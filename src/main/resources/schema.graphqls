@@ -1,0 +1,13 @@
+type Query {
+    plan(userId: ID!): Plan
+}
+
+type Plan {
+    id: ID!
+    name: String!
+    description: String!
+    price: Int!
+    image: String!
+    deleted: Boolean!
+    publish: Boolean!
+}
