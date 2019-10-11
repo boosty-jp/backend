@@ -18,7 +18,11 @@ dependencies {
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
 
+	compile "org.apache.tinkerpop:gremlin-driver:3.4.3"
+	compile "org.apache.tinkerpop:gremlin-groovy:3.4.3"
+
 	compile "com.graphql-java-kickstart:graphql-spring-boot-starter:5.10.0"
 	compile "com.graphql-java-kickstart:graphiql-spring-boot-starter:5.10.0"
 	testCompile "com.graphql-java-kickstart:graphql-spring-boot-starter-test:5.10.0"
 }
+

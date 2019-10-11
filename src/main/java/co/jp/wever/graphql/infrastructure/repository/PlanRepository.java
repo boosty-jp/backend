@@ -1,8 +1,8 @@
-package co.jp.wever.graphql.repository;
+package co.jp.wever.graphql.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 
-import co.jp.wever.graphql.model.Plan;
+import co.jp.wever.graphql.datamodel.Plan;
 
 @Repository
 public interface  PlanRepository {

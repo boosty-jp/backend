@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.model;
+package co.jp.wever.graphql.datamodel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,8 +7,6 @@ import lombok.Getter;
 
 @Data
 @Builder
-@Getter
-@AllArgsConstructor
 public class Plan {
     private long id;
     private int price;
