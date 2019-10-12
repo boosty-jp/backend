@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.resource;
+package co.jp.wever.graphql.presentor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,13 +13,14 @@ import graphql.ExecutionResult;
 
 @RequestMapping("/")
 @RestController
-public class PlanResource {
+public class ApplicationController {
 
     @Autowired
     GraphQLService graphQLService;
 
     @PostMapping
     public ResponseEntity<Object> getPlans(@RequestBody String query){
+
         ExecutionResult execute = graphQLService.getGraphQL().execute(query);
 
         return new ResponseEntity<>(execute, HttpStatus.OK);
