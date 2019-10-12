@@ -1,0 +1,4 @@
+aws:
+    cognito:
+        reggion: ${AWS_COGNITO_REGION}
+        userPoolId: ${AWS_COGNITO_USERPOOL_ID}

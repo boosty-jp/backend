@@ -1,27 +1,39 @@
 package co.jp.wever.graphql.domainmodel;
+
 import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.JwkProviderBuilder;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+@Component
 public class AwsCognitoRSAKeyProvider implements RSAKeyProvider {
+
+    @Value("${aws.cognito.region}")
+    private String region;
+
+    @Value("${aws.cognito.userPoolId}")
+    private String userPoolId;
 
     private final URL aws_kid_store_url;
 
-    public AwsCognitoRSAKeyProvider(String aws_cognito_region, String aws_user_pools_id) {
-        String url = String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", aws_cognito_region, aws_user_pools_id);
+    private static final String URL_FORMAT = "https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json";
+
+    public AwsCognitoRSAKeyProvider() {
+        String url = String.format(URL_FORMAT, region, userPoolId);
         try {
             this.aws_kid_store_url = new URL(url);
         } catch (MalformedURLException e) {
             throw new RuntimeException(String.format("Invalid URL provided, URL=%s", url));
         }
     }
-
 
     @Override
     public RSAPublicKey getPublicKeyById(String kid) {
