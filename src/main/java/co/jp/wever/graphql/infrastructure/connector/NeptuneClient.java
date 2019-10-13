@@ -4,23 +4,48 @@ import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class NeptuneClient implements AutoCloseable {
-    private final String endpoint;
+    @Value("${aws.neptune.endpoint}")
+    private String endpoint;
+
+    @Value("${aws.neptune.port}")
+    private int port;
+
+    @Value("${aws.neptune.maxInProgressPerConnection}")
+    private int maxInProcessPerConnection;
+
+    @Value("${aws.neptune.minInProcessPerConnection}")
+    private int minInProcessPerConnection;
+
+    @Value("${aws.neptune.maxConnectionPoolSize}")
+    private int maxConnectionPoolSize;
+
+    @Value("${aws.neptune.minConnectionPoolSize}")
+    private int minConnectionPoolSize;
+
+    @Value("${aws.neptune.maxSimultaneousUsagePerConnection}")
+    private int maxSimultaneousUsagePerConnection;
+
+    @Value("${aws.neptune.minSimultaneousUsagePerConnection}")
+    private int minSimultaneousUsagePerConnection;
 
     private Cluster cluster;
     private GraphTraversalSource g;
 
-    NeptuneClient(String endpoint) {
-        this.endpoint = endpoint;
+    NeptuneClient() {
         init();
     }
 
     private void init() {
         try {
-            cluster = Cluster.build().addContactPoint(endpoint).port(8182).maxInProcessPerConnection(1).minInProcessPerConnection(1).maxConnectionPoolSize(1).minConnectionPoolSize(1)
-                .maxSimultaneousUsagePerConnection(1).minSimultaneousUsagePerConnection(1).create();
+            cluster = Cluster.build().addContactPoint(endpoint).port(port).maxInProcessPerConnection(maxInProcessPerConnection).minInProcessPerConnection(minInProcessPerConnection)
+                .maxConnectionPoolSize(maxConnectionPoolSize).minConnectionPoolSize(minConnectionPoolSize).maxSimultaneousUsagePerConnection(maxSimultaneousUsagePerConnection)
+                .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection).create();
 
             g = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 

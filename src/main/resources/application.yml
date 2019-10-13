@@ -2,3 +2,13 @@ aws:
     cognito:
         reggion: ${AWS_COGNITO_REGION}
         userPoolId: ${AWS_COGNITO_USERPOOL_ID}
+    neptune:
+        endpoint: ${AWS_NEPTUNE_ENDPOINT}
+        port: ${AWS_NEPTUNE_PORT}
+        maxInProcessPerConnection: ${AWS_NEPTUNE_MAX_PROCESS_PER_CONNECTION}
+        minInProcessPerConnection: ${AWS_NEPTUNE_MIN_PROCESS_PER_CONNECTION}
+        maxConnectionPoolSize: ${AWS_NEPTUNE_MAX_CONNECTION_POOL_SIZE}
+        minConnectionPoolSize: ${AWS_NEPTUNE_MIN_COONECTION_POOL_SIZE}
+        maxSimultaneousUsagePerConnection: ${AWS_NEPTUNE_MAX_SIMULTANIOUS_USAGE_PER_CONNECTION}
+        minSimultaneousUsagePerConnection: ${AWS_NEPTUNE_MIN_SIMULTANIOUS_USAGE_PER_CONNECTION}
+
