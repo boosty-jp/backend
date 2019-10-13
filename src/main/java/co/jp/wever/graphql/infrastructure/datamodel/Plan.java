@@ -1,9 +1,7 @@
-package co.jp.wever.graphql.datamodel;
+package co.jp.wever.graphql.infrastructure.datamodel;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @Builder

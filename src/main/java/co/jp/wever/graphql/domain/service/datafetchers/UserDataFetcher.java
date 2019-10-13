@@ -1,9 +1,9 @@
-package co.jp.wever.graphql.service.datafetchers;
+package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
-import co.jp.wever.graphql.datamodel.ErrorResponse;
-import co.jp.wever.graphql.datamodel.UpdateResponse;
+import co.jp.wever.graphql.application.datamodel.ErrorResponse;
+import co.jp.wever.graphql.application.datamodel.UpdateResponse;
 import graphql.schema.DataFetcher;
 
 @Component
