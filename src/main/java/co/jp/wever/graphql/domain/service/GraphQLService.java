@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.service;
+package co.jp.wever.graphql.domain.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -9,11 +9,11 @@ import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
-import co.jp.wever.graphql.service.datafetchers.ArticleDataFetcher;
-import co.jp.wever.graphql.service.datafetchers.PlanDataFetchers;
-import co.jp.wever.graphql.service.datafetchers.SectionDataFetcher;
-import co.jp.wever.graphql.service.datafetchers.TagDataFetcher;
-import co.jp.wever.graphql.service.datafetchers.UserDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.ArticleDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.PlanDataFetchers;
+import co.jp.wever.graphql.domain.service.datafetchers.SectionDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.TagDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.UserDataFetcher;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;

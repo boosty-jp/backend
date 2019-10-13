@@ -2,7 +2,7 @@ package co.jp.wever.graphql.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 
-import co.jp.wever.graphql.datamodel.Section;
+import co.jp.wever.graphql.infrastructure.datamodel.Section;
 
 @Repository
 public interface SectionRepository {

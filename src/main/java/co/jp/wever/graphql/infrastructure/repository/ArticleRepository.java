@@ -2,7 +2,7 @@ package co.jp.wever.graphql.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 
-import co.jp.wever.graphql.datamodel.Article;
+import co.jp.wever.graphql.infrastructure.datamodel.Article;
 
 @Repository
 public interface ArticleRepository {
