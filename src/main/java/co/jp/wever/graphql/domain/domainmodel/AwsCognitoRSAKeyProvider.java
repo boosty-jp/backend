@@ -15,18 +15,11 @@ import java.security.interfaces.RSAPublicKey;
 
 @Component
 public class AwsCognitoRSAKeyProvider implements RSAKeyProvider {
-
-    @Value("${aws.cognito.region}")
-    private String region;
-
-    @Value("${aws.cognito.userPoolId}")
-    private String userPoolId;
-
     private final URL aws_kid_store_url;
 
     private static final String URL_FORMAT = "https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json";
 
-    public AwsCognitoRSAKeyProvider() {
+    public AwsCognitoRSAKeyProvider(@Value("${aws.cognito.region}") String region,  @Value("${aws.cognito.userPoolId}") String userPoolId) {
         String url = String.format(URL_FORMAT, region, userPoolId);
         try {
             this.aws_kid_store_url = new URL(url);

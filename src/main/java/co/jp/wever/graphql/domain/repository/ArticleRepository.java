@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.repository;
+package co.jp.wever.graphql.domain.repository;
 
 import org.springframework.stereotype.Repository;
 

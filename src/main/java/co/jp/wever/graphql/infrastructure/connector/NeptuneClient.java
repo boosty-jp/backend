@@ -4,24 +4,45 @@ import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class NeptuneClient implements AutoCloseable {
-    private final String endpoint;
 
     private Cluster cluster;
     private GraphTraversalSource g;
 
-    NeptuneClient(String endpoint) {
-        this.endpoint = endpoint;
-        init();
+    public NeptuneClient(
+        @Value("${aws.neptune.endpoint}") String endpoint,
+        @Value("${aws.neptune.port}") int port,
+        @Value("${aws.neptune.maxInProcessPerConnection}") int maxInProcessPerConnection,
+        @Value("${aws.neptune.minInProcessPerConnection}") int minInProcessPerConnection,
+        @Value("${aws.neptune.maxConnectionPoolSize}") int maxConnectionPoolSize,
+        @Value("${aws.neptune.minConnectionPoolSize}") int minConnectionPoolSize,
+        @Value("${aws.neptune.maxSimultaneousUsagePerConnection}") int maxSimultaneousUsagePerConnection,
+        @Value("${aws.neptune.minSimultaneousUsagePerConnection}") int minSimultaneousUsagePerConnection) {
+        init(endpoint, port, maxInProcessPerConnection, minInProcessPerConnection, maxConnectionPoolSize, minConnectionPoolSize, maxSimultaneousUsagePerConnection, minSimultaneousUsagePerConnection);
     }
 
-    private void init() {
+    private void init(
+        String endpoint,
+        int port,
+        int maxInProcessPerConnection,
+        int minInProcessPerConnection,
+        int maxConnectionPoolSize,
+        int minConnectionPoolSize,
+        int maxSimultaneousUsagePerConnection,
+        int minSimultaneousUsagePerConnection) {
         try {
-            cluster = Cluster.build().addContactPoint(endpoint).port(8182).maxInProcessPerConnection(1).minInProcessPerConnection(1).maxConnectionPoolSize(1).minConnectionPoolSize(1)
-                .maxSimultaneousUsagePerConnection(1).minSimultaneousUsagePerConnection(1).create();
+            /*cluster = Cluster.build().addContactPoint(endpoint).port(port).maxInProcessPerConnection(maxInProcessPerConnection).minInProcessPerConnection(minInProcessPerConnection)
+                .maxConnectionPoolSize(maxConnectionPoolSize).minConnectionPoolSize(minConnectionPoolSize).maxSimultaneousUsagePerConnection(maxSimultaneousUsagePerConnection)
+                .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection).create();
+*/
 
+            //TODO: Neptuneへの接続パラメータのチューニング行う
+            cluster = Cluster.build().addContactPoint(endpoint).port(port).create();
             g = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 
         } catch (Exception e) {
@@ -33,7 +54,7 @@ public class NeptuneClient implements AutoCloseable {
         }
     }
 
-    GraphTraversalSource newTraversal() {
+    public GraphTraversalSource newTraversal() {
         return g;
     }
 
