@@ -9,6 +9,7 @@ import co.jp.wever.graphql.application.datamodel.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.ErrorResponse;
 import co.jp.wever.graphql.infrastructure.datamodel.Plan;
 import co.jp.wever.graphql.application.datamodel.UpdateResponse;
+import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
 import graphql.schema.DataFetcher;
 
 @Component
@@ -17,11 +18,18 @@ public class PlanDataFetchers {
     ///////////////////////////////
     //////////// Query ////////////
     ///////////////////////////////
+    private final PlanRepositoryImpl planRepository;
+
+    PlanDataFetchers(PlanRepositoryImpl planRepository){
+        this.planRepository = planRepository;
+    }
 
     public DataFetcher planDataFetcher() {
         return dataFetchingEnvironment -> {
             String id = dataFetchingEnvironment.getArgument("id");
-            return Plan.builder().id(1L).build();
+            this.planRepository.findOne(id);
+            // TODO マッピング処理
+            return Plan.builder().id(1).name("hoge").price(100).deleted(false).publish(false).description("des").image("iamge").build();
         };
     }
 

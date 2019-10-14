@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Plan {
-    private long id;
+    private int id;
     private int price;
     private String name;
     private String image;
