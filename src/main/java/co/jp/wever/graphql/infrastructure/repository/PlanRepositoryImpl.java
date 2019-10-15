@@ -8,13 +8,15 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
 import co.jp.wever.graphql.domain.repository.PlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.UserPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.Vertex;
-import co.jp.wever.graphql.infrastructure.converter.PlanConverter;
-import co.jp.wever.graphql.infrastructure.converter.PlansConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.Plan;
+import co.jp.wever.graphql.infrastructure.converter.entity.PlanEntityConverter;
+import co.jp.wever.graphql.infrastructure.converter.entity.PlansEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.PlanElementEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
 
 @Component
 public class PlanRepositoryImpl implements PlanRepository {
@@ -26,81 +28,86 @@ public class PlanRepositoryImpl implements PlanRepository {
     }
 
     @Override
-    public Plan findOne(String planId) {
+    public PlanEntity findOne(String planId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<Object, Object> result = g.V(planId).valueMap().with(WithOptions.tokens).next();
-        return PlanConverter.toPlan(result);
+        return PlanEntityConverter.toPlan(result);
     }
 
     @Override
-    public List<Plan> findAll(String userId) {
+    public List<PlanEntity> findAll(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out().has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findAllPublished(String userId) {
+    public List<PlanEntity> findAllPublished(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.PUBLISH.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findAllDrafted(String userId) {
+    public List<PlanEntity> findAllDrafted(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.DRAFT.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findAllLiked(String userId) {
+    public List<PlanEntity> findAllLiked(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.LIKE.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findAllLearning(String userId) {
+    public List<PlanEntity> findAllLearning(String userId) {
 
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.LEARNING.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findAllLearned(String userId) {
+    public List<PlanEntity> findAllLearned(String userId) {
 
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.LEARNED.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findFamous(String userId) {
+    public List<PlanEntity> findFamous(String userId) {
 
         //TODO: 未実装
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.PUBLISH.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
     }
 
     @Override
-    public List<Plan> findRelated(String userId) {
+    public List<PlanEntity> findRelated(String userId) {
 
         //TODO: 未実装
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.PUBLISH.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
 
-        return PlansConverter.toPlans(result);
+        return PlansEntityConverter.toPlans(result);
+    }
+
+    @Override
+    public boolean isPublishedPlanElement(String planElementId) {
+        return true;
     }
 
     @Override
@@ -113,37 +120,37 @@ public class PlanRepositoryImpl implements PlanRepository {
     }
 
     @Override
-    public Plan addOne(String id) {
+    public String addOne(String planId, String userId, PlanElementEntity addElementEntity) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        return Plan.builder().build();
+        return "";
     }
 
     @Override
-    public Plan updateOne(String planId, String title, String userId) {
+    public PlanEntity updateOne(String planId, String title, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         g.V(planId).property(VertexProperty.Cardinality.single, "title", title).next();
 
-        return Plan.builder().build();
+        return PlanEntity.builder().build();
     }
 
     @Override
-    public Plan deleteOne(String id) {
-        return Plan.builder().build();
+    public PlanEntity deleteOne(String id) {
+        return PlanEntity.builder().build();
     }
 
     @Override
-    public Plan publishOne(String id) {
-        return Plan.builder().build();
+    public PlanEntity publishOne(String id) {
+        return PlanEntity.builder().build();
     }
 
     @Override
-    public Plan draftOne(String id) {
-        return Plan.builder().build();
+    public PlanEntity draftOne(String id) {
+        return PlanEntity.builder().build();
     }
 
     @Override
-    public Plan startOne(String id) {
-        return Plan.builder().build();
+    public PlanEntity startOne(String id) {
+        return PlanEntity.builder().build();
     }
 }

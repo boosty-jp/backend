@@ -1,0 +1,16 @@
+package co.jp.wever.graphql.application.converter;
+
+import java.util.Map;
+
+import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
+
+public class PlanElementInputConverter {
+    public static PlanElementInput toPlanElement(Map<String, Object> input) {
+        try {
+            return PlanElementInput.builder().number((int) input.get("number")).targetId(input.get("targetId").toString()).type(input.get("type").toString()).build();
+        } catch (Exception e) {
+            //TODO: Exception実装
+            return null;
+        }
+    }
+}

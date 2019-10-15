@@ -3,9 +3,13 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 import org.springframework.stereotype.Component;
 
 
-import co.jp.wever.graphql.application.datamodel.CreateResponse;
-import co.jp.wever.graphql.application.datamodel.ErrorResponse;
-import co.jp.wever.graphql.application.datamodel.UpdateResponse;
+import java.util.Map;
+
+import co.jp.wever.graphql.application.converter.PlanElementInputConverter;
+import co.jp.wever.graphql.application.datamodel.response.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.ErrorResponse;
+import co.jp.wever.graphql.application.datamodel.response.UpdateResponse;
+import co.jp.wever.graphql.domain.service.PlanService;
 import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
 import graphql.schema.DataFetcher;
 
@@ -15,10 +19,15 @@ public class PlanDataFetchers {
     ///////////////////////////////
     //////////// Query ////////////
     ///////////////////////////////
+
+    // TODO: あとでけす
     private final PlanRepositoryImpl planRepository;
 
-    PlanDataFetchers(PlanRepositoryImpl planRepository) {
+    private final PlanService planService;
+
+    PlanDataFetchers(PlanRepositoryImpl planRepository, PlanService planService) {
         this.planRepository = planRepository;
+        this.planService = planService;
     }
 
     public DataFetcher planDataFetcher() {
@@ -92,13 +101,19 @@ public class PlanDataFetchers {
     public DataFetcher initPlanDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            String planId = this.planRepository.initOne(userId);
-            return CreateResponse.builder().id(planId).build();
+            return planService.initPlan(userId);
         };
     }
 
-    public DataFetcher addPlansElementDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher addPlanElementDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String planId = dataFetchingEnvironment.getArgument("planId");
+            Map<String, Object> elementMap = (Map)dataFetchingEnvironment.getArgument("element");
+
+            String createId = planService.addPlanElement(planId, userId, PlanElementInputConverter.toPlanElement(elementMap));
+            return CreateResponse.builder().id("").build();
+        };
     }
 
     public DataFetcher updatePlanDataFetcher() {

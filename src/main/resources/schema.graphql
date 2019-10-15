@@ -15,7 +15,7 @@ type Query {
     famousArticles: [Article]!
     relatedArticles(userId: ID!): [Article]!
 
-    plan(planId: ID!): Plan!
+    plan(planElementId: ID!): Plan!
     allPlans(userId: ID!): [Plan]!
     allPublishedPlans(userId: ID!): [Plan]!
     allDraftedPlans(userId: ID!): [Plan]!
@@ -57,7 +57,7 @@ type Section {
 }
 
 input PlanElement{
-    id: ID!
+    targetId: ID!
     type: String!
     number: Int!
 }
@@ -77,12 +77,12 @@ type Mutation {
     likeArticle(articleId: ID!, userId: ID): UpdateResponse
 
     initPlan(userId: String!): CreateResponse
-    addPlanElement(id: ID!,element: PlanElement): UpdateResponse
-    updatePlan(planId: ID!, title: String, description: String, image: String, planElements: [PlanElement], userId: ID!): UpdateResponse
+    addPlanElement(planElementId: ID!,element: PlanElement!, userId: ID!): UpdateResponse
+    updatePlan(planElementId: ID!, title: String, description: String, image: String, planElements: [PlanElement], userId: ID!): UpdateResponse
     deletePlan(id: ID!): UpdateResponse
     publishPlan(id: ID!): UpdateResponse
     draftPlan(id: ID!): UpdateResponse
-    startPlan(planId: ID!, userId: ID!): UpdateResponse
+    startPlan(planElementId: ID!, userId: ID!): UpdateResponse
 
     followUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
     unFollowUser(targetUserId: ID!, followerUserId: ID): UpdateResponse

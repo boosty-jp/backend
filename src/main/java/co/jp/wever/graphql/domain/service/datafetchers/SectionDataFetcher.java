@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.jp.wever.graphql.application.datamodel.CreateResponse;
-import co.jp.wever.graphql.application.datamodel.ErrorResponse;
+import co.jp.wever.graphql.application.datamodel.response.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.ErrorResponse;
 import co.jp.wever.graphql.infrastructure.datamodel.Section;
-import co.jp.wever.graphql.application.datamodel.UpdateResponse;
+import co.jp.wever.graphql.application.datamodel.response.UpdateResponse;
 import graphql.schema.DataFetcher;
 
 @Component
