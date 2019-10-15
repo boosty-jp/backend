@@ -1,39 +1,43 @@
 type Query {
-    section(id: ID!): Section
-    allLikedSections(userId: ID!): [Section]
-    allBookmarkedSections(userId: ID!): [Section]
-    famousSections: [Section]
-    relatedSections(userId: ID): [Section]
+    section(id: ID!): Section!
+    allLikedSections(userId: ID!): [Section]!
+    allBookmarkedSections(userId: ID!): [Section]!
+    famousSections: [Section]!
+    relatedSections(userId: ID): [Section]!
 
-    article(id: ID!): Article
-    allArticles(userId: ID!): [Article]
-    allPublishedArticles(userId: ID!): [Article]
-    allDraftedArticles(userId: ID!): [Article]
-    allLikedArticles(userId: ID!): [Article]
-    allLearnedArticles(userId: ID!): [Article]
-    allBookmarkedArticles(userId: ID!): [Article]
-    famousArticles: [Article]
-    relatedArticles(userId: ID): [Article]
+    article(id: ID!): Article!
+    allArticles(userId: ID!): [Article]!
+    allPublishedArticles(userId: ID!): [Article]!
+    allDraftedArticles(userId: ID!): [Article]!
+    allLikedArticles(userId: ID!): [Article]!
+    allLearnedArticles(userId: ID!): [Article]!
+    allBookmarkedArticles(userId: ID!): [Article]!
+    famousArticles: [Article]!
+    relatedArticles(userId: ID!): [Article]!
 
-    plan(id: ID!): Plan
-    allPlans(userId: ID!): [Plan]
-    allPublishedPlans(userId: ID!): [Plan]
-    allDraftedPlans(userId: ID!): [Plan]
-    allLikedPlans(userId: ID!): [Plan]
-    allLearningPlans(userId: ID!): [Plan]
-    allLearnedPlans(userId: ID!): [Plan]
-    famousPlans: [Plan]
-    relatedPlans(userId: ID): [Plan]
+    plan(planId: ID!): Plan!
+    allPlans(userId: ID!): [Plan]!
+    allPublishedPlans(userId: ID!): [Plan]!
+    allDraftedPlans(userId: ID!): [Plan]!
+    allLikedPlans(userId: ID!): [Plan]!
+    allLearningPlans(userId: ID!): [Plan]!
+    allLearnedPlans(userId: ID!): [Plan]!
+    famousPlans: [Plan]!
+    relatedPlans(userId: ID): [Plan]!
 }
 
 type Plan {
     id: ID!
-    name: String!
-    price: Int!
+    title: String!
     description: String!
+    elements: [Element]
     image: String!
-    deleted: Boolean!
-    publish: Boolean!
+}
+
+type Element {
+    id: ID!
+    type: String!
+    number: Int!
 }
 
 type Article {
@@ -52,7 +56,7 @@ type Section {
     deleted: Boolean!
 }
 
-input PlanElement {
+input PlanElement{
     id: ID!
     type: String!
     number: Int!
@@ -74,7 +78,7 @@ type Mutation {
 
     initPlan(userId: String!): CreateResponse
     addPlanElement(id: ID!,element: PlanElement): UpdateResponse
-    updatePlan(title: String, elements: [PlanElement] ,userId: ID!): UpdateResponse
+    updatePlan(planId: ID!, title: String, description: String, image: String, planElements: [PlanElement], userId: ID!): UpdateResponse
     deletePlan(id: ID!): UpdateResponse
     publishPlan(id: ID!): UpdateResponse
     draftPlan(id: ID!): UpdateResponse
