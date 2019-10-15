@@ -7,7 +7,7 @@ import co.jp.wever.graphql.infrastructure.datamodel.Plan;
 @Repository
 public interface  PlanRepository {
     //Query
-    Plan findOne(String id);
+    Plan findOne(String planId);
     Plan findAll(String id);
     Plan findAllPublished(String id);
     Plan findAllDrafted(String id);
@@ -18,9 +18,9 @@ public interface  PlanRepository {
     Plan findRelated(String id);
 
     //Mutation
-    Plan initOne(String id);
+    String initOne(String userId);
     Plan addOne(String id);
-    Plan updateOne(String id);
+    Plan updateOne(String planId, String title, String userId);
     Plan deleteOne(String id);
     Plan publishOne(String id);
     Plan draftOne(String id);

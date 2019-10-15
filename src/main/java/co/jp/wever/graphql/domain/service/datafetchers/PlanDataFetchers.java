@@ -20,21 +20,20 @@ public class PlanDataFetchers {
     ///////////////////////////////
     private final PlanRepositoryImpl planRepository;
 
-    PlanDataFetchers(PlanRepositoryImpl planRepository){
+    PlanDataFetchers(PlanRepositoryImpl planRepository) {
         this.planRepository = planRepository;
     }
 
     public DataFetcher planDataFetcher() {
         return dataFetchingEnvironment -> {
-            String id = dataFetchingEnvironment.getArgument("id");
-            this.planRepository.findOne(id);
-            // TODO マッピング処理
-            return Plan.builder().id(1).name("hoge").price(100).deleted(false).publish(false).description("des").image("iamge").build();
+            String planId = dataFetchingEnvironment.getArgument("planId");
+            return this.planRepository.findOne(planId);
         };
     }
 
     public DataFetcher allPlanDataFetcher() {
         return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
             List<Plan> plans = new ArrayList<>();
             return plans;
         };
@@ -95,7 +94,11 @@ public class PlanDataFetchers {
     ///////////////////////////////
 
     public DataFetcher initPlanDataFetcher() {
-        return dataFetchingEnvironment -> CreateResponse.builder().id("1").error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String planId = this.planRepository.initOne(userId);
+            return CreateResponse.builder().id(planId).build();
+        };
     }
 
     public DataFetcher addPlansElementDataFetcher() {
@@ -103,7 +106,13 @@ public class PlanDataFetchers {
     }
 
     public DataFetcher updatePlanDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String title = dataFetchingEnvironment.getArgument("title");
+            String planId = dataFetchingEnvironment.getArgument("planId");
+            this.planRepository.updateOne(planId, title, userId);
+            return UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        };
     }
 
     public DataFetcher deletePlanDataFetcher() {

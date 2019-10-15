@@ -1,35 +1,40 @@
 package co.jp.wever.graphql.infrastructure.repository;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.T;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 import co.jp.wever.graphql.domain.repository.PlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.UserPlanEdge;
+import co.jp.wever.graphql.infrastructure.constant.Vertex;
+import co.jp.wever.graphql.infrastructure.converter.PlanConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.Plan;
+
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.V;
 
 @Component
 public class PlanRepositoryImpl implements PlanRepository {
 
     private final NeptuneClient neptuneClient;
+    private final PlanConverter planConverter;
 
-    public PlanRepositoryImpl(NeptuneClient neptuneClient) {
+    public PlanRepositoryImpl(NeptuneClient neptuneClient, PlanConverter planConverter) {
         this.neptuneClient = neptuneClient;
+        this.planConverter = planConverter;
     }
 
     @Override
-    public Plan findOne(String id) {
+    public Plan findOne(String planId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        System.out.println("== find one ==");
 
-        GraphTraversal t = g.V().limit(3).valueMap();
+        Map<Object, Object> result = g.V(planId).valueMap().next();
+        Plan plan = planConverter.toPlan(result);
+        plan.setId(planId);
 
-        t.forEachRemaining(
-            e ->  System.out.println(e)
-        );
-
-        return Plan.builder().id(1).name("hoge").price(100).deleted(false).publish(false).description("des").image("iamge").build();
+        return plan;
     }
 
     @Override
@@ -73,32 +78,27 @@ public class PlanRepositoryImpl implements PlanRepository {
     }
 
     @Override
-    public Plan initOne(String id) {
+    public String initOne(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        g.addV("Custom Label").property(T.id, id).property("name", "Custom id vertex 1").next();
-        // ユーザーデータとの紐付け
-        // Add a vertex with a user-supplied ID.
-        g.addV("Custom Label").property(T.id, id).property("name", "Custom id vertex 1").next();
-        g.addV("Custom Label").property(T.id, id+ "hoge").property("name", "Custom id vertex 2").next();
-
-        // This gets the vertices, only.
-        GraphTraversal t = g.V().limit(10).valueMap();
-
-        t.forEachRemaining(
-            e ->  System.out.println(e)
-        );
-
-        return Plan.builder().build();
+        String planId = g.addV().property("type", Vertex.PLAN.name()).next().id().toString();
+        g.V(userId).addE(UserPlanEdge.DRAFT.name()).property("drafted", "today").to(V(planId)).next();
+        return planId;
     }
 
     @Override
     public Plan addOne(String id) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        //        g.V(id).property(single, "name", "hoge").
         return Plan.builder().build();
     }
 
     @Override
-    public Plan updateOne(String id) {
+    public Plan updateOne(String planId, String title, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        g.V(planId).property(VertexProperty.Cardinality.single, "title", title).next();
+
         return Plan.builder().build();
     }
 
