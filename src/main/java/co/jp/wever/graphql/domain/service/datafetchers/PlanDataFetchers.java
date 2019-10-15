@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import co.jp.wever.graphql.application.datamodel.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.ErrorResponse;
 import co.jp.wever.graphql.application.datamodel.UpdateResponse;
+import co.jp.wever.graphql.infrastructure.constant.PlanElementType;
+import co.jp.wever.graphql.infrastructure.datamodel.PlanElement;
 import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
 import graphql.schema.DataFetcher;
 
@@ -97,8 +99,15 @@ public class PlanDataFetchers {
         };
     }
 
-    public DataFetcher addPlansElementDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher addPlanElementDataFetcher() {
+        return dataFetchingEnvironment -> {
+//            String userId = dataFetchingEnvironment.getArgument("userId");
+//            Object dataFetchingEnvironment.getArgument("element").toString());
+//            System.out.println(dataFetchingEnvironment.getArgument("element").toString());
+//            //            PlanElementType elements = dataFetchingEnvironment.getArgument("element");
+//            int number = dataFetchingEnvironment.getArgument("number");
+            return CreateResponse.builder().id("").build();
+        };
     }
 
     public DataFetcher updatePlanDataFetcher() {

@@ -57,7 +57,7 @@ type Section {
 }
 
 input PlanElement{
-    id: ID!
+    targetId: ID!
     type: String!
     number: Int!
 }
@@ -77,7 +77,7 @@ type Mutation {
     likeArticle(articleId: ID!, userId: ID): UpdateResponse
 
     initPlan(userId: String!): CreateResponse
-    addPlanElement(id: ID!,element: PlanElement): UpdateResponse
+    addPlanElement(planId: ID!,element: PlanElement!, userId: ID!): UpdateResponse
     updatePlan(planId: ID!, title: String, description: String, image: String, planElements: [PlanElement], userId: ID!): UpdateResponse
     deletePlan(id: ID!): UpdateResponse
     publishPlan(id: ID!): UpdateResponse

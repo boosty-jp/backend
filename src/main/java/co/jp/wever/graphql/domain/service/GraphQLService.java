@@ -89,7 +89,7 @@ public class GraphQLService {
                 .dataFetcher("bookmarkArticle", articleDataFetcher.bookmarkArticlesElementDataFetcher())
                 .dataFetcher("likeArticle", articleDataFetcher.likeArticlesElementDataFetcher())
                 .dataFetcher("initPlan", planDataFetchers.initPlanDataFetcher())
-                .dataFetcher("addPlanElement", planDataFetchers.addPlansElementDataFetcher())
+                .dataFetcher("addPlanElement", planDataFetchers.addPlanElementDataFetcher())
                 .dataFetcher("updatePlan", planDataFetchers.updatePlanDataFetcher())
                 .dataFetcher("deletePlan", planDataFetchers.deletePlanDataFetcher())
                 .dataFetcher("publishPlan", planDataFetchers.publishPlanDataFetcher())
