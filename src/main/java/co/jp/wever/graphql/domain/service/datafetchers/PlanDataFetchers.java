@@ -3,7 +3,9 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 import org.springframework.stereotype.Component;
 
 
-import co.jp.wever.graphql.application.datamodel.request.PlanElementRequest;
+import java.util.Map;
+
+import co.jp.wever.graphql.application.converter.PlanElementInputConverter;
 import co.jp.wever.graphql.application.datamodel.response.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.ErrorResponse;
 import co.jp.wever.graphql.application.datamodel.response.UpdateResponse;
@@ -107,9 +109,9 @@ public class PlanDataFetchers {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
             String planId = dataFetchingEnvironment.getArgument("planId");
-            OffersDto inputObject = objectMapper.convertValue(dataFetchingEnvironment.getArgument("element"), PlanElementRequest.class);
-            System.out.println(element.get);
-            String createId = planService.addPlanElement(planId, userId, element);
+            Map<String, Object> elementMap = (Map)dataFetchingEnvironment.getArgument("element");
+
+            String createId = planService.addPlanElement(planId, userId, PlanElementInputConverter.toPlanElement(elementMap));
             return CreateResponse.builder().id("").build();
         };
     }

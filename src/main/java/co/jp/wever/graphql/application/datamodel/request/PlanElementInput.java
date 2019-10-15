@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PlanElementRequest {
+public class PlanElementInput {
     private String targetId;
     private String type;
     private int number;

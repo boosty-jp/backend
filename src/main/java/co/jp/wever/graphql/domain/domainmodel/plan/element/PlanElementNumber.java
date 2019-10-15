@@ -1,16 +1,16 @@
-package co.jp.wever.graphql.domain.domainmodel.plan;
+package co.jp.wever.graphql.domain.domainmodel.plan.element;
 
-public class PlanNumber {
+public class PlanElementNumber {
     private final static int MIN_NUMBER = 1;
     private final static int MAX_NUMBER = 100;
 
     private int value;
 
-    private PlanNumber(int value) {
+    private PlanElementNumber(int value) {
         this.value = value;
     }
 
-    public static PlanNumber of(int value) throws IllegalArgumentException{
+    public static PlanElementNumber of(int value) throws IllegalArgumentException{
         if (value < MIN_NUMBER) {
             throw new IllegalArgumentException();
         }
@@ -19,7 +19,7 @@ public class PlanNumber {
             throw new IllegalArgumentException();
         }
 
-        return new PlanNumber(value);
+        return new PlanElementNumber(value);
     }
 
     public int getValue() {

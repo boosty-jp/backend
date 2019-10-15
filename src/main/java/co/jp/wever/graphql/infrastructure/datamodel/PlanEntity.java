@@ -5,9 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Plan {
+public class PlanEntity {
     private String id;
-    private int price;
     private String title;
     private String image;
     private String description;

@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.constant;
+package co.jp.wever.graphql.domain.domainmodel.plan.element;
 
 public enum PlanElementType {
     ARTICLE("article"), PLAN("plan");
