@@ -1,9 +1,11 @@
 package co.jp.wever.graphql.infrastructure.repository;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 import co.jp.wever.graphql.domain.repository.PlanRepository;
@@ -11,35 +13,33 @@ import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.UserPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.Vertex;
 import co.jp.wever.graphql.infrastructure.converter.PlanConverter;
+import co.jp.wever.graphql.infrastructure.converter.PlansConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.Plan;
-
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.V;
 
 @Component
 public class PlanRepositoryImpl implements PlanRepository {
 
     private final NeptuneClient neptuneClient;
-    private final PlanConverter planConverter;
 
-    public PlanRepositoryImpl(NeptuneClient neptuneClient, PlanConverter planConverter) {
+    public PlanRepositoryImpl(NeptuneClient neptuneClient) {
         this.neptuneClient = neptuneClient;
-        this.planConverter = planConverter;
     }
 
     @Override
     public Plan findOne(String planId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        Map<Object, Object> result = g.V(planId).valueMap().next();
-        Plan plan = planConverter.toPlan(result);
-        plan.setId(planId);
-
-        return plan;
+        Map<Object, Object> result = g.V(planId).valueMap().with(WithOptions.tokens).next();
+        return PlanConverter.toPlan(result);
     }
 
     @Override
-    public Plan findAll(String id) {
-        return Plan.builder().build();
+    public List<Plan> findAll(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        List<Map<Object, Object>> result = g.V(userId).out().has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+        System.out.println(result);
+        return PlansConverter.toPlans(result);
     }
 
     @Override
@@ -82,7 +82,8 @@ public class PlanRepositoryImpl implements PlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         String planId = g.addV().property("type", Vertex.PLAN.name()).next().id().toString();
-        g.V(userId).addE(UserPlanEdge.DRAFT.name()).property("drafted", "today").to(V(planId)).next();
+        g.V(userId).addE(UserPlanEdge.DRAFT.name()).to(g.V(planId)).property("drafted", "today").next();
+
         return planId;
     }
 

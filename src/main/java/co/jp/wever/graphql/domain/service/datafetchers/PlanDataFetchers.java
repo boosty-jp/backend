@@ -34,8 +34,9 @@ public class PlanDataFetchers {
     public DataFetcher allPlanDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            return this.planRepository.findAll(userId);
+            //            List<Plan> plans = new ArrayList<>();
+            //            return plans;
         };
     }
 

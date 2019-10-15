@@ -2,13 +2,15 @@ package co.jp.wever.graphql.domain.repository;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import co.jp.wever.graphql.infrastructure.datamodel.Plan;
 
 @Repository
 public interface  PlanRepository {
     //Query
     Plan findOne(String planId);
-    Plan findAll(String id);
+    List<Plan> findAll(String id);
     Plan findAllPublished(String id);
     Plan findAllDrafted(String id);
     Plan findAllLiked(String id);
