@@ -19,11 +19,11 @@ type Query {
     allPlans(userId: ID!): [Plan]!
     allPublishedPlans(userId: ID!): [Plan]!
     allDraftedPlans(userId: ID!): [Plan]!
-    allLikedPlans(userId: ID!): [Plan]
-    allLearningPlans(userId: ID!): [Plan]
-    allLearnedPlans(userId: ID!): [Plan]
-    famousPlans: [Plan]
-    relatedPlans(userId: ID): [Plan]
+    allLikedPlans(userId: ID!): [Plan]!
+    allLearningPlans(userId: ID!): [Plan]!
+    allLearnedPlans(userId: ID!): [Plan]!
+    famousPlans: [Plan]!
+    relatedPlans(userId: ID): [Plan]!
 }
 
 type Plan {

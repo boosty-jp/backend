@@ -11,13 +11,13 @@ public interface  PlanRepository {
     //Query
     Plan findOne(String planId);
     List<Plan> findAll(String id);
-    Plan findAllPublished(String id);
-    Plan findAllDrafted(String id);
-    Plan findAllLiked(String id);
-    Plan findAllLearning(String id);
-    Plan findAllLearned(String id);
-    Plan findFamous(String id);
-    Plan findRelated(String id);
+    List<Plan> findAllPublished(String id);
+    List<Plan> findAllDrafted(String id);
+    List<Plan> findAllLiked(String id);
+    List<Plan> findAllLearning(String id);
+    List<Plan> findAllLearned(String id);
+    List<Plan> findFamous(String id);
+    List<Plan> findRelated(String id);
 
     //Mutation
     String initOne(String userId);

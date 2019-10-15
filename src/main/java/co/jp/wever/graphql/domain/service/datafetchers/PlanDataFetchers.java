@@ -2,12 +2,9 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import co.jp.wever.graphql.application.datamodel.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.ErrorResponse;
-import co.jp.wever.graphql.infrastructure.datamodel.Plan;
 import co.jp.wever.graphql.application.datamodel.UpdateResponse;
 import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
 import graphql.schema.DataFetcher;
@@ -35,57 +32,55 @@ public class PlanDataFetchers {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
             return this.planRepository.findAll(userId);
-            //            List<Plan> plans = new ArrayList<>();
-            //            return plans;
         };
     }
 
     public DataFetcher allPublishedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findAllPublished(userId);
         };
     }
 
     public DataFetcher allDraftedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findAllDrafted(userId);
         };
     }
 
     public DataFetcher allLikedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findAllLiked(userId);
         };
     }
 
     public DataFetcher allLearningPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findAllLearning(userId);
         };
     }
 
     public DataFetcher allLearnedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findAllLearned(userId);
         };
     }
 
     public DataFetcher famousPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findFamous(userId);
         };
     }
 
     public DataFetcher relatedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            List<Plan> plans = new ArrayList<>();
-            return plans;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return this.planRepository.findRelated(userId);
         };
     }
 

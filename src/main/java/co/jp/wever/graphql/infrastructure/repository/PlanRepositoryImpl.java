@@ -36,51 +36,76 @@ public class PlanRepositoryImpl implements PlanRepository {
     @Override
     public List<Plan> findAll(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         List<Map<Object, Object>> result = g.V(userId).out().has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
-        System.out.println(result);
+
         return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findAllPublished(String id) {
-        return Plan.builder().build();
+    public List<Plan> findAllPublished(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.PUBLISH.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findAllDrafted(String id) {
-        return Plan.builder().build();
+    public List<Plan> findAllDrafted(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.DRAFT.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findAllLiked(String id) {
-        return Plan.builder().build();
+    public List<Plan> findAllLiked(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.LIKE.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findAllLearning(String id) {
-        return Plan.builder().build();
+    public List<Plan> findAllLearning(String userId) {
+
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.LEARNING.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findAllLearned(String id) {
-        return Plan.builder().build();
+    public List<Plan> findAllLearned(String userId) {
+
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.LEARNED.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findFamous(String id) {
-        return Plan.builder().build();
+    public List<Plan> findFamous(String userId) {
+
+        //TODO: 未実装
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.PUBLISH.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
-    public Plan findRelated(String id) {
-        return Plan.builder().build();
+    public List<Plan> findRelated(String userId) {
+
+        //TODO: 未実装
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<Object, Object>> result = g.V(userId).out(UserPlanEdge.PUBLISH.name()).has("type", Vertex.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+
+        return PlansConverter.toPlans(result);
     }
 
     @Override
     public String initOne(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         String planId = g.addV().property("type", Vertex.PLAN.name()).next().id().toString();
         g.V(userId).addE(UserPlanEdge.DRAFT.name()).to(g.V(planId)).property("drafted", "today").next();
 
@@ -90,14 +115,13 @@ public class PlanRepositoryImpl implements PlanRepository {
     @Override
     public Plan addOne(String id) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        //        g.V(id).property(single, "name", "hoge").
+
         return Plan.builder().build();
     }
 
     @Override
     public Plan updateOne(String planId, String title, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         g.V(planId).property(VertexProperty.Cardinality.single, "title", title).next();
 
         return Plan.builder().build();
