@@ -21,7 +21,7 @@ public interface  PlanRepository {
 
     //Mutation
     String initOne(String userId);
-    Plan addOne(String id);
+    String addOne(String id);
     Plan updateOne(String planId, String title, String userId);
     Plan deleteOne(String id);
     Plan publishOne(String id);

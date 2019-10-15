@@ -113,10 +113,10 @@ public class PlanRepositoryImpl implements PlanRepository {
     }
 
     @Override
-    public Plan addOne(String id) {
+    public String addOne(String id) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        return Plan.builder().build();
+        return "";
     }
 
     @Override
