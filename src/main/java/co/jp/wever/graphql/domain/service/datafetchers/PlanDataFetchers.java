@@ -4,11 +4,13 @@ import org.springframework.stereotype.Component;
 
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.PlanElementInputConverter;
-import co.jp.wever.graphql.application.datamodel.response.CreateResponse;
+import co.jp.wever.graphql.application.converter.PlanResponseConverter;
+import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.ErrorResponse;
-import co.jp.wever.graphql.application.datamodel.response.UpdateResponse;
+import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import co.jp.wever.graphql.domain.service.PlanService;
 import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
 import graphql.schema.DataFetcher;
@@ -20,79 +22,77 @@ public class PlanDataFetchers {
     //////////// Query ////////////
     ///////////////////////////////
 
-    // TODO: あとでけす
-    private final PlanRepositoryImpl planRepository;
-
     private final PlanService planService;
 
-    PlanDataFetchers(PlanRepositoryImpl planRepository, PlanService planService) {
-        this.planRepository = planRepository;
+    PlanDataFetchers(PlanService planService) {
         this.planService = planService;
     }
 
     public DataFetcher planDataFetcher() {
         return dataFetchingEnvironment -> {
             String planId = dataFetchingEnvironment.getArgument("planId");
-            return this.planRepository.findOne(planId);
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return PlanResponseConverter.toPlanResponse(this.planService.findPlan(planId, userId));
         };
     }
 
     public DataFetcher allPlanDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findAll(userId);
+            return this.planService.findAllPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher allPublishedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findAllPublished(userId);
+            return this.planService.findAllPublishedPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher allDraftedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findAllDrafted(userId);
+            return this.planService.findAllDraftedPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLikedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findAllLiked(userId);
+            return this.planService.findAllLikedPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLearningPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findAllLearning(userId);
+            return this.planService.findAllLearningPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLearnedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findAllLearned(userId);
+            return this.planService.findAllLearnedPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher famousPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findFamous(userId);
+            //TODO: 未実装
+            return this.planService.findAllLearnedPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
 
     public DataFetcher relatedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return this.planRepository.findRelated(userId);
+            //TODO: 未実装
+            return this.planService.findAllLearnedPlan(userId).stream().map(p -> PlanResponseConverter.toPlanResponse(p)).collect(Collectors.toList());
         };
     }
-
 
     ///////////////////////////////
     ///////// Mutations   /////////
@@ -109,36 +109,61 @@ public class PlanDataFetchers {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
             String planId = dataFetchingEnvironment.getArgument("planId");
-            Map<String, Object> elementMap = (Map)dataFetchingEnvironment.getArgument("element");
+            Map<String, Object> elementMap = (Map) dataFetchingEnvironment.getArgument("element");
 
             String createId = planService.addPlanElement(planId, userId, PlanElementInputConverter.toPlanElement(elementMap));
-            return CreateResponse.builder().id("").build();
+            return CreateResponse.builder().id(createId).build();
         };
     }
 
+    // TODO: あとでやる
     public DataFetcher updatePlanDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
             String title = dataFetchingEnvironment.getArgument("title");
             String planId = dataFetchingEnvironment.getArgument("planId");
-            this.planRepository.updateOne(planId, title, userId);
             return UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
         };
     }
 
     public DataFetcher deletePlanDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            planService.deletePlan(planId, userId);
+            return UpdateResponse.builder().build();
+        };
     }
 
     public DataFetcher publishPlanDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            planService.publishPlan(planId, userId);
+            return UpdateResponse.builder().build();
+        };
     }
 
     public DataFetcher draftPlanDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            planService.draftPlan(planId, userId);
+            return UpdateResponse.builder().build();
+        };
     }
 
     public DataFetcher startPlanDataFetcher() {
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            planService.startPlan(planId, userId);
+            return UpdateResponse.builder().build();
+        };
     }
 }

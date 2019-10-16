@@ -2,6 +2,7 @@ package co.jp.wever.graphql.domain.domainmodel.plan;
 
 import java.util.List;
 
+import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
 
 public class Plan {
@@ -11,6 +12,8 @@ public class Plan {
     private PlanDescription description;
     private String imageUrl;
     private List<PlanElement> elements;
+    private PlanStatus status;
+    private User author;
 
     public Plan(PlanId id, PlanTitle title, PlanDescription description, String imageUrl, List<PlanElement> elements) {
         this.id = id;
@@ -25,7 +28,38 @@ public class Plan {
             return false;
         }
 
-        return element.getNumber().getValue() != elements.size() + 1 ? true : false;
+        return element.getNumber() != elements.size() + 1 ? true : false;
     }
 
+    public boolean isPublished() {
+        return this.status.name().equals(PlanStatus.PUBLISHED.name()) ? true : false;
+    }
+
+    public User getAuthor() {
+        return this.author;
+    }
+
+    public String getPlanId() {
+        return id.getValue();
+    }
+
+    public String getTitle() {
+        return title.getValue();
+    }
+
+    public String getDescription() {
+        return description.getValue();
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public List<PlanElement> getElements() {
+        return elements;
+    }
+
+    public PlanStatus getStatus() {
+        return status;
+    }
 }
