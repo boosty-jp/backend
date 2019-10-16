@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.domainmodel.plan;
+package co.jp.wever.graphql.domain.domainmodel.plan.base;
 
 public enum PlanStatus {
     PUBLISHED("published"), DRAFTED("drafted"), DELETED("deleted");

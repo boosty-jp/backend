@@ -1,5 +1,6 @@
 package co.jp.wever.graphql.infrastructure.datamodel;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,9 +8,6 @@ import lombok.Data;
 @Builder
 public class PlanEntity {
     private String id;
-    private String title;
-    private String image;
-    private String description;
-    private Boolean publish;
-    private Boolean deleted;
+    private PlanBaseEntity baseEntity;
+    private List<PlanElementEntity> elementEntities;
 }

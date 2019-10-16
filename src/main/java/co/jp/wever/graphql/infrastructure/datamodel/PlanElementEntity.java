@@ -8,6 +8,7 @@ import lombok.Data;
 @Builder
 public class PlanElementEntity {
     private String targetId;
+    private String title;
     private PlanElementType Type;
     private int number;
 }

@@ -2,57 +2,33 @@ package co.jp.wever.graphql.domain.domainmodel.plan;
 
 import java.util.List;
 
-import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
+import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanStatus;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
 
 public class Plan {
-    private final int MAX_PLAN_ELEMENT_COUNT = 50;
-    private PlanId id;
-    private PlanTitle title;
-    private PlanDescription description;
-    private String imageUrl;
+    private PlanBase base;
     private List<PlanElement> elements;
-    private PlanStatus status;
-    private User author;
 
-    public Plan(PlanId id, PlanTitle title, PlanDescription description, String imageUrl, List<PlanElement> elements) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.imageUrl = imageUrl;
+    public Plan(PlanBase planBase, List<PlanElement> elements) {
+        this.base = planBase;
         this.elements = elements;
     }
 
-    public boolean canAddElement(PlanElement element) {
-        if (elements.size() > MAX_PLAN_ELEMENT_COUNT - 1) {
-            return false;
-        }
-
-        return element.getNumber() != elements.size() + 1 ? true : false;
-    }
-
-    public boolean isPublished() {
-        return this.status.name().equals(PlanStatus.PUBLISHED.name()) ? true : false;
-    }
-
-    public User getAuthor() {
-        return this.author;
-    }
-
-    public String getPlanId() {
-        return id.getValue();
+    public String getAuthorId() {
+        return base.getAuthor().getUserId();
     }
 
     public String getTitle() {
-        return title.getValue();
+        return base.getTitle();
     }
 
     public String getDescription() {
-        return description.getValue();
+        return base.getDescription();
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return base.getImageUrl();
     }
 
     public List<PlanElement> getElements() {
@@ -60,6 +36,6 @@ public class Plan {
     }
 
     public PlanStatus getStatus() {
-        return status;
+        return base.getStatus();
     }
 }

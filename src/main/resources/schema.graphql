@@ -57,6 +57,13 @@ type Section {
     deleted: Boolean!
 }
 
+input PlanBase {
+    title: String!
+    description: String!
+    tags: [String]!
+    imageUrl: String!
+}
+
 input PlanElement{
     targetId: ID!
     title: String!
@@ -78,9 +85,11 @@ type Mutation {
     bookmarkArticle(articleId: ID!, userId: ID): UpdateResponse
     likeArticle(articleId: ID!, userId: ID): UpdateResponse
 
-    initPlan(userId: String!): CreateResponse
-    addPlanElement(planElementId: ID!,element: PlanElement!, userId: ID!): UpdateResponse
-    updatePlan(planElementId: ID!, title: String, description: String, image: String, planElements: [PlanElement], userId: ID!): UpdateResponse
+    createPlanBase(userId: String!, plan: PlanBase): CreateResponse
+    updatePlanBase(userId: String!, plan: PlanBase): CreateResponse
+    createPlanElements(planId: ID!, userId: ID!, elements: [PlanElement]!): UpdateResponse
+    updatePlanElements(userId: String!, elements: [PlanElement]!): UpdateResponse
+
     deletePlan(planId: ID!, userId: ID!): UpdateResponse
     publishPlan(id: ID!): UpdateResponse
     draftPlan(id: ID!): UpdateResponse
