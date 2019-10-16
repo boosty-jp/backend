@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
 import co.jp.wever.graphql.domain.repository.PlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.UserPlanEdge;
@@ -135,22 +134,22 @@ public class PlanRepositoryImpl implements PlanRepository {
     }
 
     @Override
-    public PlanEntity deleteOne(String id) {
+    public PlanEntity deleteOne(String planId, String userId) {
         return PlanEntity.builder().build();
     }
 
     @Override
-    public PlanEntity publishOne(String id) {
+    public PlanEntity publishOne(String planId, String userId) {
         return PlanEntity.builder().build();
     }
 
     @Override
-    public PlanEntity draftOne(String id) {
+    public PlanEntity draftOne(String planId, String userId) {
         return PlanEntity.builder().build();
     }
 
     @Override
-    public PlanEntity startOne(String id) {
+    public PlanEntity startOne(String planId, String userId) {
         return PlanEntity.builder().build();
     }
 }

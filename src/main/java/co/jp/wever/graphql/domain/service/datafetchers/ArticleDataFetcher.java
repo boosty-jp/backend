@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.datamodel.Article;
-import co.jp.wever.graphql.application.datamodel.response.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.ErrorResponse;
-import co.jp.wever.graphql.application.datamodel.response.UpdateResponse;
+import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import graphql.schema.DataFetcher;
 
 @Component
@@ -21,7 +21,11 @@ public class ArticleDataFetcher {
         // データ取得
         // 下書きかどうかチェック
         // 下書きだった場合は認証チェックする
-        return dataFetchingEnvironment -> Article.builder().id(1L).build();
+        return dataFetchingEnvironment -> {
+            String planId = dataFetchingEnvironment.getArgument("planId");
+            //            return this.article.findOne(planId);
+            return Article.builder().id(1L).build();
+        };
     }
 
     public DataFetcher allArticlesDataFetcher() {

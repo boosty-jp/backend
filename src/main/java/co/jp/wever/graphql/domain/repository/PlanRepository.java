@@ -25,8 +25,8 @@ public interface  PlanRepository {
     String initOne(String userId);
     String addOne(String planId, String userId, PlanElementEntity planElementEntity);
     PlanEntity updateOne(String planId, String title, String userId);
-    PlanEntity deleteOne(String id);
-    PlanEntity publishOne(String id);
-    PlanEntity draftOne(String id);
-    PlanEntity startOne(String id);
+    PlanEntity deleteOne(String planId, String userId);
+    PlanEntity publishOne(String planId, String userId);
+    PlanEntity draftOne(String planId, String userId);
+    PlanEntity startOne(String planId, String userId);
 }

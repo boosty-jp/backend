@@ -36,6 +36,7 @@ type Plan {
 
 type Element {
     id: ID!
+    title: String
     type: String!
     number: Int!
 }
@@ -58,6 +59,7 @@ type Section {
 
 input PlanElement{
     targetId: ID!
+    title: String!
     type: String!
     number: Int!
 }
@@ -79,7 +81,7 @@ type Mutation {
     initPlan(userId: String!): CreateResponse
     addPlanElement(planElementId: ID!,element: PlanElement!, userId: ID!): UpdateResponse
     updatePlan(planElementId: ID!, title: String, description: String, image: String, planElements: [PlanElement], userId: ID!): UpdateResponse
-    deletePlan(id: ID!): UpdateResponse
+    deletePlan(planId: ID!, userId: ID!): UpdateResponse
     publishPlan(id: ID!): UpdateResponse
     draftPlan(id: ID!): UpdateResponse
     startPlan(planElementId: ID!, userId: ID!): UpdateResponse

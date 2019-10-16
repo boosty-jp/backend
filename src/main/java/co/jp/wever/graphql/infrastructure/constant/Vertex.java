@@ -9,5 +9,4 @@ public enum Vertex {
     private Vertex(String value) {
         this.value = value;
     }
-
 }

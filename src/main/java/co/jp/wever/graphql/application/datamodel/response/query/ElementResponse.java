@@ -1,12 +1,12 @@
-package co.jp.wever.graphql.application.datamodel.request;
+package co.jp.wever.graphql.application.datamodel.response.query;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class PlanElementInput {
-    private String targetId;
+public class ElementResponse {
+    private String id;
     private String title;
     private String type;
     private int number;
