@@ -5,6 +5,7 @@ import java.util.List;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 
 public class PlanBase {
+    private PlanId id;
     private PlanTitle title;
     private PlanDescription description;
     private PlanImageUrl imageUrl;
@@ -51,6 +52,10 @@ public class PlanBase {
 
     public List<String> getTagIds() {
         return tagIds.getValue();
+    }
+
+    public String getPlanId() {
+        return id.getValue();
     }
 
     public User getAuthor() {

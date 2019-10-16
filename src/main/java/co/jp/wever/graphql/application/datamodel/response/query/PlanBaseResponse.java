@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.datamodel;
+package co.jp.wever.graphql.application.datamodel.response.query;
 
 import java.util.List;
 
@@ -7,12 +7,12 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PlanBaseEntity {
+public class PlanBaseResponse {
     private String id;
     private String title;
     private String description;
-    private String imageUrl;
-    private List<String> tagIds;
+    private List<TagResponse> tags;
+    private String image;
     private String status;
-    private String authorId;
+    private UserResponse author;
 }

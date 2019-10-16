@@ -17,8 +17,6 @@ public class PlanEntityConverter {
         Map<Object, Object> statusVertex,
         Map<Object, Object> elementsVertex) {
 
-
-
         return PlanEntity.builder()
                          .id(VertexConverter.toId(planVertex))
                          .baseEntity(PlanBaseEntityConverter.toPlanBaseEntity(planVertex,

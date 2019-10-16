@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import co.jp.wever.graphql.domain.repository.PlanRepository;
+import co.jp.wever.graphql.domain.repository.plan.PlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
@@ -55,14 +55,15 @@ public class PlanRepositoryImpl implements PlanRepository {
     }
 
 
-    @Override
-    public List<PlanEntity> findAll(String userId) {
-        GraphTraversalSource g = neptuneClient.newTraversal();
-        List<Map<Object, Object>> result =
-            g.V(userId).out().has("type", VertexType.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
-
-        return PlansEntityConverter.toPlans(result);
-    }
+    //TODO: あとで実装
+//    @Override
+//    public List<PlanBaseEntity> findAll(String userId) {
+//        GraphTraversalSource g = neptuneClient.newTraversal();
+//        List<Map<Object, Object>> result =
+//            g.V(userId).out().has("type", VertexType.PLAN.name()).valueMap().with(WithOptions.tokens).toList();
+//
+//        return result.stream().map(e -> PlanBaseEntityConverter.toPlanBaseEntity(e)).collect(Collectors.toList());
+//    }
 
     @Override
     public List<PlanEntity> findAllPublished(String userId) {

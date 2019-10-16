@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.repository;
+package co.jp.wever.graphql.domain.repository.plan;
 
 import org.springframework.stereotype.Repository;
 
@@ -10,34 +10,8 @@ import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
 
 @Repository
 public interface PlanRepository {
-    //Query
-    PlanEntity findOne(String planId);
-
-    List<PlanEntity> findAll(String id);
-
-    List<PlanEntity> findAllPublished(String id);
-
-    List<PlanEntity> findAllDrafted(String id);
-
-    List<PlanEntity> findAllLiked(String id);
-
-    List<PlanEntity> findAllLearning(String id);
-
-    List<PlanEntity> findAllLearned(String id);
-
-    List<PlanEntity> findFamous(String id);
-
-    List<PlanEntity> findRelated(String id);
-
-    PlanBaseEntity findBase(String planId);
-
-    List<String> findPublishedPlanElementIds(List<String> ids);
-
-    boolean isPublishedPlanElement(String elementId);
-
-    boolean isPublishedPlan(String planId);
-
     //Mutation
+
     String createBase(String userId, PlanBaseEntity planBaseEntity);
 
     void updateBase(String planId, PlanBaseEntity planBaseEntity);
