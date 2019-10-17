@@ -1,0 +1,117 @@
+type Query {
+    section(id: ID!): Section!
+    allLikedSections(userId: ID!): [Section]!
+    allBookmarkedSections(userId: ID!): [Section]!
+    famousSections: [Section]!
+    relatedSections(userId: ID): [Section]!
+
+    article(id: ID!): Article!
+    allArticles(userId: ID!): [Article]!
+    allPublishedArticles(userId: ID!): [Article]!
+    allDraftedArticles(userId: ID!): [Article]!
+    allLikedArticles(userId: ID!): [Article]!
+    allLearnedArticles(userId: ID!): [Article]!
+    allBookmarkedArticles(userId: ID!): [Article]!
+    famousArticles: [Article]!
+    relatedArticles(userId: ID!): [Article]!
+
+    plan(planId: ID!, userId: ID!): Plan!
+    allPlans(userId: ID!): [Plan]!
+    allPublishedPlans(userId: ID!): [Plan]!
+    allDraftedPlans(userId: ID!): [Plan]!
+    allLikedPlans(userId: ID!): [Plan]!
+    allLearningPlans(userId: ID!): [Plan]!
+    allLearnedPlans(userId: ID!): [Plan]!
+    famousPlans: [Plan]!
+    relatedPlans(userId: ID): [Plan]!
+}
+
+type Plan {
+    id: ID!
+    title: String!
+    description: String!
+    elements: [Element]
+    image: String!
+}
+
+type Element {
+    id: ID!
+    title: String
+    type: String!
+    number: Int!
+}
+
+type Article {
+    id: ID!
+    title: String!
+    price: Int!
+    image: String!
+    deleted: Boolean!
+    publish: Boolean!
+}
+
+type Section {
+    id: ID!
+    title: String!
+    texts: [String]
+    deleted: Boolean!
+}
+
+input PlanBase {
+    title: String!
+    description: String!
+    tags: [String]!
+    imageUrl: String!
+}
+
+input PlanElementInput{
+    targetId: ID!
+    title: String!
+    type: String!
+    number: Int!
+}
+
+type Mutation {
+    addSection(id: ID!, title: String!, texts: [String!], number: Int): CreateResponse
+    updateSection(id: ID!, title: String!, texts: [String!], number: Int): UpdateResponse
+    bookmarkSection(sectionId: ID!, userId: ID): UpdateResponse
+    likeSection(sectionId: ID!, userId: ID): UpdateResponse
+
+    initArticle(userId: ID!): CreateResponse
+    updateArticle(title: String, tags: [ID!], image:String): UpdateResponse
+    deleteArticle(id: ID!): UpdateResponse
+    publishArticle(id: ID!): UpdateResponse
+    draftArticle(id: ID!): UpdateResponse
+    bookmarkArticle(articleId: ID!, userId: ID): UpdateResponse
+    likeArticle(articleId: ID!, userId: ID): UpdateResponse
+
+    createPlanBase(userId: ID!, planBase: PlanBase): CreateResponse
+    updatePlanBase(planId: ID!, userId: ID!, planBase: PlanBase!): UpdateResponse
+    createPlanElements(planId: ID!, userId: ID!, elements: [PlanElementInput]!): UpdateResponse
+    updatePlanElements(planId: ID!, userId: ID!, elements: [PlanElementInput]!): UpdateResponse
+
+    deletePlan(planId: ID!, userId: ID!): UpdateResponse
+    publishPlan(planId: ID!, userId: ID!): UpdateResponse
+    draftPlan(planId: ID!, userId: ID!): UpdateResponse
+    startPlan(planId: ID!, userId: ID!): UpdateResponse
+    stopPlan(planId: ID!, userId: ID!): UpdateResponse
+
+    followUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
+    unFollowUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
+
+    followTag(tags: [ID], userId: ID!): UpdateResponse
+}
+
+type CreateResponse {
+    id: ID!,
+    error: Error
+}
+
+type UpdateResponse {
+    error: Error
+}
+
+type Error{
+    errorCode: String
+    errorMessage: String
+}

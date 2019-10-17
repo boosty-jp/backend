@@ -1,0 +1,32 @@
+package co.jp.wever.graphql.domain.domainmodel.plan.element;
+
+public class PlanElement {
+
+    private PlanElementId id;
+    private PlanElementTitle title;
+    private PlanElementNumber number;
+    private PlanElementType elementType;
+
+    public PlanElement(PlanElementId id, PlanElementTitle title, PlanElementNumber number, PlanElementType elementType) {
+        this.id = id;
+        this.title = title;
+        this.number = number;
+        this.elementType = elementType;
+    }
+
+    public int getNumber() {
+        return number.getValue();
+    }
+
+    public String getId() {
+        return id.getValue();
+    }
+
+    public String getElementType() {
+        return elementType.name();
+    }
+
+    public String getTitle() {
+        return title.getValue();
+    }
+}
