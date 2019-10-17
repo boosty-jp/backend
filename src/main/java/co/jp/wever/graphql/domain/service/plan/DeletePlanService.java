@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import co.jp.wever.graphql.domain.converter.PlanBaseConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.DeletePlanRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 

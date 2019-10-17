@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.domain.converter.PlanConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 
 @Service

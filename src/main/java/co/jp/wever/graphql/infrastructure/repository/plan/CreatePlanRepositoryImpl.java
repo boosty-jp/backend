@@ -15,8 +15,8 @@ import co.jp.wever.graphql.infrastructure.constant.edge.property.PlanToPlanEleme
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexType;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.VertexCommonProperty;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanElementEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementEntity;
 
 @Component
 public class CreatePlanRepositoryImpl implements CreatePlanRepository {

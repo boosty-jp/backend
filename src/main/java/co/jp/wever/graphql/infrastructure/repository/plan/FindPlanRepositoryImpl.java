@@ -14,8 +14,8 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexType;
 import co.jp.wever.graphql.infrastructure.converter.entity.PlanBaseEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.PlansEntityConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 
 @Component
 public class FindPlanRepositoryImpl implements FindPlanRepository {

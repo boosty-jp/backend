@@ -5,7 +5,7 @@ type Query {
     famousSections: [Section]!
     relatedSections(userId: ID): [Section]!
 
-    article(id: ID!): Article!
+    article(articleId: ID!, userId: ID!): Article!
     allArticles(userId: ID!): [Article]!
     allPublishedArticles(userId: ID!): [Article]!
     allDraftedArticles(userId: ID!): [Article]!
@@ -57,11 +57,24 @@ type Section {
     deleted: Boolean!
 }
 
+input SectionInput{
+    title: String!
+    texts: [String!]
+    number: Int
+}
+
+input ArticleInput {
+    title: String!
+    imageUrl: String
+    description: String
+    tags: [String]!
+}
+
 input PlanBase {
     title: String!
     description: String!
     tags: [String]!
-    imageUrl: String!
+    imageUrl: String
 }
 
 input PlanElementInput{
@@ -71,17 +84,18 @@ input PlanElementInput{
     number: Int!
 }
 
+
 type Mutation {
-    addSection(id: ID!, title: String!, texts: [String!], number: Int): CreateResponse
-    updateSection(id: ID!, title: String!, texts: [String!], number: Int): UpdateResponse
+    addSection(articleId: ID!, section: SectionInput!): CreateResponse
+    updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
     bookmarkSection(sectionId: ID!, userId: ID): UpdateResponse
     likeSection(sectionId: ID!, userId: ID): UpdateResponse
 
-    initArticle(userId: ID!): CreateResponse
-    updateArticle(title: String, tags: [ID!], image:String): UpdateResponse
-    deleteArticle(id: ID!): UpdateResponse
-    publishArticle(id: ID!): UpdateResponse
-    draftArticle(id: ID!): UpdateResponse
+    createArticle(userId: ID!, article: ArticleInput): CreateResponse
+    updateArticle(articleId: ID!, userId: ID!, article: ArticleInput): UpdateResponse
+    deleteArticle(articleId: ID!, userId: ID!): UpdateResponse
+    publishArticle(articleId: ID!, userId: ID!): UpdateResponse
+    draftArticle(articleId: ID!, userId: ID!): UpdateResponse
     bookmarkArticle(articleId: ID!, userId: ID): UpdateResponse
     likeArticle(articleId: ID!, userId: ID): UpdateResponse
 
