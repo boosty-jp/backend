@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.domain.converter.PlanConverter;
+import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;

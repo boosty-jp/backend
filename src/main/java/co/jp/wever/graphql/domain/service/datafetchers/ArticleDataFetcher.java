@@ -24,6 +24,7 @@ public class ArticleDataFetcher {
         return dataFetchingEnvironment -> {
             String planId = dataFetchingEnvironment.getArgument("planId");
             //            return this.article.findOne(planId);
+
             return Article.builder().id(1L).build();
         };
     }
@@ -104,20 +105,33 @@ public class ArticleDataFetcher {
     public DataFetcher initArticleDataFetcher() {
         // 認証
         // データ追加
-        return dataFetchingEnvironment -> CreateResponse.builder().id("1").error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> CreateResponse.builder()
+                                                        .id("1")
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 
     public DataFetcher updateArticlesElementDataFetcher() {
         // 認証
         // 正しいリクエストデータかバリデーションチェック
         // データ更新
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> UpdateResponse.builder()
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 
     public DataFetcher deleteArticlesElementDataFetcher() {
         // 認証
         // データ削除
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> UpdateResponse.builder()
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 
     public DataFetcher publishArticlesElementDataFetcher() {
@@ -125,7 +139,11 @@ public class ArticleDataFetcher {
         // データ取得
         // 公開できるかどうかチェック
         // データ削除
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> UpdateResponse.builder()
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 
     public DataFetcher draftArticlesElementDataFetcher() {
@@ -133,18 +151,30 @@ public class ArticleDataFetcher {
         // データ取得
         // 下書きにできるかどうかチェック
         // データ削除
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> UpdateResponse.builder()
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 
     public DataFetcher bookmarkArticlesElementDataFetcher() {
         // 認証
         // データ更新
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> UpdateResponse.builder()
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 
     public DataFetcher likeArticlesElementDataFetcher() {
         // 認証
         // データ更新
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+        return dataFetchingEnvironment -> UpdateResponse.builder()
+                                                        .error(ErrorResponse.builder()
+                                                                            .errorCode("code")
+                                                                            .errorMessage("error")
+                                                                            .build());
     }
 }

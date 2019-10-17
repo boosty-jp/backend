@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.converter;
+package co.jp.wever.graphql.domain.converter.plan;
 
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;

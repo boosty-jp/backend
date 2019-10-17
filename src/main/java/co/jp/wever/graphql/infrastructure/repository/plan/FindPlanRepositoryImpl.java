@@ -12,8 +12,8 @@ import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexType;
-import co.jp.wever.graphql.infrastructure.converter.entity.PlanBaseEntityConverter;
-import co.jp.wever.graphql.infrastructure.converter.entity.PlansEntityConverter;
+import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanBaseEntityConverter;
+import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlansEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 
