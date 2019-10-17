@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.domainmodel.plan;
+package co.jp.wever.graphql.domain.domainmodel.plan.base;
 
 public class PlanDescription {
     private final static int MIN_WORD_COUNT = 0;

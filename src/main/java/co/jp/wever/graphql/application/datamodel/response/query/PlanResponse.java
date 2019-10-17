@@ -8,9 +8,6 @@ import lombok.Data;
 @Data
 @Builder
 public class PlanResponse {
-    private String id;
-    private String title;
-    private String description;
+    private PlanBaseResponse baseResponse;
     private List<ElementResponse> elementResponses;
-    private String image;
 }

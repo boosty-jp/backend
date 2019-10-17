@@ -1,19 +1,21 @@
 package co.jp.wever.graphql.domain.converter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
-import co.jp.wever.graphql.domain.domainmodel.plan.PlanDescription;
-import co.jp.wever.graphql.domain.domainmodel.plan.PlanId;
-import co.jp.wever.graphql.domain.domainmodel.plan.PlanTitle;
+import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
+import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
 import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
 
 public class PlanConverter {
-    public static Plan toPlan(PlanEntity planEntity){
-        PlanId planId = PlanId.of(planEntity.getId());
-        PlanTitle planTitle = PlanTitle.of(planEntity.getTitle());
-        PlanDescription planDescription = PlanDescription.of(planEntity.getDescription());
-        String imageUrl =planEntity.getImage();
+    public static Plan toPlan(PlanEntity planEntity) {
+        PlanBase planBase = PlanBaseConverter.toPlanBase(planEntity.getBaseEntity());
+        List<PlanElement> elements = planEntity.getElementEntities()
+                                               .stream()
+                                               .map(p -> PlanElementConverter.toPlanElement(p))
+                                               .collect(Collectors.toList());
 
-        //TODO: null修正
-        return new Plan(planId, planTitle, planDescription, imageUrl,null);
+        return new Plan(planBase, elements);
     }
 }
