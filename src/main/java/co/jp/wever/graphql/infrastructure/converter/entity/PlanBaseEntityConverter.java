@@ -13,6 +13,8 @@ public class PlanBaseEntityConverter {
                              .description(planBase.getDescription())
                              .imageUrl(planBase.getImageUrl())
                              .tagIds(planBase.getTagIds())
+                             .status(planBase.getStatus().name())
+                             .authorId(planBase.getAuthor().getUserId())
                              .build();
     }
 

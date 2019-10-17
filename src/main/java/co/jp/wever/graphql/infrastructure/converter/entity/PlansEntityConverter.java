@@ -9,6 +9,6 @@ import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
 
 public class PlansEntityConverter {
     public static List<PlanEntity> toPlans(List<Map<Object, Object>> vertexes) {
-        return vertexes.stream().flatMap(v -> Stream.of(PlanEntityConverter.toPlan(v))).collect(Collectors.toList());
+        return vertexes.stream().flatMap(v -> Stream.of(PlanEntityConverter.toPlay(v))).collect(Collectors.toList());
     }
 }

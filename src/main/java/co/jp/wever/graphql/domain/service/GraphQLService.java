@@ -54,52 +54,98 @@ public class GraphQLService {
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
                             .type("Query",
-                                  typeWiring -> typeWiring.dataFetcher("section", sectionDataFetcher.sectionDataFetcher())
-                                                          .dataFetcher("allLikedSections", sectionDataFetcher.allLikedSectionsDataFetcher())
-                                                          .dataFetcher("allBookmarkedSections", sectionDataFetcher.allBookmarkedSectionsDataFetcher())
-                                                          .dataFetcher("famousSections", sectionDataFetcher.famousSectionsDataFetcher())
-                                                          .dataFetcher("relatedSections", sectionDataFetcher.relatedSectionsDataFetcher())
-                                                          .dataFetcher("article", articleDataFetcher.articleDataFetcher())
-                                                          .dataFetcher("allArticles", articleDataFetcher.allArticlesDataFetcher())
-                                                          .dataFetcher("allPublishedArticles", articleDataFetcher.allPublishedArticlesDataFetcher())
-                                                          .dataFetcher("allDraftedArticles", articleDataFetcher.allDraftedArticlesDataFetcher())
-                                                          .dataFetcher("allLikedArticles", articleDataFetcher.allLikedArticlesDataFetcher())
-                                                          .dataFetcher("allLearnedArticles", articleDataFetcher.allLearnedArticlesDataFetcher())
-                                                          .dataFetcher("allBookmarkedArticles", articleDataFetcher.allBookmarkedArticlesDataFetcher())
-                                                          .dataFetcher("famousArticles", articleDataFetcher.famousArticlesDataFetcher())
-                                                          .dataFetcher("relatedArticles", articleDataFetcher.relatedArticlesDataFetcher())
+                                  typeWiring -> typeWiring.dataFetcher("section",
+                                                                       sectionDataFetcher.sectionDataFetcher())
+                                                          .dataFetcher("allLikedSections",
+                                                                       sectionDataFetcher.allLikedSectionsDataFetcher())
+                                                          .dataFetcher("allBookmarkedSections",
+                                                                       sectionDataFetcher.allBookmarkedSectionsDataFetcher())
+                                                          .dataFetcher("famousSections",
+                                                                       sectionDataFetcher.famousSectionsDataFetcher())
+                                                          .dataFetcher("relatedSections",
+                                                                       sectionDataFetcher.relatedSectionsDataFetcher())
+                                                          .dataFetcher("article",
+                                                                       articleDataFetcher.articleDataFetcher())
+                                                          .dataFetcher("allArticles",
+                                                                       articleDataFetcher.allArticlesDataFetcher())
+                                                          .dataFetcher("allPublishedArticles",
+                                                                       articleDataFetcher.allPublishedArticlesDataFetcher())
+                                                          .dataFetcher("allDraftedArticles",
+                                                                       articleDataFetcher.allDraftedArticlesDataFetcher())
+                                                          .dataFetcher("allLikedArticles",
+                                                                       articleDataFetcher.allLikedArticlesDataFetcher())
+                                                          .dataFetcher("allLearnedArticles",
+                                                                       articleDataFetcher.allLearnedArticlesDataFetcher())
+                                                          .dataFetcher("allBookmarkedArticles",
+                                                                       articleDataFetcher.allBookmarkedArticlesDataFetcher())
+                                                          .dataFetcher("famousArticles",
+                                                                       articleDataFetcher.famousArticlesDataFetcher())
+                                                          .dataFetcher("relatedArticles",
+                                                                       articleDataFetcher.relatedArticlesDataFetcher())
                                                           .dataFetcher("plan", planDataFetchers.planDataFetcher())
-                                                          .dataFetcher("allPlans", planDataFetchers.allPlanDataFetcher())
-                                                          .dataFetcher("allPublishedPlans", planDataFetchers.allPublishedPlansDataFetcher())
-                                                          .dataFetcher("allDraftedPlans", planDataFetchers.allDraftedPlansDataFetcher())
-                                                          .dataFetcher("allLikedPlans", planDataFetchers.allLikedPlansDataFetcher())
-                                                          .dataFetcher("allLearningPlans", planDataFetchers.allLearningPlansDataFetcher())
-                                                          .dataFetcher("allLearnedPlans", planDataFetchers.allLearnedPlansDataFetcher())
-                                                          .dataFetcher("famousPlans", planDataFetchers.famousPlansDataFetcher())
-                                                          .dataFetcher("relatedPlans", planDataFetchers.relatedPlansDataFetcher()))
+                                                          .dataFetcher("allPlans",
+                                                                       planDataFetchers.allPlanDataFetcher())
+                                                          .dataFetcher("allPublishedPlans",
+                                                                       planDataFetchers.allPublishedPlansDataFetcher())
+                                                          .dataFetcher("allDraftedPlans",
+                                                                       planDataFetchers.allDraftedPlansDataFetcher())
+                                                          .dataFetcher("allLikedPlans",
+                                                                       planDataFetchers.allLikedPlansDataFetcher())
+                                                          .dataFetcher("allLearningPlans",
+                                                                       planDataFetchers.allLearningPlansDataFetcher())
+                                                          .dataFetcher("allLearnedPlans",
+                                                                       planDataFetchers.allLearnedPlansDataFetcher())
+                                                          .dataFetcher("famousPlans",
+                                                                       planDataFetchers.famousPlansDataFetcher())
+                                                          .dataFetcher("relatedPlans",
+                                                                       planDataFetchers.relatedPlansDataFetcher()))
                             .type("Mutation",
-                                  typeWiring -> typeWiring.dataFetcher("addSection", sectionDataFetcher.addSectionDataFetcher())
-                                                          .dataFetcher("updateSection", sectionDataFetcher.updateSectionElementDataFetcher())
-                                                          .dataFetcher("bookmarkSection", sectionDataFetcher.bookmarkSectionElementDataFetcher())
-                                                          .dataFetcher("likeSection", sectionDataFetcher.likeSectionElementDataFetcher())
-                                                          .dataFetcher("initArticle", articleDataFetcher.initArticleDataFetcher())
-                                                          .dataFetcher("updateArticle", articleDataFetcher.updateArticlesElementDataFetcher())
-                                                          .dataFetcher("deleteArticle", articleDataFetcher.deleteArticlesElementDataFetcher())
-                                                          .dataFetcher("publishArticle", articleDataFetcher.publishArticlesElementDataFetcher())
-                                                          .dataFetcher("draftArticle", articleDataFetcher.draftArticlesElementDataFetcher())
-                                                          .dataFetcher("bookmarkArticle", articleDataFetcher.bookmarkArticlesElementDataFetcher())
-                                                          .dataFetcher("likeArticle", articleDataFetcher.likeArticlesElementDataFetcher())
-                                                          .dataFetcher("createPlanBase", planDataFetchers.createPlanBaseDataFetcher())
-                                                          .dataFetcher("updatePlanBase", planDataFetchers.updatePlanBaseDataFetcher())
-                                                          .dataFetcher("createPlanElements", planDataFetchers.createPlanBaseDataFetcher())
-                                                          .dataFetcher("updatePlanElements", planDataFetchers.updatePlanElementsDataFetcher())
-                                                          .dataFetcher("deletePlan", planDataFetchers.deletePlanDataFetcher())
-                                                          .dataFetcher("publishPlan", planDataFetchers.publishPlanDataFetcher())
-                                                          .dataFetcher("draftPlan", planDataFetchers.draftPlanDataFetcher())
-                                                          .dataFetcher("startPlan", planDataFetchers.startPlanDataFetcher())
-                                                          .dataFetcher("followUser", userDataFetcher.followUserDataFetcher())
-                                                          .dataFetcher("unFollowUser", userDataFetcher.unFollowUserDataFetcher())
-                                                          .dataFetcher("followTag", tagDataFetcher.followTagDataFetcher()))
+                                  typeWiring -> typeWiring.dataFetcher("addSection",
+                                                                       sectionDataFetcher.addSectionDataFetcher())
+                                                          .dataFetcher("updateSection",
+                                                                       sectionDataFetcher.updateSectionElementDataFetcher())
+                                                          .dataFetcher("bookmarkSection",
+                                                                       sectionDataFetcher.bookmarkSectionElementDataFetcher())
+                                                          .dataFetcher("likeSection",
+                                                                       sectionDataFetcher.likeSectionElementDataFetcher())
+                                                          .dataFetcher("initArticle",
+                                                                       articleDataFetcher.initArticleDataFetcher())
+                                                          .dataFetcher("updateArticle",
+                                                                       articleDataFetcher.updateArticlesElementDataFetcher())
+                                                          .dataFetcher("deleteArticle",
+                                                                       articleDataFetcher.deleteArticlesElementDataFetcher())
+                                                          .dataFetcher("publishArticle",
+                                                                       articleDataFetcher.publishArticlesElementDataFetcher())
+                                                          .dataFetcher("draftArticle",
+                                                                       articleDataFetcher.draftArticlesElementDataFetcher())
+                                                          .dataFetcher("bookmarkArticle",
+                                                                       articleDataFetcher.bookmarkArticlesElementDataFetcher())
+                                                          .dataFetcher("likeArticle",
+                                                                       articleDataFetcher.likeArticlesElementDataFetcher())
+                                                          .dataFetcher("createPlanBase",
+                                                                       planDataFetchers.createPlanBaseDataFetcher())
+                                                          .dataFetcher("updatePlanBase",
+                                                                       planDataFetchers.updatePlanBaseDataFetcher())
+                                                          .dataFetcher("createPlanElements",
+                                                                       planDataFetchers.createPlanElementsDataFetcher())
+                                                          .dataFetcher("updatePlanElements",
+                                                                       planDataFetchers.updatePlanElementsDataFetcher())
+                                                          .dataFetcher("deletePlan",
+                                                                       planDataFetchers.deletePlanDataFetcher())
+                                                          .dataFetcher("publishPlan",
+                                                                       planDataFetchers.publishPlanDataFetcher())
+                                                          .dataFetcher("draftPlan",
+                                                                       planDataFetchers.draftPlanDataFetcher())
+                                                          .dataFetcher("startPlan",
+                                                                       planDataFetchers.startPlanDataFetcher())
+                                                          .dataFetcher("stopPlan",
+                                                                       planDataFetchers.stopPlanDataFetcher())
+                                                          .dataFetcher("followUser",
+                                                                       userDataFetcher.followUserDataFetcher())
+                                                          .dataFetcher("unFollowUser",
+                                                                       userDataFetcher.unFollowUserDataFetcher())
+                                                          .dataFetcher("followTag",
+                                                                       tagDataFetcher.followTagDataFetcher()))
                             .build();
     }
 

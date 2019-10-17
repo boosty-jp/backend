@@ -5,6 +5,7 @@ import java.util.List;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanStatus;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
+import co.jp.wever.graphql.domain.domainmodel.user.User;
 
 public class Plan {
     private PlanBase base;
@@ -37,5 +38,13 @@ public class Plan {
 
     public PlanStatus getStatus() {
         return base.getStatus();
+    }
+
+    public boolean canReadUser(User user){
+        return false;
+    }
+
+    public User getAuthor(){
+        return base.getAuthor();
     }
 }

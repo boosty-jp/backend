@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
-import co.jp.wever.graphql.domain.converter.PlanBaseConverter;
+import co.jp.wever.graphql.domain.converter.PlanConverter;
 import co.jp.wever.graphql.domain.converter.PlanElementConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
@@ -17,34 +17,37 @@ import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.converter.entity.PlanBaseEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
-import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.plan.CreatePlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 
 @Service
 public class CreatePlanService {
-    private final PlanRepositoryImpl planRepositoryImpl;
+    private final CreatePlanRepositoryImpl createPlanRepository;
+    private final FindPlanRepositoryImpl findPlanRepository;
 
-    CreatePlanService(PlanRepositoryImpl planRepositoryImpl) {
-        this.planRepositoryImpl = planRepositoryImpl;
+    CreatePlanService(CreatePlanRepositoryImpl createPlanRepository, FindPlanRepositoryImpl findPlanRepository) {
+        this.createPlanRepository = createPlanRepository;
+        this.findPlanRepository = findPlanRepository;
     }
 
     public String createPlanBase(String userId, PlanBaseInput planBaseInput) {
         PlanBase planBase = PlanBase.of(planBaseInput.getTitle(),
                                         planBaseInput.getDescription(),
                                         planBaseInput.getImageUrl(),
-                                        planBaseInput.getTags()
+                                        planBaseInput.getTags(),
                                         userId,
                                         PlanStatus.DRAFTED.name());
 
         PlanBaseEntity planBaseEntity = PlanBaseEntityConverter.toPlanBaseEntity(planBase);
-        return planRepositoryImpl.createBase(userId, planBaseEntity);
+        return createPlanRepository.createBase(userId, planBaseEntity);
     }
 
-    public void createPlanElements(String planId, String userId, List<PlanElementInput> elementsInput)
+    public void createPlanElements(String planId, String userId, List<PlanElementInput> elements)
         throws IllegalAccessException {
 
-        List<String> targetIds = elementsInput.stream().map(e -> e.getTargetId()).collect(Collectors.toList());
+        List<String> targetIds = elements.stream().map(e -> e.getTargetId()).collect(Collectors.toList());
         // 追加するエレメントが公開されているかチェック
-        List<String> publishedPlanElementIds = this.planRepositoryImpl.findPublishedPlanElementIds(targetIds);
+        List<String> publishedPlanElementIds = findPlanRepository.findPublishedPlanElementIds(targetIds);
 
         // TODO: ドメインサービスに移す
         if (!publishedPlanElementIds.stream().allMatch(id -> targetIds.contains(id))) {
@@ -55,29 +58,27 @@ public class CreatePlanService {
             throw new IllegalArgumentException();
         }
 
-        PlanEntity targetPlanEntity = this.planRepositoryImpl.findBase(planId);
+        PlanEntity targetPlanEntity = findPlanRepository.findOne(planId);
 
-        PlanBase planBase = PlanBaseConverter.toPlanBase(targetPlanEntity);
+        Plan plan = PlanConverter.toPlan(targetPlanEntity);
 
         List<PlanElement> planElements =
-            elementsInput.stream().map(e -> PlanElementConverter.toPlanElement(e)).collect(Collectors.toList());
+            elements.stream().map(e -> PlanElementConverter.toPlanElement(e)).collect(Collectors.toList());
 
         User user = User.of(userId);
-        if (!user.isSame(planBase.getAuthor())) {
+        if (!user.isSame(plan.getAuthor())) {
             throw new IllegalAccessException();
         }
-
-        Plan plan = new Plan(planBase, planElements);
 
         // 作成できるかプランエレメントかどうかチェック
         // 順番の不整合がないか
         // 追加できる数を超えていないか
-        if (!plan.canCreateElement(planElement)) {
-            // TODO: Exception検討する
-            throw new IllegalArgumentException();
-        }
+        //        if (!plan.canCreateElement(planElement)) {
+        //            // TODO: Exception検討する
+        //            throw new IllegalArgumentException();
+        //        }
 
-        this.planRepositoryImpl.createElements(planId, null);
+        createPlanRepository.createElements(planId, null);
     }
 
 }

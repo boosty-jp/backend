@@ -6,20 +6,23 @@ import co.jp.wever.graphql.domain.converter.PlanBaseConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.repository.PlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.plan.DeletePlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 
 @Service
 public class DeletePlanService {
 
-    private final PlanRepositoryImpl planRepositoryImpl;
+    private final DeletePlanRepositoryImpl deletePlanRepository;
+    private final FindPlanRepositoryImpl findPlanRepository;
 
-    DeletePlanService(PlanRepositoryImpl planRepositoryImpl) {
-        this.planRepositoryImpl = planRepositoryImpl;
+    DeletePlanService(DeletePlanRepositoryImpl deletePlanRepository, FindPlanRepositoryImpl findPlanRepository) {
+        this.deletePlanRepository = deletePlanRepository;
+        this.findPlanRepository = findPlanRepository;
     }
 
     public void deletePlan(String planId, String userId) throws IllegalAccessException {
 
-        PlanBaseEntity planBaseEntity = this.planRepositoryImpl.findBase(planId);
+        PlanBaseEntity planBaseEntity = findPlanRepository.findBase(planId);
         PlanBase planBase = PlanBaseConverter.toPlanBase(planBaseEntity);
 
         User user = User.of(userId);
@@ -28,7 +31,7 @@ public class DeletePlanService {
         }
 
         // 削除できるかチェック
-        this.planRepositoryImpl.deleteOne(planId, userId);
+        deletePlanRepository.deleteOne(planId, userId);
     }
 
 
