@@ -4,8 +4,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 
 @Repository
 public interface FindPlanRepository {

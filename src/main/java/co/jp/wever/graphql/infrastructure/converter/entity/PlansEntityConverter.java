@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 
 public class PlansEntityConverter {
     public static List<PlanEntity> toPlans(List<Map<Object, Object>> vertexes) {
