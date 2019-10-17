@@ -19,8 +19,8 @@ public interface ArticleRepository {
 
     //Mutation
     Article initOne(String id);
-    Article updateOne(String id);
     Article deleteOne(String id);
+    Article updateOne(String id);
     Article publishOne(String id);
     Article draftOne(String id);
     Article bookmarkOne(String id);

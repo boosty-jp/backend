@@ -6,7 +6,7 @@ import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementId;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementNumber;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementTitle;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementType;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanElementEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementEntity;
 
 public class PlanElementConverter {
     public static PlanElement toPlanElement(PlanElementInput planElementInput) {

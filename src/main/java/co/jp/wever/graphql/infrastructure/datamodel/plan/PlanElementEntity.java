@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.datamodel;
+package co.jp.wever.graphql.infrastructure.datamodel.plan;
 
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementType;
 import lombok.Builder;

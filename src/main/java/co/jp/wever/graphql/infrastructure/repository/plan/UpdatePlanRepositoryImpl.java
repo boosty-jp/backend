@@ -9,8 +9,8 @@ import co.jp.wever.graphql.domain.repository.plan.UpdatePlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanElementEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementEntity;
 
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 

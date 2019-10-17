@@ -11,8 +11,8 @@ import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.converter.entity.PlanBaseEntityConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.plan.UpdatePlanRepositoryImpl;
 

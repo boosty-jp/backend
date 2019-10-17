@@ -4,7 +4,7 @@ import java.util.Map;
 
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 
 public class PlanBaseEntityConverter {
     public static PlanBaseEntity toPlanBaseEntity(PlanBase planBase) {

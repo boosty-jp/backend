@@ -5,8 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 
-import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 
 @Component
 public class PlanEntityConverter {
