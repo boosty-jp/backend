@@ -27,10 +27,7 @@ public class ArticleDetail {
     }
 
     public boolean canRead(User user) {
-        if (!base.getStatus().equals(ArticleStatus.PUBLISHED) && !author.isSame(user)) {
-            return false;
-        }
-        return true;
+        return base.getStatus().equals(ArticleStatus.PUBLISHED) || author.isSame(user);
     }
 
     public boolean canDelete(User user) {
@@ -38,11 +35,7 @@ public class ArticleDetail {
             return false;
         }
 
-        if(base.getStatus().name().equals(ArticleStatus.DELETED.name())){
-            return false;
-        }
-
-        return true;
+        return !base.getStatus().name().equals(ArticleStatus.DELETED.name());
     }
 
     public boolean canUpdate(User user) {
@@ -50,11 +43,7 @@ public class ArticleDetail {
             return false;
         }
 
-        if(base.getStatus().name().equals(ArticleStatus.DELETED.name())){
-            return false;
-        }
-
-        return true;
+        return !base.getStatus().name().equals(ArticleStatus.DELETED.name());
     }
 
     public boolean canPublish(User user) {
@@ -62,15 +51,11 @@ public class ArticleDetail {
             return false;
         }
 
-        if(base.getStatus().name().equals(ArticleStatus.DELETED.name())){
+        if (base.getStatus().name().equals(ArticleStatus.DELETED.name())) {
             return false;
         }
 
-        if(base.getStatus().name().equals(ArticleStatus.PUBLISHED.name())){
-            return false;
-        }
-
-        return true;
+        return !base.getStatus().name().equals(ArticleStatus.PUBLISHED.name());
     }
 
     public boolean canDraft(User user) {
@@ -78,14 +63,10 @@ public class ArticleDetail {
             return false;
         }
 
-        if(base.getStatus().name().equals(ArticleStatus.DELETED.name())){
+        if (base.getStatus().name().equals(ArticleStatus.DELETED.name())) {
             return false;
         }
 
-        if(base.getStatus().name().equals(ArticleStatus.DRAFTED.name())){
-            return false;
-        }
-
-        return true;
+        return !base.getStatus().name().equals(ArticleStatus.DRAFTED.name());
     }
 }

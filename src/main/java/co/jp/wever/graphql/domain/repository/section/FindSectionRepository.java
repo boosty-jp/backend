@@ -9,14 +9,17 @@ import co.jp.wever.graphql.infrastructure.datamodel.SectionEntity;
 
 @Repository
 public interface FindSectionRepository {
-    SectionEntity findOne(String id);
 
-    List<SectionEntity> findAllLiked(String id);
+    SectionEntity findOne(String sectionId);
 
-    List<SectionEntity> findAllBookmarked(String id);
+    List<SectionEntity> findAllOnArticle(String articleId);
 
-    List<SectionEntity> findFamous(String id);
+    List<SectionEntity> findAllLiked(String userId);
 
-    List<SectionEntity> findRelated(String id);
+    List<SectionEntity> findAllBookmarked(String userId);
+
+    List<SectionEntity> findFamous();
+
+    List<SectionEntity> findRelated(String userId);
 
 }

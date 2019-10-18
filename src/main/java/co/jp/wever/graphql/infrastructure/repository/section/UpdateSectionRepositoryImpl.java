@@ -8,17 +8,17 @@ import co.jp.wever.graphql.domain.repository.section.UpdateSectionRepository;
 public class UpdateSectionRepositoryImpl implements UpdateSectionRepository {
 
     @Override
-    public void updateOne(String id) {
+    public void updateOne(String sectionId) {
 
     }
 
     @Override
-    public void bookmarkOne(String id) {
+    public void bookmarkOne(String sectionId, String userId) {
 
     }
 
     @Override
-    public void likeOne(String id) {
+    public void likeOne(String sectionId, String userId) {
 
     }
 }

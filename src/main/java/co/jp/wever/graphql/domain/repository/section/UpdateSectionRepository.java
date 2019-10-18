@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UpdateSectionRepository {
 
-    void updateOne(String id);
+    void updateOne(String sectionId);
 
-    void bookmarkOne(String id);
+    void bookmarkOne(String sectionId, String userId);
 
-    void likeOne(String id);
+    void likeOne(String sectionId, String userId);
 }
 

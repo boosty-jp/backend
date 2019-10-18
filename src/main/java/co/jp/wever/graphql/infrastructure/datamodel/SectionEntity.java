@@ -10,6 +10,8 @@ import lombok.Data;
 public class SectionEntity {
     private String id;
     private String title;
+    private int number;
     private List<String> texts;
     private Boolean deleted;
+    private String authorId;
 }

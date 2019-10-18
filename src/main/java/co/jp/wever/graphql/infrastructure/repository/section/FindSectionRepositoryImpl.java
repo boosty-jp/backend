@@ -11,27 +11,32 @@ import co.jp.wever.graphql.infrastructure.datamodel.SectionEntity;
 public class FindSectionRepositoryImpl implements FindSectionRepository {
 
     @Override
-    public SectionEntity findOne(String id) {
-        return SectionEntity.builder().build();
-    }
-
-    @Override
-    public List<SectionEntity> findAllLiked(String id) {
+    public SectionEntity findOne(String sectionId) {
         return null;
     }
 
     @Override
-    public List<SectionEntity> findAllBookmarked(String id) {
+    public List<SectionEntity> findAllOnArticle(String articleId) {
         return null;
     }
 
     @Override
-    public List<SectionEntity> findFamous(String id) {
+    public List<SectionEntity> findAllLiked(String userId) {
         return null;
     }
 
     @Override
-    public List<SectionEntity> findRelated(String id) {
+    public List<SectionEntity> findAllBookmarked(String userId) {
+        return null;
+    }
+
+    @Override
+    public List<SectionEntity> findFamous() {
+        return null;
+    }
+
+    @Override
+    public List<SectionEntity> findRelated(String userId) {
         return null;
     }
 
