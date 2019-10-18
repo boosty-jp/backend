@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Section {
-    private long id;
+public class SectionEntity {
+    private String id;
     private String title;
     private List<String> texts;
     private Boolean deleted;
