@@ -3,6 +3,7 @@ package co.jp.wever.graphql.domain.domainmodel.article.base;
 import java.util.Date;
 
 public class ArticleDate {
+
     private Date createDate;
     private Date updateDate;
 
@@ -17,6 +18,14 @@ public class ArticleDate {
         }
 
         return new ArticleDate(createDate, updateDate);
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
     }
 
 }

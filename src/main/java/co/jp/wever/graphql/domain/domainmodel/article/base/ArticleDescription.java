@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.domain.domainmodel.article.base;
 
 public class ArticleDescription {
+
     private String value;
     private final static int MAX_WORD_COUNT = 1000;
 
@@ -14,6 +15,10 @@ public class ArticleDescription {
         }
 
         return new ArticleDescription(value);
+    }
+
+    public String getValue() {
+        return value;
     }
 }
 

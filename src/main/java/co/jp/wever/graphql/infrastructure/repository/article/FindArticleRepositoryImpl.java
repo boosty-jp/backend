@@ -6,7 +6,7 @@ import java.util.List;
 
 import co.jp.wever.graphql.domain.repository.article.FindArticleRepository;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleOutlineEntity;
 
 @Component
 public class FindArticleRepositoryImpl implements FindArticleRepository {
@@ -16,41 +16,41 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
     }
 
     @Override
-    public List<ArticleEntity> findAll(String userId) {
+    public List<ArticleOutlineEntity> findAll(String userId) {
         return null;
     }
 
     @Override
-    public List<ArticleEntity> findAllPublished(String userId) {
+    public List<ArticleOutlineEntity> findAllPublished(String userId) {
         return null;
     }
 
     @Override
-    public List<ArticleEntity> findAllDrafted(String userId) {
+    public List<ArticleOutlineEntity> findAllDrafted(String userId) {
         return null;
     }
 
     @Override
-    public List<ArticleEntity> findAllLiked(String userId) {
+    public List<ArticleOutlineEntity> findAllLiked(String userId) {
         return null;
     }
 
     @Override
-    public List<ArticleEntity> findAllLearned(String userId) {
+    public List<ArticleOutlineEntity> findAllLearned(String userId) {
         return null;
     }
 
     @Override
-    public List<ArticleEntity> findAllBookmarked(String userId) {
+    public List<ArticleOutlineEntity> findAllBookmarked(String userId) {
         return null;
     }
 
     @Override
-    public List<ArticleEntity> findFamous() {
+    public List<ArticleOutlineEntity> findFamous() {
         return null;
     }
 
-    public List<ArticleEntity> findRelated(String userId) {
+    public List<ArticleOutlineEntity> findRelated(String userId) {
         return null;
     }
 }

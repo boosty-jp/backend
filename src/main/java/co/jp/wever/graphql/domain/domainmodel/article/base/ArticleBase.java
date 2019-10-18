@@ -1,7 +1,8 @@
 package co.jp.wever.graphql.domain.domainmodel.article.base;
 
-public class ArticleBase {
+import co.jp.wever.graphql.domain.domainmodel.user.User;
 
+public class ArticleBase {
     private ArticleId id;
     private Articletitle title;
     private ArticleDescription description;
@@ -22,5 +23,29 @@ public class ArticleBase {
         this.imageUrl = imageUrl;
         this.status = status;
         this.date = date;
+    }
+
+    public ArticleStatus getStatus() {
+        return status;
+    }
+
+    public String getId() {
+        return id.getValue();
+    }
+
+    public String getTitle() {
+        return title.getValue();
+    }
+
+    public String getDescription() {
+        return description.getValue();
+    }
+
+    public String getImageUrl() {
+        return imageUrl.getValue();
+    }
+
+    public ArticleDate getDate() {
+        return date;
     }
 }

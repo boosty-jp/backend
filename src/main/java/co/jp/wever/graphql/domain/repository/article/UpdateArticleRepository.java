@@ -12,7 +12,7 @@ public interface UpdateArticleRepository {
 
     void draftOne(String articleId, String userId);
 
-    void bookmarkOne(String articleId, String userId);
-
     void likeOne(String articleId, String userId);
+
+    void finishOne(String articleId, String userId);
 }

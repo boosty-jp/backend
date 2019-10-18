@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ArticleEntity {
+public class ArticleOutlineEntity {
     private ArticleBaseEntity base;
     private UserEntity author;
     private List<TagEntity> tags;
