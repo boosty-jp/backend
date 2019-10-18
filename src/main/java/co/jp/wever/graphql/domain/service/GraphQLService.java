@@ -54,8 +54,8 @@ public class GraphQLService {
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
                             .type("Query",
-                                  typeWiring -> typeWiring.dataFetcher("section",
-                                                                       sectionDataFetcher.sectionDataFetcher())
+                                  typeWiring -> typeWiring.dataFetcher("allSectionOnArticle",
+                                                                       sectionDataFetcher.allSectionsOnArticleDataFetcher())
                                                           .dataFetcher("allLikedSections",
                                                                        sectionDataFetcher.allLikedSectionsDataFetcher())
                                                           .dataFetcher("allBookmarkedSections",
@@ -98,14 +98,16 @@ public class GraphQLService {
                                                           .dataFetcher("relatedPlans",
                                                                        planDataFetchers.relatedPlansDataFetcher()))
                             .type("Mutation",
-                                  typeWiring -> typeWiring.dataFetcher("addSection",
-                                                                       sectionDataFetcher.addSectionDataFetcher())
+                                  typeWiring -> typeWiring.dataFetcher("createSection",
+                                                                       sectionDataFetcher.createSectionDataFetcher())
                                                           .dataFetcher("updateSection",
                                                                        sectionDataFetcher.updateSectionElementDataFetcher())
                                                           .dataFetcher("bookmarkSection",
                                                                        sectionDataFetcher.bookmarkSectionElementDataFetcher())
                                                           .dataFetcher("likeSection",
                                                                        sectionDataFetcher.likeSectionElementDataFetcher())
+                                                          .dataFetcher("deleteSection",
+                                                                       sectionDataFetcher.deleteSectionElementDataFetcher())
                                                           .dataFetcher("createArticle",
                                                                        articleDataFetcher.createArticleDataFetcher())
                                                           .dataFetcher("updateArticle",

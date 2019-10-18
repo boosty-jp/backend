@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.datamodel;
+package co.jp.wever.graphql.application.datamodel.request;
 
 import java.util.List;
 
@@ -7,9 +7,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Section {
-    private long id;
+public class SectionInput {
     private String title;
     private List<String> texts;
-    private Boolean deleted;
+    private int number;
 }

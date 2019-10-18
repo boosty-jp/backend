@@ -1,5 +1,5 @@
 type Query {
-    section(id: ID!): Section!
+    allSectionOnArticle(article: ID!): Section!
     allLikedSections(userId: ID!): [Section]!
     allBookmarkedSections(userId: ID!): [Section]!
     famousSections: [Section]!
@@ -85,8 +85,9 @@ input PlanElementInput{
 
 
 type Mutation {
-    addSection(articleId: ID!, section: SectionInput!): CreateResponse
+    createSection(articleId: ID!, section: SectionInput!): CreateResponse
     updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
+    deleteSection(sectionId: ID!, userId: ID): UpdateResponse
     bookmarkSection(sectionId: ID!, userId: ID): UpdateResponse
     likeSection(sectionId: ID!, userId: ID): UpdateResponse
 
