@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.application.converter;
+package co.jp.wever.graphql.application.converter.plan;
 
 import java.util.List;
 import java.util.Map;

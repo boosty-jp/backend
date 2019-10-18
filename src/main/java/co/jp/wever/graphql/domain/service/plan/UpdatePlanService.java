@@ -6,11 +6,11 @@ import java.util.List;
 
 import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
-import co.jp.wever.graphql.domain.converter.PlanConverter;
+import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.infrastructure.converter.entity.PlanBaseEntityConverter;
+import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanBaseEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;

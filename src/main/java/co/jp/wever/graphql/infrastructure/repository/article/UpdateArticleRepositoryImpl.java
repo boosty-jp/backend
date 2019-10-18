@@ -24,11 +24,10 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     }
 
     @Override
-    public void bookmarkOne(String articleId, String userId) {
-
+    public void likeOne(String articleId, String userId) {
     }
 
     @Override
-    public void likeOne(String articleId, String userId) {
+    public void finishOne(String articleId, String userId) {
     }
 }

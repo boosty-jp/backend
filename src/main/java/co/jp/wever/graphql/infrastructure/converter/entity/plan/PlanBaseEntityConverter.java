@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.converter.entity;
+package co.jp.wever.graphql.infrastructure.converter.entity.plan;
 
 import java.util.Map;
 

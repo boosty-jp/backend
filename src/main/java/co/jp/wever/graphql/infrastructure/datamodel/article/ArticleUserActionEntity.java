@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.infrastructure.datamodel.article;
 
-
 import lombok.Builder;
 import lombok.Data;
 

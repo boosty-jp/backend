@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.converter;
+package co.jp.wever.graphql.domain.converter.plan;
 
 import java.util.List;
 import java.util.stream.Collectors;

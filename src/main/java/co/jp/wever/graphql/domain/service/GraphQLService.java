@@ -76,8 +76,6 @@ public class GraphQLService {
                                                                        articleDataFetcher.allLikedArticlesDataFetcher())
                                                           .dataFetcher("allLearnedArticles",
                                                                        articleDataFetcher.allLearnedArticlesDataFetcher())
-                                                          .dataFetcher("allBookmarkedArticles",
-                                                                       articleDataFetcher.allBookmarkedArticlesDataFetcher())
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
                                                           .dataFetcher("relatedArticles",
@@ -108,20 +106,20 @@ public class GraphQLService {
                                                                        sectionDataFetcher.bookmarkSectionElementDataFetcher())
                                                           .dataFetcher("likeSection",
                                                                        sectionDataFetcher.likeSectionElementDataFetcher())
-                                                          .dataFetcher("initArticle",
-                                                                       articleDataFetcher.initArticleDataFetcher())
+                                                          .dataFetcher("createArticle",
+                                                                       articleDataFetcher.createArticleDataFetcher())
                                                           .dataFetcher("updateArticle",
-                                                                       articleDataFetcher.updateArticlesElementDataFetcher())
+                                                                       articleDataFetcher.updateArticleDataFetcher())
                                                           .dataFetcher("deleteArticle",
-                                                                       articleDataFetcher.deleteArticlesElementDataFetcher())
+                                                                       articleDataFetcher.deleteArticleDataFetcher())
                                                           .dataFetcher("publishArticle",
-                                                                       articleDataFetcher.publishArticlesElementDataFetcher())
+                                                                       articleDataFetcher.publishArticleDataFetcher())
                                                           .dataFetcher("draftArticle",
-                                                                       articleDataFetcher.draftArticlesElementDataFetcher())
-                                                          .dataFetcher("bookmarkArticle",
-                                                                       articleDataFetcher.bookmarkArticlesElementDataFetcher())
+                                                                       articleDataFetcher.draftArticleDataFetcher())
                                                           .dataFetcher("likeArticle",
-                                                                       articleDataFetcher.likeArticlesElementDataFetcher())
+                                                                       articleDataFetcher.likeArticleDataFetcher())
+                                                          .dataFetcher("finishArticle",
+                                                                       articleDataFetcher.finishArticleDataFetcher())
                                                           .dataFetcher("createPlanBase",
                                                                        planDataFetchers.createPlanBaseDataFetcher())
                                                           .dataFetcher("updatePlanBase",

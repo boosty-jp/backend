@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.application.converter;
+package co.jp.wever.graphql.application.converter.plan;
 
 import co.jp.wever.graphql.application.datamodel.response.query.ElementResponse;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
