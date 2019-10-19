@@ -91,8 +91,6 @@ public class UserDataFetcher {
     }
 
     public DataFetcher unFollowUserDataFetcher() {
-
-
         return dataFetchingEnvironment -> {
             String targetUserId = dataFetchingEnvironment.getArgument("targetUserId");
 
