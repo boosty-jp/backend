@@ -23,6 +23,8 @@ type Query {
     allLearnedPlans(userId: ID!): [Plan]!
     famousPlans: [Plan]!
     relatedPlans(userId: ID): [Plan]!
+
+    user(userId: ID!): User
 }
 
 type Plan {
@@ -56,6 +58,20 @@ type Section {
     deleted: Boolean!
 }
 
+type User{
+    id: ID!
+    displayName: String!
+    imageUrl: String!
+    description: String!
+    tags: [Tag]!
+}
+
+type Tag{
+    id: ID!
+    name: String!
+    imageUrl: String!
+}
+
 input SectionInput{
     title: String!
     texts: [String!]
@@ -81,6 +97,15 @@ input PlanElementInput{
     title: String!
     type: String!
     number: Int!
+}
+
+input UserInput{
+    displayName: String!
+    userId: String!
+    description: String
+    tags: [String]
+    imageUrl: String!
+    url: String
 }
 
 
@@ -110,6 +135,9 @@ type Mutation {
     startPlan(planId: ID!, userId: ID!): UpdateResponse
     stopPlan(planId: ID!, userId: ID!): UpdateResponse
 
+    createUser(userInput: UserInput!): CreateResponse
+    updateUser(userInput: UserInput!): UpdateResponse
+    deleteUser(userInput: UserInput!): UpdateResponse
     followUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
     unFollowUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
 
