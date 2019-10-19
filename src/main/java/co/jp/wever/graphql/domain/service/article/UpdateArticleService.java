@@ -7,6 +7,7 @@ import co.jp.wever.graphql.domain.converter.article.ArticleBaseConverter;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleBaseEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.article.UpdateArticleRepositoryImpl;
@@ -28,7 +29,7 @@ public class UpdateArticleService {
         // このクエリは重いので負荷がかかってしまうと思われる
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
         //        ArticleBase articleBase = ArticleBaseConverter.toArticleBase(articleInput);
-        if (!articleDetail.canUpdate(User.of(userId))) {
+        if (!articleDetail.canUpdate(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 
@@ -44,7 +45,7 @@ public class UpdateArticleService {
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
 
         //        ArticleBase articleBase = ArticleBaseConverter.toArticleBase(articleInput);
-        if (!articleDetail.canPublish(User.of(userId))) {
+        if (!articleDetail.canPublish(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 
@@ -56,7 +57,7 @@ public class UpdateArticleService {
         // このクエリは重いので負荷がかかってしまうと思われる
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
 
-        if (!articleDetail.canDraft(User.of(userId))) {
+        if (!articleDetail.canDraft(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 

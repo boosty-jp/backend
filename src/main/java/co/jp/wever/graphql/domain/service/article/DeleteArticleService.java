@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.repository.article.DeleteArticleRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 
@@ -24,7 +25,7 @@ public class DeleteArticleService {
         //TODO: 詳細とらずにステータスと著者だけ取るようにしてもいいかも
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
 
-        if (articleDetail.canDelete(User.of(userId))) {
+        if (articleDetail.canDelete(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 

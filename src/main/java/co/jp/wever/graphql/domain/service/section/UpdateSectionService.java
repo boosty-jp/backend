@@ -6,6 +6,7 @@ import co.jp.wever.graphql.application.datamodel.request.SectionInput;
 import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.UpdateSectionRepositoryImpl;
 
@@ -26,7 +27,7 @@ public class UpdateSectionService {
         Section target = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
         Section updateSection = SectionConverter.toSection(sectionInput, userId);
 
-        if (target.canUpdate(User.of(userId), updateSection.getSectionNumber())) {
+        if (target.canUpdate(UserId.of(userId), updateSection.getSectionNumber())) {
             throw new IllegalAccessException();
         }
 

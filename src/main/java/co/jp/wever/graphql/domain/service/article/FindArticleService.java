@@ -10,6 +10,7 @@ import co.jp.wever.graphql.domain.converter.article.ArticleOutlineConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleOutline;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleOutlineEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
@@ -28,14 +29,14 @@ public class FindArticleService {
 
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
-        if (articleDetail.canRead(User.of(userId))) {
+        if (articleDetail.canRead(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 
         return articleDetail;
     }
 
-    public List<ArticleOutline> findAllArticle(String userId) throws IllegalAccessException {
+    public List<ArticleOutline> findAllArticle(String userId) {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findAll(userId);
 
         List<ArticleOutline> articleOutlines = articleOutlineEntities.stream()
@@ -44,11 +45,11 @@ public class FindArticleService {
                                                                      .collect(Collectors.toList());
 
         // 公開していない　かつ　そのユーザーじゃないものは含めない
-        User readUser = User.of(userId);
-        return articleOutlines.stream().filter(e -> e.canRead(readUser)).collect(Collectors.toList());
+        UserId readUserId = UserId.of(userId);
+        return articleOutlines.stream().filter(e -> e.canRead(readUserId)).collect(Collectors.toList());
     }
 
-    public List<ArticleOutline> findAllPublishedArticle(String userId) throws IllegalAccessException {
+    public List<ArticleOutline> findAllPublishedArticle(String userId) {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findAllPublished(userId);
 
         return articleOutlineEntities.stream()
@@ -56,7 +57,7 @@ public class FindArticleService {
                                      .collect(Collectors.toList());
     }
 
-    public List<ArticleOutline> findAllDraftedArticle(String userId) throws IllegalAccessException {
+    public List<ArticleOutline> findAllDraftedArticle(String userId) {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findAllDrafted(userId);
 
         List<ArticleOutline> articleOutlines = articleOutlineEntities.stream()
@@ -65,11 +66,11 @@ public class FindArticleService {
                                                                      .collect(Collectors.toList());
 
         // 公開していない　かつ　そのユーザーじゃないものは含めない
-        User readUser = User.of(userId);
-        return articleOutlines.stream().filter(e -> e.canRead(readUser)).collect(Collectors.toList());
+        UserId readUserId = UserId.of(userId);
+        return articleOutlines.stream().filter(e -> e.canRead(readUserId)).collect(Collectors.toList());
     }
 
-    public List<ArticleOutline> findAllLikedArticle(String userId) throws IllegalAccessException {
+    public List<ArticleOutline> findAllLikedArticle(String userId) {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findAllLiked(userId);
 
         return articleOutlineEntities.stream()
@@ -78,7 +79,7 @@ public class FindArticleService {
 
     }
 
-    public List<ArticleOutline> findAllLearnedArticle(String userId) throws IllegalAccessException {
+    public List<ArticleOutline> findAllLearnedArticle(String userId) {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findAllLearned(userId);
 
         List<ArticleOutline> articleOutlines = articleOutlineEntities.stream()
@@ -87,11 +88,11 @@ public class FindArticleService {
                                                                      .collect(Collectors.toList());
 
         // 公開していない　かつ　そのユーザーじゃないものは含めない
-        User readUser = User.of(userId);
-        return articleOutlines.stream().filter(e -> e.canRead(readUser)).collect(Collectors.toList());
+        UserId readUserId = UserId.of(userId);
+        return articleOutlines.stream().filter(e -> e.canRead(readUserId)).collect(Collectors.toList());
     }
 
-    public List<ArticleOutline> findFamousArticle() throws IllegalAccessException {
+    public List<ArticleOutline> findFamousArticle() {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findFamous();
 
         return articleOutlineEntities.stream()
@@ -100,7 +101,7 @@ public class FindArticleService {
 
     }
 
-    public List<ArticleOutline> findRelatedArticle(String userId) throws IllegalAccessException {
+    public List<ArticleOutline> findRelatedArticle(String userId) {
         List<ArticleOutlineEntity> articleOutlineEntities = findArticleRepository.findRelated(userId);
 
         return articleOutlineEntities.stream()

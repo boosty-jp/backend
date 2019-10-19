@@ -13,5 +13,6 @@ public class UserEntity {
     private String displayName;
     private String imageUrl;
     private String description;
+    private String url;
     private List<TagEntity> tags;
 }

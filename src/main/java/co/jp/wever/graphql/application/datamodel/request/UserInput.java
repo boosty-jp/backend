@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.application.datamodel.response.query;
+package co.jp.wever.graphql.application.datamodel.request;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserResponse {
+public class UserInput {
     private String userId;
     private String displayName;
     private String description;
     private String imageUrl;
     private String url;
-    private List<TagResponse> tags;
+    private List<TagInput> tags;
 }

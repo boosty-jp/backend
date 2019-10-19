@@ -1,21 +1,55 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
+import java.util.List;
+
+import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
+
 public class User {
+
     private UserId userId;
+    private UserDisplayName displayName;
+    private UserDescription description;
+    private UserImageUrl imageUrl;
+    private UserUrl url;
+    private List<Tag> tags;
 
-    private User(UserId userId) {
+    public User(
+        UserId userId,
+        UserDisplayName displayName,
+        UserDescription description,
+        UserImageUrl imageUrl,
+        UserUrl url,
+        List<Tag> tags) {
         this.userId = userId;
+        this.description = description;
+        this.displayName = displayName;
+        this.imageUrl = imageUrl;
+        this.url = url;
+        this.tags = tags;
     }
 
-    public static User of(String userId) {
-        return new User(UserId.of(userId));
+    public UserId getUserId() {
+        return userId;
     }
 
-    public String getUserId() {
-        return userId.getValue();
+    public UserDisplayName getDisplayName() {
+        return displayName;
     }
 
-    public boolean isSame(User user) {
-        return userId.same(user.getUserId());
+    public UserDescription getDescription() {
+        return description;
     }
+
+    public UserImageUrl getImageUrl() {
+        return imageUrl;
+    }
+
+    public UserUrl getUrl() {
+        return url;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
 }

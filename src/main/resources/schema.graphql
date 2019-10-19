@@ -63,7 +63,7 @@ type User{
     displayName: String!
     imageUrl: String!
     description: String!
-    tags: [Tag]!
+    tags: [String]!
 }
 
 type Tag{
@@ -103,9 +103,9 @@ input UserInput{
     displayName: String!
     userId: String!
     description: String
-    tags: [String]
-    imageUrl: String!
+    imageUrl: String
     url: String
+    tags: [String]
 }
 
 

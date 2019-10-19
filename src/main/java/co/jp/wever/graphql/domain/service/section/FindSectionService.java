@@ -10,6 +10,7 @@ import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.domain.repository.article.FindArticleRepository;
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
@@ -32,7 +33,7 @@ public class FindSectionService {
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
-        if (!articleDetail.canRead(User.of(userId))) {
+        if (!articleDetail.canRead(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 

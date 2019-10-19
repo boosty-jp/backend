@@ -4,6 +4,7 @@ import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
 import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleStatistics;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 
 public class ArticleOutline {
     private ArticleBase articleBase;
@@ -17,8 +18,8 @@ public class ArticleOutline {
         this.author = user;
     }
 
-    public boolean canRead(User user) {
-        if (!articleBase.getStatus().equals(ArticleStatus.PUBLISHED) && !author.isSame(user)) {
+    public boolean canRead(UserId userId) {
+        if (!articleBase.getStatus().equals(ArticleStatus.PUBLISHED) && !author.getUserId().same(userId)) {
             return false;
         }
         return true;

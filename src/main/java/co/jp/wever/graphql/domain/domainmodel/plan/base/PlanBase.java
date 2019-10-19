@@ -3,6 +3,7 @@ package co.jp.wever.graphql.domain.domainmodel.plan.base;
 import java.util.List;
 
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 
 public class PlanBase {
     private PlanId id;
@@ -10,22 +11,22 @@ public class PlanBase {
     private PlanDescription description;
     private PlanImageUrl imageUrl;
     private PlanTagIds tagIds;
-    private User author;
     private PlanStatus status;
+    private UserId authorId;
 
     private PlanBase(
         PlanTitle title,
         PlanDescription description,
         PlanImageUrl imageUrl,
         PlanTagIds tagIds,
-        User user,
+        UserId userId,
         PlanStatus status) {
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
         this.tagIds = tagIds;
         this.status = status;
-        this.author = user;
+        this.authorId = userId;
     }
 
     public static PlanBase of(
@@ -34,7 +35,7 @@ public class PlanBase {
                             PlanDescription.of(description),
                             PlanImageUrl.of(imageUrl),
                             PlanTagIds.of(tagIds),
-                            User.of(userId),
+                            UserId.of(userId),
                             PlanStatus.valueOf(status));
     }
 
@@ -58,8 +59,8 @@ public class PlanBase {
         return id.getValue();
     }
 
-    public User getAuthor() {
-        return author;
+    public UserId getAuthorId() {
+        return authorId;
     }
 
     public PlanStatus getStatus() {

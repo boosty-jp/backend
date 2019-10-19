@@ -1,8 +1,8 @@
-package co.jp.wever.graphql.domain.domainmodel.plan.base;
+package co.jp.wever.graphql.domain.domainmodel.user;
 
 import io.netty.util.internal.StringUtil;
 
-public class PlanImageUrl {
+public class UserImageUrl {
     private String value;
 
     // TODO: サンプル画像のURLを入れる
@@ -11,14 +11,14 @@ public class PlanImageUrl {
     // TODO: S3の画像URLのサイズを確認する
     private final static int MAX_URL_SIZE = 2048;
 
-    private PlanImageUrl(String value) {
+    private UserImageUrl(String value) {
         this.value = value;
     }
 
-    public static PlanImageUrl of(String value) throws IllegalArgumentException {
+    public static UserImageUrl of(String value) throws IllegalArgumentException {
         //TODO: URL先の画像が存在するかどうかチェックしたい
         if (StringUtil.isNullOrEmpty(value)) {
-            return new PlanImageUrl(DEFAULT_IMAGE_URL);
+            return new UserImageUrl(DEFAULT_IMAGE_URL);
         }
 
         if (value.length() > MAX_URL_SIZE) {
@@ -27,7 +27,7 @@ public class PlanImageUrl {
 
         // TODO: S3にアップロードされているURLかチェックする
 
-        return new PlanImageUrl(value);
+        return new UserImageUrl(value);
     }
 
     public String getValue() {
