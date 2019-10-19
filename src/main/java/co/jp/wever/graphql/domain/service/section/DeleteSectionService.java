@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.repository.section.DeleteSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 
@@ -22,7 +23,7 @@ public class DeleteSectionService {
     public void deleteSection(String sectionId, String userId) throws IllegalAccessException {
         Section section = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
 
-        if (!section.canDelete(User.of(userId))) {
+        if (!section.canDelete(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 

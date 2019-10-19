@@ -96,7 +96,8 @@ public class GraphQLService {
                                                           .dataFetcher("famousPlans",
                                                                        planDataFetchers.famousPlansDataFetcher())
                                                           .dataFetcher("relatedPlans",
-                                                                       planDataFetchers.relatedPlansDataFetcher()))
+                                                                       planDataFetchers.relatedPlansDataFetcher())
+                                                          .dataFetcher("user", userDataFetcher.userDataFetcher()))
                             .type("Mutation",
                                   typeWiring -> typeWiring.dataFetcher("createSection",
                                                                        sectionDataFetcher.createSectionDataFetcher())
@@ -140,6 +141,12 @@ public class GraphQLService {
                                                                        planDataFetchers.startPlanDataFetcher())
                                                           .dataFetcher("stopPlan",
                                                                        planDataFetchers.stopPlanDataFetcher())
+                                                          .dataFetcher("createUser",
+                                                                       userDataFetcher.createUserDataFetcher())
+                                                          .dataFetcher("updateUser",
+                                                                       userDataFetcher.updateUserDataFetcher())
+                                                          .dataFetcher("deleteUser",
+                                                                       userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("followUser",
                                                                        userDataFetcher.followUserDataFetcher())
                                                           .dataFetcher("unFollowUser",

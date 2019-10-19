@@ -20,7 +20,7 @@ public class UserId {
         return value;
     }
 
-    public boolean same(String targetId){
-        return value.equals(targetId);
+    public boolean same(UserId targetId) {
+        return value.equals(targetId.getValue());
     }
 }

@@ -8,6 +8,7 @@ import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
 import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleStatistics;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 
 public class ArticleDetail {
 
@@ -26,28 +27,28 @@ public class ArticleDetail {
         this.userAction = userAction;
     }
 
-    public boolean canRead(User user) {
-        return base.getStatus().equals(ArticleStatus.PUBLISHED) || author.isSame(user);
+    public boolean canRead(UserId userId) {
+        return base.getStatus().equals(ArticleStatus.PUBLISHED) || author.getUserId().same(userId);
     }
 
-    public boolean canDelete(User user) {
-        if (!author.isSame(user)) {
+    public boolean canDelete(UserId userId) {
+        if (!author.getUserId().same(userId)) {
             return false;
         }
 
         return !base.getStatus().name().equals(ArticleStatus.DELETED.name());
     }
 
-    public boolean canUpdate(User user) {
-        if (!author.isSame(user)) {
+    public boolean canUpdate(UserId userId) {
+        if (!author.getUserId().same(userId)) {
             return false;
         }
 
         return !base.getStatus().name().equals(ArticleStatus.DELETED.name());
     }
 
-    public boolean canPublish(User user) {
-        if (!author.isSame(user)) {
+    public boolean canPublish(UserId userId) {
+        if (!author.getUserId().same(userId)) {
             return false;
         }
 
@@ -58,8 +59,8 @@ public class ArticleDetail {
         return !base.getStatus().name().equals(ArticleStatus.PUBLISHED.name());
     }
 
-    public boolean canDraft(User user) {
-        if (!author.isSame(user)) {
+    public boolean canDraft(UserId userId) {
+        if (!author.getUserId().same(userId)) {
             return false;
         }
 

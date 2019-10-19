@@ -13,7 +13,7 @@ import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanStatus;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
-import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanBaseEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
@@ -65,8 +65,8 @@ public class CreatePlanService {
         List<PlanElement> planElements =
             elements.stream().map(e -> PlanElementConverter.toPlanElement(e)).collect(Collectors.toList());
 
-        User user = User.of(userId);
-        if (!user.isSame(plan.getAuthor())) {
+        UserId creatorId = UserId.of(userId);
+        if (!creatorId.same(plan.getAuthorId())) {
             throw new IllegalAccessException();
         }
 

@@ -3,6 +3,7 @@ package co.jp.wever.graphql.domain.domainmodel.section;
 import java.util.List;
 
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 
 public class Section {
 
@@ -10,14 +11,14 @@ public class Section {
     private SectionTitle title;
     private SectionTexts texts;
     private SectionNumber number;
-    private User author;
+    private UserId authorId;
 
     public Section(
-        SectionTitle title, SectionTexts texts, SectionNumber number, User author) {
+        SectionTitle title, SectionTexts texts, SectionNumber number, UserId authorId) {
         this.title = title;
         this.texts = texts;
         this.number = number;
-        this.author = author;
+        this.authorId = authorId;
     }
 
     public String getTitle() {
@@ -36,15 +37,15 @@ public class Section {
         return number.getValue();
     }
 
-    public boolean canUpdate(User user, SectionNumber sectionNumber) {
-        if (!author.isSame(user)) {
+    public boolean canUpdate(UserId userId, SectionNumber sectionNumber) {
+        if (!authorId.same(userId)) {
             return false;
         }
 
         return number.isSame(sectionNumber);
     }
 
-    public boolean canDelete(User user) {
-        return author.isSame(user);
+    public boolean canDelete(UserId userId) {
+        return authorId.same(userId);
     }
 }
