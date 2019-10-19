@@ -141,7 +141,7 @@ type Mutation {
     followUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
     unFollowUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
 
-    followTag(tags: [ID], userId: ID!): UpdateResponse
+    createTag(name: String!): CreateResponse
 }
 
 type CreateResponse {

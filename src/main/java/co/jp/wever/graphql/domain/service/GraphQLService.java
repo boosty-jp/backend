@@ -151,8 +151,8 @@ public class GraphQLService {
                                                                        userDataFetcher.followUserDataFetcher())
                                                           .dataFetcher("unFollowUser",
                                                                        userDataFetcher.unFollowUserDataFetcher())
-                                                          .dataFetcher("followTag",
-                                                                       tagDataFetcher.followTagDataFetcher()))
+                                                          .dataFetcher("createTag",
+                                                                       tagDataFetcher.createTagDataFetcher()))
                             .build();
     }
 
