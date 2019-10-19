@@ -1,17 +1,16 @@
 type Query {
-    section(id: ID!): Section!
+    allSectionOnArticle(article: ID!): Section!
     allLikedSections(userId: ID!): [Section]!
     allBookmarkedSections(userId: ID!): [Section]!
     famousSections: [Section]!
     relatedSections(userId: ID): [Section]!
 
-    article(id: ID!): Article!
+    article(articleId: ID!, userId: ID!): Article!
     allArticles(userId: ID!): [Article]!
     allPublishedArticles(userId: ID!): [Article]!
     allDraftedArticles(userId: ID!): [Article]!
     allLikedArticles(userId: ID!): [Article]!
     allLearnedArticles(userId: ID!): [Article]!
-    allBookmarkedArticles(userId: ID!): [Article]!
     famousArticles: [Article]!
     relatedArticles(userId: ID!): [Article]!
 
@@ -24,6 +23,8 @@ type Query {
     allLearnedPlans(userId: ID!): [Plan]!
     famousPlans: [Plan]!
     relatedPlans(userId: ID): [Plan]!
+
+    user(userId: ID!): User
 }
 
 type Plan {
@@ -57,11 +58,38 @@ type Section {
     deleted: Boolean!
 }
 
+type User{
+    id: ID!
+    displayName: String!
+    imageUrl: String!
+    description: String!
+    tags: [String]!
+}
+
+type Tag{
+    id: ID!
+    name: String!
+    imageUrl: String!
+}
+
+input SectionInput{
+    title: String!
+    texts: [String!]
+    number: Int
+}
+
+input ArticleInput {
+    title: String!
+    imageUrl: String
+    description: String
+    tags: [String]!
+}
+
 input PlanBase {
     title: String!
     description: String!
     tags: [String]!
-    imageUrl: String!
+    imageUrl: String
 }
 
 input PlanElementInput{
@@ -71,19 +99,30 @@ input PlanElementInput{
     number: Int!
 }
 
+input UserInput{
+    displayName: String!
+    userId: String!
+    description: String
+    imageUrl: String
+    url: String
+    tags: [String]
+}
+
+
 type Mutation {
-    addSection(id: ID!, title: String!, texts: [String!], number: Int): CreateResponse
-    updateSection(id: ID!, title: String!, texts: [String!], number: Int): UpdateResponse
+    createSection(articleId: ID!, section: SectionInput!): CreateResponse
+    updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
+    deleteSection(sectionId: ID!, userId: ID): UpdateResponse
     bookmarkSection(sectionId: ID!, userId: ID): UpdateResponse
     likeSection(sectionId: ID!, userId: ID): UpdateResponse
 
-    initArticle(userId: ID!): CreateResponse
-    updateArticle(title: String, tags: [ID!], image:String): UpdateResponse
-    deleteArticle(id: ID!): UpdateResponse
-    publishArticle(id: ID!): UpdateResponse
-    draftArticle(id: ID!): UpdateResponse
-    bookmarkArticle(articleId: ID!, userId: ID): UpdateResponse
+    createArticle(userId: ID!, article: ArticleInput): CreateResponse
+    updateArticle(articleId: ID!, userId: ID!, article: ArticleInput): UpdateResponse
+    deleteArticle(articleId: ID!, userId: ID!): UpdateResponse
+    publishArticle(articleId: ID!, userId: ID!): UpdateResponse
+    draftArticle(articleId: ID!, userId: ID!): UpdateResponse
     likeArticle(articleId: ID!, userId: ID): UpdateResponse
+    finishArticle(articleId: ID!, userId: ID): UpdateResponse
 
     createPlanBase(userId: ID!, planBase: PlanBase): CreateResponse
     updatePlanBase(planId: ID!, userId: ID!, planBase: PlanBase!): UpdateResponse
@@ -96,10 +135,13 @@ type Mutation {
     startPlan(planId: ID!, userId: ID!): UpdateResponse
     stopPlan(planId: ID!, userId: ID!): UpdateResponse
 
+    createUser(userInput: UserInput!): CreateResponse
+    updateUser(userInput: UserInput!): UpdateResponse
+    deleteUser(userInput: UserInput!): UpdateResponse
     followUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
     unFollowUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
 
-    followTag(tags: [ID], userId: ID!): UpdateResponse
+    createTag(name: String!): CreateResponse
 }
 
 type CreateResponse {

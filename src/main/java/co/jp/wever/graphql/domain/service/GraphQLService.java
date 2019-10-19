@@ -54,8 +54,8 @@ public class GraphQLService {
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
                             .type("Query",
-                                  typeWiring -> typeWiring.dataFetcher("section",
-                                                                       sectionDataFetcher.sectionDataFetcher())
+                                  typeWiring -> typeWiring.dataFetcher("allSectionOnArticle",
+                                                                       sectionDataFetcher.allSectionsOnArticleDataFetcher())
                                                           .dataFetcher("allLikedSections",
                                                                        sectionDataFetcher.allLikedSectionsDataFetcher())
                                                           .dataFetcher("allBookmarkedSections",
@@ -76,8 +76,6 @@ public class GraphQLService {
                                                                        articleDataFetcher.allLikedArticlesDataFetcher())
                                                           .dataFetcher("allLearnedArticles",
                                                                        articleDataFetcher.allLearnedArticlesDataFetcher())
-                                                          .dataFetcher("allBookmarkedArticles",
-                                                                       articleDataFetcher.allBookmarkedArticlesDataFetcher())
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
                                                           .dataFetcher("relatedArticles",
@@ -98,30 +96,33 @@ public class GraphQLService {
                                                           .dataFetcher("famousPlans",
                                                                        planDataFetchers.famousPlansDataFetcher())
                                                           .dataFetcher("relatedPlans",
-                                                                       planDataFetchers.relatedPlansDataFetcher()))
+                                                                       planDataFetchers.relatedPlansDataFetcher())
+                                                          .dataFetcher("user", userDataFetcher.userDataFetcher()))
                             .type("Mutation",
-                                  typeWiring -> typeWiring.dataFetcher("addSection",
-                                                                       sectionDataFetcher.addSectionDataFetcher())
+                                  typeWiring -> typeWiring.dataFetcher("createSection",
+                                                                       sectionDataFetcher.createSectionDataFetcher())
                                                           .dataFetcher("updateSection",
                                                                        sectionDataFetcher.updateSectionElementDataFetcher())
                                                           .dataFetcher("bookmarkSection",
                                                                        sectionDataFetcher.bookmarkSectionElementDataFetcher())
                                                           .dataFetcher("likeSection",
                                                                        sectionDataFetcher.likeSectionElementDataFetcher())
-                                                          .dataFetcher("initArticle",
-                                                                       articleDataFetcher.initArticleDataFetcher())
+                                                          .dataFetcher("deleteSection",
+                                                                       sectionDataFetcher.deleteSectionElementDataFetcher())
+                                                          .dataFetcher("createArticle",
+                                                                       articleDataFetcher.createArticleDataFetcher())
                                                           .dataFetcher("updateArticle",
-                                                                       articleDataFetcher.updateArticlesElementDataFetcher())
+                                                                       articleDataFetcher.updateArticleDataFetcher())
                                                           .dataFetcher("deleteArticle",
-                                                                       articleDataFetcher.deleteArticlesElementDataFetcher())
+                                                                       articleDataFetcher.deleteArticleDataFetcher())
                                                           .dataFetcher("publishArticle",
-                                                                       articleDataFetcher.publishArticlesElementDataFetcher())
+                                                                       articleDataFetcher.publishArticleDataFetcher())
                                                           .dataFetcher("draftArticle",
-                                                                       articleDataFetcher.draftArticlesElementDataFetcher())
-                                                          .dataFetcher("bookmarkArticle",
-                                                                       articleDataFetcher.bookmarkArticlesElementDataFetcher())
+                                                                       articleDataFetcher.draftArticleDataFetcher())
                                                           .dataFetcher("likeArticle",
-                                                                       articleDataFetcher.likeArticlesElementDataFetcher())
+                                                                       articleDataFetcher.likeArticleDataFetcher())
+                                                          .dataFetcher("finishArticle",
+                                                                       articleDataFetcher.finishArticleDataFetcher())
                                                           .dataFetcher("createPlanBase",
                                                                        planDataFetchers.createPlanBaseDataFetcher())
                                                           .dataFetcher("updatePlanBase",
@@ -140,12 +141,18 @@ public class GraphQLService {
                                                                        planDataFetchers.startPlanDataFetcher())
                                                           .dataFetcher("stopPlan",
                                                                        planDataFetchers.stopPlanDataFetcher())
+                                                          .dataFetcher("createUser",
+                                                                       userDataFetcher.createUserDataFetcher())
+                                                          .dataFetcher("updateUser",
+                                                                       userDataFetcher.updateUserDataFetcher())
+                                                          .dataFetcher("deleteUser",
+                                                                       userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("followUser",
                                                                        userDataFetcher.followUserDataFetcher())
                                                           .dataFetcher("unFollowUser",
                                                                        userDataFetcher.unFollowUserDataFetcher())
-                                                          .dataFetcher("followTag",
-                                                                       tagDataFetcher.followTagDataFetcher()))
+                                                          .dataFetcher("createTag",
+                                                                       tagDataFetcher.createTagDataFetcher()))
                             .build();
     }
 

@@ -6,13 +6,13 @@ import java.util.List;
 
 import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
-import co.jp.wever.graphql.domain.converter.PlanConverter;
+import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
-import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.infrastructure.converter.entity.PlanBaseEntityConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanBaseEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.plan.UpdatePlanRepositoryImpl;
 
@@ -34,9 +34,9 @@ public class UpdatePlanService {
         PlanEntity planEntity = findPlanRepository.findOne(planId);
         Plan plan = PlanConverter.toPlan(planEntity);
 
-        User user = User.of(userId);
 
-        if (!user.isSame(plan.getAuthor())) {
+        UserId updaterId = UserId.of(userId);
+        if (!updaterId.same(plan.getAuthorId())) {
             throw new IllegalAccessException();
         }
 
@@ -51,8 +51,7 @@ public class UpdatePlanService {
         updatePlanRepository.updateBase(planId, planBaseEntity);
     }
 
-    public void updatePlanElements(String planId, String userId, List<PlanElementInput> elements)
-        throws IllegalAccessException {
+    public void updatePlanElements(String planId, String userId, List<PlanElementInput> elements) {
 
         // TODO: 基本的にcreateの方と同じなので、createができたのを使い回す
         // Repositoryの操作だけ違う
@@ -65,8 +64,8 @@ public class UpdatePlanService {
         PlanEntity targetPlanEntity = findPlanRepository.findOne(planId);
         Plan plan = PlanConverter.toPlan(targetPlanEntity);
 
-        User user = User.of(userId);
-        if (!user.isSame(plan.getAuthor())) {
+        UserId publisherId = UserId.of(userId);
+        if (!publisherId.same(plan.getAuthorId())) {
             throw new IllegalAccessException();
         }
 
@@ -80,8 +79,8 @@ public class UpdatePlanService {
         PlanEntity targetPlanEntity = findPlanRepository.findOne(planId);
 
         Plan plan = PlanConverter.toPlan(targetPlanEntity);
-        User user = User.of(userId);
-        if (!user.isSame(plan.getAuthor())) {
+        UserId draftUserId = UserId.of(userId);
+        if (!draftUserId.same(plan.getAuthorId())) {
             throw new IllegalAccessException();
         }
 
@@ -90,11 +89,11 @@ public class UpdatePlanService {
         this.updatePlanRepository.draftOne(planId, userId);
     }
 
-    public void startPlan(String planId, String userId) throws IllegalAccessException {
+    public void startPlan(String planId, String userId) {
         this.updatePlanRepository.startOne(planId, userId);
     }
 
-    public void stopPlan(String planId, String userId) throws IllegalAccessException {
+    public void stopPlan(String planId, String userId) {
         this.updatePlanRepository.stopOne(planId, userId);
     }
 }

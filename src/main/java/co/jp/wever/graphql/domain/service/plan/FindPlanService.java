@@ -5,10 +5,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.domain.converter.PlanConverter;
+import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.infrastructure.datamodel.PlanEntity;
+import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 
 @Service
@@ -24,9 +25,9 @@ public class FindPlanService {
         PlanEntity planEntity = findPlanRepository.findOne(planId);
 
         Plan plan = PlanConverter.toPlan(planEntity);
-        User user = User.of(userId);
+        UserId finderId = UserId.of(userId);
 
-        if (!plan.canReadUser(user)) {
+        if (!plan.readableUser(finderId)) {
             throw new IllegalArgumentException();
         }
 

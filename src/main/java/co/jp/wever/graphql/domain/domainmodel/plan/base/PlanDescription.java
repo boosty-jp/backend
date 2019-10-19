@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.domain.domainmodel.plan.base;
 
 public class PlanDescription {
-    private final static int MIN_WORD_COUNT = 0;
+    private final static int MIN_WORD_COUNT = 1;
     private final static int MAX_WORD_COUNT = 10000;
     private String value;
 

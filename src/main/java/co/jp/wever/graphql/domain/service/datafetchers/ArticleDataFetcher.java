@@ -2,149 +2,169 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
-import co.jp.wever.graphql.infrastructure.datamodel.Article;
+import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
+import co.jp.wever.graphql.domain.service.article.CreateArticleService;
+import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
+import co.jp.wever.graphql.domain.service.article.FindArticleService;
+import co.jp.wever.graphql.domain.service.article.UpdateArticleService;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
-import co.jp.wever.graphql.application.datamodel.response.ErrorResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import graphql.schema.DataFetcher;
 
 @Component
 public class ArticleDataFetcher {
 
+
+    private final FindArticleService findArticleService;
+    private final CreateArticleService createArticleService;
+    private final UpdateArticleService updateArticleService;
+    private final DeleteArticleService deleteArticleService;
+
+    public ArticleDataFetcher(
+        FindArticleService findArticleService,
+        CreateArticleService createArticleService,
+        UpdateArticleService updateArticleService,
+        DeleteArticleService deleteArticleService) {
+        this.findArticleService = findArticleService;
+        this.createArticleService = createArticleService;
+        this.updateArticleService = updateArticleService;
+        this.deleteArticleService = deleteArticleService;
+    }
+
     ///////////////////////////////
     //////////// Query ////////////
     ///////////////////////////////
+
     public DataFetcher articleDataFetcher() {
-        // データ取得
-        // 下書きかどうかチェック
-        // 下書きだった場合は認証チェックする
         return dataFetchingEnvironment -> {
-            String planId = dataFetchingEnvironment.getArgument("planId");
-            //            return this.article.findOne(planId);
-            return Article.builder().id(1L).build();
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findArticleDetail(articleId, userId);
         };
     }
 
     public DataFetcher allArticlesDataFetcher() {
-        // ユーザー認証
-        // データ取得
         return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllArticle(userId);
         };
     }
 
     public DataFetcher allPublishedArticlesDataFetcher() {
-        // データ取得
         return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllPublishedArticle(userId);
         };
     }
 
     public DataFetcher allDraftedArticlesDataFetcher() {
-        // ユーザー認証
-        // データ取得
         return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllDraftedArticle(userId);
         };
     }
 
     public DataFetcher allLikedArticlesDataFetcher() {
-        // データ取得
         return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllLikedArticle(userId);
         };
     }
 
     public DataFetcher allLearnedArticlesDataFetcher() {
-        // 認証
-        // データ取得
         return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
-        };
-    }
-
-    public DataFetcher allBookmarkedArticlesDataFetcher() {
-        // 認証
-        // データ取得
-        return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllLearnedArticle(userId);
         };
     }
 
     public DataFetcher famousArticlesDataFetcher() {
-        // 認証
-        // データ取得
-        return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
-        };
+        return dataFetchingEnvironment -> findArticleService.findFamousArticle();
     }
 
     public DataFetcher relatedArticlesDataFetcher() {
-        // 認証
-        // データ取得
         return dataFetchingEnvironment -> {
-            List<Article> articles = new ArrayList<>();
-            return articles;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findRelatedArticle(userId);
         };
     }
 
     ///////////////////////////////
     ///////// Mutations   /////////
     ///////////////////////////////
-    public DataFetcher initArticleDataFetcher() {
-        // 認証
-        // データ追加
-        return dataFetchingEnvironment -> CreateResponse.builder().id("1").error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher createArticleDataFetcher() {
+
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("articleInput");
+            String articleId =
+                createArticleService.createArticle(userId, ArticleInputConverter.toArticleInput(articleInputMap));
+
+            return CreateResponse.builder().id(articleId).build();
+        };
     }
 
-    public DataFetcher updateArticlesElementDataFetcher() {
-        // 認証
-        // 正しいリクエストデータかバリデーションチェック
-        // データ更新
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher updateArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("articleInput");
+            updateArticleService.updateArticle(articleId,
+                                               userId,
+                                               ArticleInputConverter.toArticleInput(articleInputMap));
+            return UpdateResponse.builder().build();
+        };
     }
 
-    public DataFetcher deleteArticlesElementDataFetcher() {
-        // 認証
-        // データ削除
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher deleteArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            deleteArticleService.deleteArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
     }
 
-    public DataFetcher publishArticlesElementDataFetcher() {
-        // 認証
-        // データ取得
-        // 公開できるかどうかチェック
-        // データ削除
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher publishArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            updateArticleService.publishArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
     }
 
-    public DataFetcher draftArticlesElementDataFetcher() {
-        // 認証
-        // データ取得
-        // 下書きにできるかどうかチェック
-        // データ削除
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher draftArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            updateArticleService.draftArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
     }
 
-    public DataFetcher bookmarkArticlesElementDataFetcher() {
-        // 認証
-        // データ更新
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher likeArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            updateArticleService.likeArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
     }
 
-    public DataFetcher likeArticlesElementDataFetcher() {
-        // 認証
-        // データ更新
-        return dataFetchingEnvironment -> UpdateResponse.builder().error(ErrorResponse.builder().errorCode("code").errorMessage("error").build());
+    public DataFetcher finishArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            updateArticleService.finishArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
     }
 }
