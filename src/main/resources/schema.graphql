@@ -1,28 +1,28 @@
 type Query {
-    allSectionOnArticle(article: ID!): Section!
+    allSectionOnArticle(articleId: ID!): [Section]!
     allLikedSections(userId: ID!): [Section]!
     allBookmarkedSections(userId: ID!): [Section]!
     famousSections: [Section]!
-    relatedSections(userId: ID): [Section]!
+    relatedSections: [Section]!
 
-    article(articleId: ID!, userId: ID!): Article!
-    allArticles(userId: ID!): [Article]!
-    allPublishedArticles(userId: ID!): [Article]!
-    allDraftedArticles(userId: ID!): [Article]!
-    allLikedArticles(userId: ID!): [Article]!
-    allLearnedArticles(userId: ID!): [Article]!
-    famousArticles: [Article]!
-    relatedArticles(userId: ID!): [Article]!
+    article(articleId: ID!): ArticleDetail!
+    allArticles(userId: ID!): [ArticleOutline]!
+    allPublishedArticles(userId: ID!): [ArticleOutline]!
+    allDraftedArticles: [ArticleOutline]!
+    allLikedArticles(userId: ID!): [ArticleOutline]!
+    allLearnedArticles(userId: ID!): [ArticleOutline]!
+    famousArticles: [ArticleOutline]!
+    relatedArticles: [ArticleOutline]!
 
-    plan(planId: ID!, userId: ID!): Plan!
+    plan(planId: ID!): Plan!
     allPlans(userId: ID!): [Plan]!
     allPublishedPlans(userId: ID!): [Plan]!
-    allDraftedPlans(userId: ID!): [Plan]!
+    allDraftedPlans: [Plan]!
     allLikedPlans(userId: ID!): [Plan]!
     allLearningPlans(userId: ID!): [Plan]!
     allLearnedPlans(userId: ID!): [Plan]!
     famousPlans: [Plan]!
-    relatedPlans(userId: ID): [Plan]!
+    relatedPlans: [Plan]!
 
     user(userId: ID!): User
 }
@@ -42,20 +42,58 @@ type Element {
     number: Int!
 }
 
-type Article {
+type ArticleOutline {
+    base: ArticleBase
+    author: User
+    statistics: ArticleStatistics
+}
+
+type ArticleDetail {
+    base: ArticleBase
+    tags: [Tag]
+    author: User
+    statistics: ArticleStatistics
+    action: ArticleAction
+}
+
+type ArticleBase {
     id: ID!
     title: String!
-    price: Int!
-    image: String!
-    deleted: Boolean!
-    publish: Boolean!
+    description: String!
+    imageUrl: String!
+    status: String!
+    createDate: String!
+    updateDate: String!
+}
+
+type ArticleAction{
+    like: Int!
+    learned: Int!
+}
+
+type ArticleStatistics{
+    liked: Boolean!
+    learned: Boolean!
 }
 
 type Section {
     id: ID!
     title: String!
     texts: [String]
-    deleted: Boolean!
+    number: Int!
+    authorId: String!
+    statistics: SectionStatistics
+    action: SectionAction
+}
+
+type SectionStatistics{
+    like: Int!
+    bookmark: Int!
+}
+
+type SectionAction{
+    liked: Boolean!
+    bookmarked: Boolean!
 }
 
 type User{
@@ -69,7 +107,6 @@ type User{
 type Tag{
     id: ID!
     name: String!
-    imageUrl: String!
 }
 
 input SectionInput{
@@ -112,28 +149,28 @@ input UserInput{
 type Mutation {
     createSection(articleId: ID!, section: SectionInput!): CreateResponse
     updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
-    deleteSection(sectionId: ID!, userId: ID): UpdateResponse
-    bookmarkSection(sectionId: ID!, userId: ID): UpdateResponse
-    likeSection(sectionId: ID!, userId: ID): UpdateResponse
+    deleteSection(sectionId: ID! ): UpdateResponse
+    bookmarkSection(sectionId: ID!): UpdateResponse
+    likeSection(sectionId: ID!): UpdateResponse
 
-    createArticle(userId: ID!, article: ArticleInput): CreateResponse
-    updateArticle(articleId: ID!, userId: ID!, article: ArticleInput): UpdateResponse
-    deleteArticle(articleId: ID!, userId: ID!): UpdateResponse
-    publishArticle(articleId: ID!, userId: ID!): UpdateResponse
-    draftArticle(articleId: ID!, userId: ID!): UpdateResponse
-    likeArticle(articleId: ID!, userId: ID): UpdateResponse
-    finishArticle(articleId: ID!, userId: ID): UpdateResponse
+    createArticle(article: ArticleInput): CreateResponse
+    updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    deleteArticle(articleId: ID!): UpdateResponse
+    publishArticle(articleId: ID!): UpdateResponse
+    draftArticle(articleId: ID!): UpdateResponse
+    likeArticle(articleId: ID!): UpdateResponse
+    finishArticle(articleId: ID!): UpdateResponse
 
-    createPlanBase(userId: ID!, planBase: PlanBase): CreateResponse
-    updatePlanBase(planId: ID!, userId: ID!, planBase: PlanBase!): UpdateResponse
-    createPlanElements(planId: ID!, userId: ID!, elements: [PlanElementInput]!): UpdateResponse
-    updatePlanElements(planId: ID!, userId: ID!, elements: [PlanElementInput]!): UpdateResponse
+    createPlanBase(planBase: PlanBase): CreateResponse
+    updatePlanBase(planId: ID!, planBase: PlanBase!): UpdateResponse
+    createPlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
+    updatePlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
 
-    deletePlan(planId: ID!, userId: ID!): UpdateResponse
-    publishPlan(planId: ID!, userId: ID!): UpdateResponse
-    draftPlan(planId: ID!, userId: ID!): UpdateResponse
-    startPlan(planId: ID!, userId: ID!): UpdateResponse
-    stopPlan(planId: ID!, userId: ID!): UpdateResponse
+    deletePlan(planId: ID!): UpdateResponse
+    publishPlan(planId: ID!): UpdateResponse
+    draftPlan(planId: ID!): UpdateResponse
+    startPlan(planId: ID!): UpdateResponse
+    stopPlan(planId: ID!): UpdateResponse
 
     createUser(userInput: UserInput!): CreateResponse
     updateUser(userInput: UserInput!): UpdateResponse

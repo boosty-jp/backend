@@ -11,6 +11,7 @@ public class ArticleOutline {
     private User author;
     private ArticleStatistics statistics;
 
+
     public ArticleOutline(
         ArticleBase articleBase, ArticleStatistics statistics, User user) {
         this.articleBase = articleBase;
@@ -23,5 +24,17 @@ public class ArticleOutline {
             return false;
         }
         return true;
+    }
+
+    public ArticleBase getArticleBase() {
+        return articleBase;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public ArticleStatistics getStatistics() {
+        return statistics;
     }
 }

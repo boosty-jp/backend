@@ -9,7 +9,6 @@ import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleStatisticsEnt
 public class ArticleStatisticsConverter {
     public static ArticleStatistics toArticleStatistics(ArticleStatisticsEntity articleStatisticsEntity) {
         return new ArticleStatistics(ArticleLikeCount.of(articleStatisticsEntity.getLikeCount()),
-                                     ArticleBookmarkedCount.of(articleStatisticsEntity.getBookmarkedCount()),
                                      ArticleLearnedCount.of(articleStatisticsEntity.getLearnedCount()));
     }
 }

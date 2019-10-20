@@ -8,6 +8,5 @@ import lombok.Data;
 @Builder
 public class ArticleStatisticsEntity {
     private int likeCount;
-    private int bookmarkedCount;
     private int learnedCount;
 }

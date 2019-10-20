@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.domain.domainmodel.article.statistics;
 
 public class ArticleLearnedCount {
+
     private int value;
     private final static int MIN_VALUE = 0;
     private final static int MAX_VALUE = 999_999_999;
@@ -19,6 +20,10 @@ public class ArticleLearnedCount {
         }
 
         return new ArticleLearnedCount(value);
+    }
+
+    public int getValue() {
+        return value;
     }
 }
 

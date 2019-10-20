@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.domain.domainmodel.article.statistics;
 
 public class ArticleLikeCount {
+
     private int value;
     private final static int MIN_VALUE = 0;
     private final static int MAX_VALUE = 999_999_999;
@@ -19,5 +20,9 @@ public class ArticleLikeCount {
         }
 
         return new ArticleLikeCount(value);
+    }
+
+    public int getValue() {
+        return value;
     }
 }

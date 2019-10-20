@@ -1,8 +1,7 @@
 package co.jp.wever.graphql.application.converter.plan;
 
-import co.jp.wever.graphql.application.datamodel.response.query.PlanResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanResponse;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
-import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 
 public class PlanResponseConverter {
     public static PlanResponse toPlanResponse(Plan plan) {

@@ -6,7 +6,6 @@ import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleUserActionEnt
 public class ArticleUserActionConverter {
     public static ArticleUserAction toArticleUserAction(ArticleUserActionEntity articleUserActionEntity) {
         return new ArticleUserAction(articleUserActionEntity.isLiked(),
-                                     articleUserActionEntity.isBookmarked(),
                                      articleUserActionEntity.isLearned());
     }
 }

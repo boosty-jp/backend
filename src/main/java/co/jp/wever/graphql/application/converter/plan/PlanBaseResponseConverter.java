@@ -1,6 +1,6 @@
 package co.jp.wever.graphql.application.converter.plan;
 
-import co.jp.wever.graphql.application.datamodel.response.query.PlanBaseResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanBaseResponse;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 
 public class PlanBaseResponseConverter {
