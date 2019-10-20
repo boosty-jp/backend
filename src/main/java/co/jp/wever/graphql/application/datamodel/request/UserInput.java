@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 @Builder
 public class UserInput {
-    private String userId;
     private String displayName;
     private String description;
     private String imageUrl;

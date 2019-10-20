@@ -12,6 +12,7 @@ import co.jp.wever.graphql.application.converter.plan.PlanResponseConverter;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
+import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import co.jp.wever.graphql.domain.service.plan.CreatePlanService;
 import co.jp.wever.graphql.domain.service.plan.DeletePlanService;
 import co.jp.wever.graphql.domain.service.plan.FindPlanService;
@@ -21,16 +22,19 @@ import graphql.schema.DataFetcher;
 @Component
 public class PlanDataFetchers {
 
+    private final TokenVerifier tokenVerifier;
     private final FindPlanService findPlanService;
     private final UpdatePlanService updatePlanService;
     private final DeletePlanService deletePlanService;
     private final CreatePlanService createPlanService;
 
     PlanDataFetchers(
+        TokenVerifier tokenVerifier,
         FindPlanService findPlanService,
         UpdatePlanService updatePlanService,
         DeletePlanService deletePlanService,
         CreatePlanService createPlanService) {
+        this.tokenVerifier = tokenVerifier;
         this.findPlanService = findPlanService;
         this.updatePlanService = updatePlanService;
         this.deletePlanService = deletePlanService;
@@ -39,8 +43,10 @@ public class PlanDataFetchers {
 
     public DataFetcher planDataFetcher() {
         return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
-            String userId = dataFetchingEnvironment.getArgument("userId");
             return PlanResponseConverter.toPlanResponse(this.findPlanService.findPlan(planId, userId));
         };
     }
@@ -67,7 +73,8 @@ public class PlanDataFetchers {
 
     public DataFetcher allDraftedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             return this.findPlanService.findAllDraftedPlan(userId)
                                        .stream()
                                        .map(p -> PlanResponseConverter.toPlanResponse(p))
@@ -132,7 +139,9 @@ public class PlanDataFetchers {
     ///////////////////////////////
     public DataFetcher createPlanBaseDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             Map<String, Object> planBaseMap = (Map) dataFetchingEnvironment.getArgument("planBase");
 
             String createId =
@@ -143,7 +152,10 @@ public class PlanDataFetchers {
 
     public DataFetcher updatePlanBaseDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
             Map<String, Object> planBaseMap = (Map) dataFetchingEnvironment.getArgument("planBase");
 
@@ -154,7 +166,10 @@ public class PlanDataFetchers {
 
     public DataFetcher createPlanElementsDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
             List<Map<String, Object>> elementMaps =
                 (List<Map<String, Object>>) dataFetchingEnvironment.getArgument("elements");
@@ -170,8 +185,12 @@ public class PlanDataFetchers {
     // TODO: あとでやる
     public DataFetcher updatePlanElementsDataFetcher() {
         return dataFetchingEnvironment -> {
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
             List<Map<String, Object>> elementMaps =
                 (List<Map<String, Object>>) dataFetchingEnvironment.getArgument("elements");
 
@@ -186,7 +205,9 @@ public class PlanDataFetchers {
     public DataFetcher deletePlanDataFetcher() {
 
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             deletePlanService.deletePlan(planId, userId);
@@ -196,7 +217,10 @@ public class PlanDataFetchers {
 
     public DataFetcher publishPlanDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             updatePlanService.publishPlan(planId, userId);
@@ -206,7 +230,10 @@ public class PlanDataFetchers {
 
     public DataFetcher draftPlanDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             updatePlanService.draftPlan(planId, userId);
@@ -216,7 +243,10 @@ public class PlanDataFetchers {
 
     public DataFetcher startPlanDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             updatePlanService.startPlan(planId, userId);
@@ -226,7 +256,10 @@ public class PlanDataFetchers {
 
     public DataFetcher stopPlanDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             updatePlanService.stopPlan(planId, userId);

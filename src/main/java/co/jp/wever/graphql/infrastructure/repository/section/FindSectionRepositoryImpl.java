@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
-import co.jp.wever.graphql.infrastructure.datamodel.SectionEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 
 @Component
 public class FindSectionRepositoryImpl implements FindSectionRepository {

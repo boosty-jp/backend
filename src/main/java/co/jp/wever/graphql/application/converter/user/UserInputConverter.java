@@ -13,7 +13,6 @@ public class UserInputConverter {
             List<Map<String, Object>> tagsInputMap = (List<Map<String, Object>>) input.get("tags");
 
             return UserInput.builder()
-                            .userId(input.get("userId").toString())
                             .displayName(input.get("displayName").toString())
                             .description(input.get("description").toString())
                             .imageUrl(input.get("imageUrl").toString())

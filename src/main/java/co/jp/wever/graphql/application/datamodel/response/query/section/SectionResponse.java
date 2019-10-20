@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.infrastructure.datamodel;
+package co.jp.wever.graphql.application.datamodel.response.query.section;
 
 import java.util.List;
 
@@ -7,11 +7,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SectionEntity {
+public class SectionResponse {
     private String id;
     private String title;
     private int number;
     private List<String> texts;
-    private Boolean deleted;
-    private String authorId;
+    private SectionStatisticsResponse statistics;
 }

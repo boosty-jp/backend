@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import co.jp.wever.graphql.infrastructure.datamodel.SectionEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 
 
 @Repository

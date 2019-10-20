@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.jp.wever.graphql.domain.service.GraphQLService;
+import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 
 @RequestMapping("/")
@@ -20,10 +21,14 @@ public class ApplicationController {
     GraphQLService graphQLService;
 
     @PostMapping
-    public ResponseEntity<Object> getPlans(@RequestHeader(value = "AuthorizationToken", required = false) String token, @RequestBody String query) {
+        public ResponseEntity<Object> getPlans(@RequestHeader(value = "AuthorizationToken", required = false) String token, @RequestBody String query) {
 
-        System.out.println("token:" + token);
-        ExecutionResult execute = graphQLService.getGraphQL().execute(query);
+        ExecutionInput executionInput = ExecutionInput.newExecutionInput()
+                                                      .query(query)
+                                                      .context(token)
+                                                      .build();
+
+        ExecutionResult execute = graphQLService.getGraphQL().execute(executionInput);
 
         return new ResponseEntity<>(execute, HttpStatus.OK);
     }
