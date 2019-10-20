@@ -101,6 +101,7 @@ type User{
     displayName: String!
     imageUrl: String!
     description: String!
+    url: String!
     tags: [String]!
 }
 
@@ -138,7 +139,6 @@ input PlanElementInput{
 
 input UserInput{
     displayName: String!
-    userId: String!
     description: String
     imageUrl: String
     url: String
@@ -172,11 +172,11 @@ type Mutation {
     startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse
 
-    createUser(userInput: UserInput!): CreateResponse
-    updateUser(userInput: UserInput!): UpdateResponse
-    deleteUser(userInput: UserInput!): UpdateResponse
-    followUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
-    unFollowUser(targetUserId: ID!, followerUserId: ID): UpdateResponse
+    createUser(user: UserInput!): CreateResponse
+    updateUser(user: UserInput!): UpdateResponse
+    deleteUser: UpdateResponse
+    followUser(userId: ID!): UpdateResponse
+    unFollowUser(userId: ID!): UpdateResponse
 
     createTag(name: String!): CreateResponse
 }

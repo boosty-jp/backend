@@ -17,8 +17,8 @@ public class CreateUserService {
         this.createUserRepository = createUserRepository;
     }
 
-    public String createUser(UserInput userInput) {
-        User user = UserConverter.toUser(userInput);
+    public String createUser(UserInput userInput, String userId) {
+        User user = UserConverter.toUser(userInput, userId);
         return createUserRepository.createOne(UserEntityConverter.toUserEntity(user));
     }
 }
