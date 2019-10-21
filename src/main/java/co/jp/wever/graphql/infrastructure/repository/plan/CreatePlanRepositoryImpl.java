@@ -12,9 +12,9 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementE
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.PlanToPlanElementProperty;
-import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexType;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
+import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
-import co.jp.wever.graphql.infrastructure.constant.vertex.property.VertexCommonProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementEntity;
 
@@ -29,8 +29,7 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
     @Override
     public String createBase(String userId, PlanBaseEntity planBaseEntity) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        String planId = g.addV()
-                         .property(VertexCommonProperty.Type.name(), VertexType.PLAN.name())
+        String planId = g.addV(VertexLabel.PLAN.name())
                          .property(PlanVertexProperty.TITLE.name(), planBaseEntity.getTitle())
                          .property(PlanVertexProperty.DESCRIPTION.name(), planBaseEntity.getDescription())
                          .property(PlanVertexProperty.IMAGE_URL.name(), planBaseEntity.getImageUrl())
@@ -39,7 +38,16 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
                          .toString();
 
         g.V(planBaseEntity.getTagIds()).addE(PlanToTagEdge.RELATED.name()).from(g.V(planId)).next();
-        g.V(userId).addE(UserToPlanEdge.DRAFT.name()).to(g.V(planId)).property("drafted", "today").next();
+
+        long now = System.currentTimeMillis() / 1000L;
+
+        g.V(userId)
+         .addE(UserToPlanEdge.DRAFT.name())
+         .to(g.V(planId))
+         .property(UserToPlanProperty.DRAFTED.name(), now)
+         .next();
+
+        //TODO: Algoliaにデータ追加する
 
         return planId;
     }

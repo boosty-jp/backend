@@ -1,7 +1,5 @@
 package co.jp.wever.graphql.domain.domainmodel.article.base;
 
-import co.jp.wever.graphql.domain.domainmodel.user.User;
-
 public class ArticleBase {
     private ArticleId id;
     private Articletitle title;

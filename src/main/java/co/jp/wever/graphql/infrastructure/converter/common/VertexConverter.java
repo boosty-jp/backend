@@ -29,6 +29,15 @@ public class VertexConverter {
         return ((List<Object>) target.get(key)).get(0).toString();
     }
 
+    public static long toLong(String key, Map<Object, Object> target) {
+        try {
+            return Long.parseLong(toString(key, target));
+        } catch (NumberFormatException e) {
+            //TODO: ログ
+            return 0;
+        }
+    }
+
     public static int toInt(String key, Map<Object, Object> target) {
         try {
             return Integer.parseInt(toString(key, target));
@@ -42,9 +51,9 @@ public class VertexConverter {
         try {
 
             Set<Object> keys = target.keySet();
-            for(Object key: keys){
-                if(key.toString().equals("id")){
-                    return(target.get(key).toString());
+            for (Object key : keys) {
+                if (key.toString().equals("id")) {
+                    return (target.get(key).toString());
                 }
             }
             // TODO: Exception発生させる

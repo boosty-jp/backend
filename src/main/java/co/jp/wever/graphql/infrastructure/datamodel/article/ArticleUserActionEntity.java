@@ -7,6 +7,5 @@ import lombok.Data;
 @Builder
 public class ArticleUserActionEntity {
     private boolean liked;
-    private boolean bookmarked;
     private boolean learned;
 }

@@ -33,10 +33,10 @@ public class UpdateArticleService {
             throw new IllegalAccessException();
         }
 
-        updateArticleRepository.updateOne(userId,
-                                          ArticleBaseEntityConverter.toArticleBaseEntity(articleId,
+        updateArticleRepository.updateOne(ArticleBaseEntityConverter.toArticleBaseEntity(articleId,
                                                                                          ArticleBaseConverter.toArticleBase(
-                                                                                             articleInput)));
+                                                                                             articleInput)),
+                                          articleInput.getTags());
     }
 
     public void publishArticle(String articleId, String userId) throws IllegalAccessException {

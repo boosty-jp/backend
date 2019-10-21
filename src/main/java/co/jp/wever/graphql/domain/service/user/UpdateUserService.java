@@ -18,8 +18,8 @@ public class UpdateUserService {
         this.updateUserRepository = updateUserRepository;
     }
 
-    public void updateUser(UserInput userInput) {
-        User user = UserConverter.toUser(userInput);
+    public void updateUser(UserInput userInput, String userId) {
+        User user = UserConverter.toUser(userInput, userId);
 
         this.updateUserRepository.updateOne(UserEntityConverter.toUserEntity(user));
     }

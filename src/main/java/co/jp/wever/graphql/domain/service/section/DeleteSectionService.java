@@ -2,9 +2,11 @@ package co.jp.wever.graphql.domain.service.section;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
-import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.repository.section.DeleteSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
@@ -20,13 +22,22 @@ public class DeleteSectionService {
         this.deleteSectionRepository = deleteSectionRepository;
     }
 
-    public void deleteSection(String sectionId, String userId) throws IllegalAccessException {
+    public void deleteSection(String articleId, String sectionId, String userId) throws IllegalAccessException {
         Section section = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
 
         if (!section.canDelete(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 
-        deleteSectionRepository.deleteOne(sectionId, userId);
+        List<Section> sections = findSectionRepository.findAllOnArticle(articleId)
+                                                      .stream()
+                                                      .map(s -> SectionConverter.toSection(s))
+                                                      .collect(Collectors.toList());
+        List<String> decrementIds = sections.stream()
+                                            .filter(s -> s.getNumber() > section.getNumber())
+                                            .map(s -> s.getId().getValue())
+                                            .collect(Collectors.toList());
+
+        deleteSectionRepository.deleteOne(sectionId, userId, decrementIds);
     }
 }

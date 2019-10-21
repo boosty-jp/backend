@@ -23,8 +23,8 @@ public class UserConverter {
                         user.getTags().stream().map(t -> TagConverter.toTag(t)).collect(Collectors.toList()));
     }
 
-    public static User toUser(UserInput userInput) {
-        return new User(UserId.of(userInput.getUserId()),
+    public static User toUser(UserInput userInput, String userId) {
+        return new User(UserId.of(userId),
                         UserDisplayName.of(userInput.getDisplayName()),
                         UserDescription.of(userInput.getDescription()),
                         UserImageUrl.of(userInput.getImageUrl()),

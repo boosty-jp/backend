@@ -70,4 +70,24 @@ public class ArticleDetail {
 
         return !base.getStatus().name().equals(ArticleStatus.DRAFTED.name());
     }
+
+    public ArticleBase getBase() {
+        return base;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public ArticleStatistics getStatistics() {
+        return statistics;
+    }
+
+    public ArticleUserAction getUserAction() {
+        return userAction;
+    }
 }

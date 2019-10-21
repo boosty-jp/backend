@@ -103,8 +103,6 @@ public class GraphQLService {
                                                                        sectionDataFetcher.createSectionDataFetcher())
                                                           .dataFetcher("updateSection",
                                                                        sectionDataFetcher.updateSectionElementDataFetcher())
-                                                          .dataFetcher("bookmarkSection",
-                                                                       sectionDataFetcher.bookmarkSectionElementDataFetcher())
                                                           .dataFetcher("likeSection",
                                                                        sectionDataFetcher.likeSectionElementDataFetcher())
                                                           .dataFetcher("deleteSection",

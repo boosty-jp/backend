@@ -6,5 +6,5 @@ import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 
 @Repository
 public interface DeletePlanRepository {
-    PlanEntity deleteOne(String planId, String userId);
+    void deleteOne(String planId, String userId);
 }

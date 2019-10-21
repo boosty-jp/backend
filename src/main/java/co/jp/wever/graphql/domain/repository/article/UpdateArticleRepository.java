@@ -2,11 +2,13 @@ package co.jp.wever.graphql.domain.repository.article;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 @Repository
 public interface UpdateArticleRepository {
-    void updateOne(String userId, ArticleBaseEntity base);
+    void updateOne(ArticleBaseEntity base, List<String> tagIds);
 
     void publishOne(String articleId, String userId);
 

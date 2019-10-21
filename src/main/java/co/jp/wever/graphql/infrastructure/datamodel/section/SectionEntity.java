@@ -1,6 +1,4 @@
-package co.jp.wever.graphql.infrastructure.datamodel;
-
-import java.util.List;
+package co.jp.wever.graphql.infrastructure.datamodel.section;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +9,8 @@ public class SectionEntity {
     private String id;
     private String title;
     private int number;
-    private List<String> texts;
+    private String text;
     private Boolean deleted;
     private String authorId;
+    private SectionStatisticEntity statisticEntity;
 }

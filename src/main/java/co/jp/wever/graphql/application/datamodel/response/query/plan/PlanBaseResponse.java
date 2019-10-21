@@ -1,7 +1,9 @@
-package co.jp.wever.graphql.application.datamodel.response.query;
+package co.jp.wever.graphql.application.datamodel.response.query.plan;
 
 import java.util.List;
 
+import co.jp.wever.graphql.application.datamodel.response.query.TagResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.UserResponse;
 import lombok.Builder;
 import lombok.Data;
 
