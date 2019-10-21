@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ArticleStatisticsResponse {
-    private int like;
-    private int learned;
+    private long like;
+    private long learned;
 }

@@ -2,15 +2,15 @@ package co.jp.wever.graphql.domain.domainmodel.article.statistics;
 
 public class ArticleLikeCount {
 
-    private int value;
-    private final static int MIN_VALUE = 0;
-    private final static int MAX_VALUE = 999_999_999;
+    private long value;
+    private final static long MIN_VALUE = 0;
+    private final static long MAX_VALUE = 999_999_999;
 
-    private ArticleLikeCount(int value) {
+    private ArticleLikeCount(long value) {
         this.value = value;
     }
 
-    public static ArticleLikeCount of(int value) {
+    public static ArticleLikeCount of(long value) {
         if (value < MIN_VALUE) {
             throw new IllegalArgumentException();
         }
@@ -22,7 +22,7 @@ public class ArticleLikeCount {
         return new ArticleLikeCount(value);
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 }

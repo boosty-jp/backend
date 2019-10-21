@@ -3,10 +3,12 @@ package co.jp.wever.graphql.domain.service.plan;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
 import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
+import co.jp.wever.graphql.domain.converter.plan.PlanElementConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
@@ -56,7 +58,7 @@ public class UpdatePlanService {
         // TODO: 基本的にcreateの方と同じなので、createができたのを使い回す
         // Repositoryの操作だけ違う
         // すでに作成したプランの連携を切らなければならない。
-        updatePlanRepository.updateElements(planId, userId, null);
+        updatePlanRepository.updateElements(planId, null);
     }
 
     public void publishPlan(String planId, String userId) throws IllegalAccessException {
@@ -84,12 +86,13 @@ public class UpdatePlanService {
             throw new IllegalAccessException();
         }
 
-        // 下書き化できるかチェック
+        // TODO:下書き化できるかチェック
         // 対象のユーザーのプランかどうか
         this.updatePlanRepository.draftOne(planId, userId);
     }
 
     public void startPlan(String planId, String userId) {
+        //TODO:すでに終わっていないかプランじゃないかチェックする
         this.updatePlanRepository.startOne(planId, userId);
     }
 

@@ -19,7 +19,8 @@ public class ArticleBaseConverter {
                                ArticleDescription.of(articleBaseEntity.getDescription()),
                                ArticleImageUrl.of(articleBaseEntity.getImageUrl()),
                                ArticleStatus.valueOf(articleBaseEntity.getStatus()),
-                               ArticleDate.of(articleBaseEntity.getCreatedDate(), articleBaseEntity.getUpdatedDate()));
+                               ArticleDate.of(new Date(articleBaseEntity.getCreatedDate()),
+                                              new Date(articleBaseEntity.getUpdatedDate())));
     }
 
     public static ArticleBase toArticleBase(ArticleInput articleInput) {

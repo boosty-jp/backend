@@ -7,6 +7,7 @@ import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.UpdateSectionRepositoryImpl;
 
@@ -31,11 +32,7 @@ public class UpdateSectionService {
             throw new IllegalAccessException();
         }
 
-        updateSectionRepository.updateOne(sectionId);
-    }
-
-    public void bookmarkSection(String sectionId, String userId) {
-        updateSectionRepository.bookmarkOne(sectionId, userId);
+        updateSectionRepository.updateOne(SectionEntityConverter.toSectionEntity(updateSection));
     }
 
     public void likeSection(String sectionId, String userId) {

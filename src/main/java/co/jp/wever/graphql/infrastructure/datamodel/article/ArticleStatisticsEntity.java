@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ArticleStatisticsEntity {
-    private int likeCount;
-    private int learnedCount;
+    private long likeCount;
+    private long learnedCount;
 }

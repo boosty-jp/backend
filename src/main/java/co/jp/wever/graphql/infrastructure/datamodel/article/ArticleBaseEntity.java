@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.infrastructure.datamodel.article;
 
-import java.util.Date;
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +12,6 @@ public class ArticleBaseEntity {
     private String description;
     private String imageUrl;
     private String status;
-    private Date createdDate;
-    private Date updatedDate;
+    private long createdDate;
+    private long updatedDate;
 }

@@ -79,7 +79,7 @@ type ArticleStatistics{
 type Section {
     id: ID!
     title: String!
-    texts: [String]
+    text: String!
     number: Int!
     authorId: String!
     statistics: SectionStatistics
@@ -112,7 +112,7 @@ type Tag{
 
 input SectionInput{
     title: String!
-    texts: [String!]
+    text: String!
     number: Int
 }
 
@@ -149,8 +149,7 @@ input UserInput{
 type Mutation {
     createSection(articleId: ID!, section: SectionInput!): CreateResponse
     updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
-    deleteSection(sectionId: ID! ): UpdateResponse
-    bookmarkSection(sectionId: ID!): UpdateResponse
+    deleteSection(articleId: ID!,sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
 
     createArticle(article: ArticleInput): CreateResponse
@@ -171,6 +170,7 @@ type Mutation {
     draftPlan(planId: ID!): UpdateResponse
     startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse
+    finishPlan(planId: ID!): UpdateResponse
 
     createUser(user: UserInput!): CreateResponse
     updateUser(user: UserInput!): UpdateResponse
