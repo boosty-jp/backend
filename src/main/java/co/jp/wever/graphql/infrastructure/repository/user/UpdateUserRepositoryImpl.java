@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.infrastructure.repository.user;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.property.UserVertexPro
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
+import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
 @Component
 public class UpdateUserRepositoryImpl implements UpdateUserRepository {
@@ -31,11 +33,16 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
 
         long now = System.currentTimeMillis() / 1000L;
 
-        // サインアップ時にユーザー作成に失敗する可能性もあるので、アップサート文にする
+        // サインアップ時にユーザー作成に失敗する可能性もあるので、アップサートにする
         g.V()
          .has(VertexLabel.USER.name(), "id", userEntity.getUserId())
          .fold()
-         .coalesce(unfold(), g.V().addV(VertexLabel.USER.name()).property("id", userEntity.getUserId()))
+         .coalesce(unfold().V(userEntity.getUserId())
+                           .property(single, UserVertexProperty.DISPLAY_NAME.name(), userEntity.getDisplayName())
+                           .property(single, UserVertexProperty.URL.name(), userEntity.getUrl())
+                           .property(single, UserVertexProperty.IMAGE_URL.name(), userEntity.getImageUrl())
+                           .property(single, UserVertexProperty.UPDATE_DATE.name(), now),
+                   g.V().addV(VertexLabel.USER.getString()).property("id", userEntity.getUserId()))
          .property(UserVertexProperty.DISPLAY_NAME.name(), userEntity.getDisplayName())
          .property(UserVertexProperty.DESCRIPTION.name(), userEntity.getDescription())
          .property(UserVertexProperty.URL.name(), userEntity.getUrl())
@@ -45,8 +52,8 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
 
         List<String> tagIds = userEntity.getTags().stream().map(t -> t.getTagId()).collect(Collectors.toList());
 
-        g.V(tagIds).addE(UserToTagEdge.RELATED.name()).from(userEntity.getUserId()).next();
-
+        g.V(userEntity.getUserId()).outE(UserToTagEdge.RELATED.name()).drop().iterate();
+        g.V(tagIds).addE(UserToTagEdge.RELATED.name()).from(g.V(userEntity.getUserId())).next();
 
         //TODO: Algoliaにデータ追加する
     }

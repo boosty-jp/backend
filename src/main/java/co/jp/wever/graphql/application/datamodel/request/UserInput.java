@@ -12,5 +12,5 @@ public class UserInput {
     private String description;
     private String imageUrl;
     private String url;
-    private List<TagInput> tags;
+    private List<String> tags;
 }

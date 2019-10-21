@@ -3,6 +3,7 @@ package co.jp.wever.graphql.domain.domainmodel.user;
 import java.util.List;
 
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
+import co.jp.wever.graphql.domain.domainmodel.tag.TagId;
 
 public class User {
 

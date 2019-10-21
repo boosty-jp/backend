@@ -8,4 +8,8 @@ public enum UserToSectionEdge {
     private UserToSectionEdge(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

@@ -8,4 +8,8 @@ public enum UserToPlanEdge {
     private UserToPlanEdge(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

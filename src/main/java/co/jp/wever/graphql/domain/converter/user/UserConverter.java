@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.UserInput;
 import co.jp.wever.graphql.domain.converter.tag.TagConverter;
+import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserDescription;
 import co.jp.wever.graphql.domain.domainmodel.user.UserDisplayName;
@@ -29,6 +30,6 @@ public class UserConverter {
                         UserDescription.of(userInput.getDescription()),
                         UserImageUrl.of(userInput.getImageUrl()),
                         UserUrl.of(userInput.getUrl()),
-                        userInput.getTags().stream().map(t -> TagConverter.toTag(t)).collect(Collectors.toList()));
+                        userInput.getTags().stream().map(t -> Tag.of(t)).collect(Collectors.toList()));
     }
 }

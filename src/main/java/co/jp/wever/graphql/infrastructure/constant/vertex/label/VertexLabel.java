@@ -9,4 +9,8 @@ public enum VertexLabel {
     private VertexLabel(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

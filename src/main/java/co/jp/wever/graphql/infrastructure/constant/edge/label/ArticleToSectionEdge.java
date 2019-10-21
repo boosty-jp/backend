@@ -8,4 +8,8 @@ public enum ArticleToSectionEdge {
     private ArticleToSectionEdge(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

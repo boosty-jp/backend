@@ -53,7 +53,7 @@ public class UserDataFetcher {
     ///////////////////////////////
     public DataFetcher createUserDataFetcher() {
         return dataFetchingEnvironment -> {
-            Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("userInput");
+            Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("user");
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
 
@@ -65,7 +65,7 @@ public class UserDataFetcher {
     public DataFetcher updateUserDataFetcher() {
         //TODO: 操作者と更新対象のユーザーが同じかチェック
         return dataFetchingEnvironment -> {
-            Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("userInput");
+            Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("user");
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
 
