@@ -24,8 +24,15 @@ public class ArticleDate {
         return createDate;
     }
 
+    public long getUnixCreateDate() {
+        return createDate.getTime();
+    }
+
     public Date getUpdateDate() {
         return updateDate;
     }
 
+    public long getUnixUpdateDate() {
+        return updateDate.getTime();
+    }
 }

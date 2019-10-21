@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.domain.converter.article;
 
-import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleBookmarkedCount;
 import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleLearnedCount;
 import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleLikeCount;
 import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleStatistics;

@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.application.converter.section;
 
-import java.util.List;
 import java.util.Map;
 
 import co.jp.wever.graphql.application.datamodel.request.SectionInput;
@@ -10,7 +9,7 @@ public class SectionInputConverter {
         try {
             return SectionInput.builder()
                                .title(input.get("title").toString())
-                               .texts((List<String>) input.get("texts"))
+                               .text(input.get("text").toString())
                                .number((int) input.get("number"))
                                .build();
         } catch (Exception e) {

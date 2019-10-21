@@ -12,7 +12,7 @@ public interface UpdatePlanRepository {
 
     void updateBase(String planId, PlanBaseEntity planBaseEntity);
 
-    void updateElements(String planId, String userId, List<PlanElementEntity> planElementEntities);
+    void updateElements(String planId, List<PlanElementEntity> planElementEntities);
 
     void publishOne(String planId, String userId);
 
@@ -21,4 +21,6 @@ public interface UpdatePlanRepository {
     void startOne(String planId, String userId);
 
     void stopOne(String planId, String userId);
+
+    void finishOne(String planId, String userId);
 }

@@ -91,9 +91,11 @@ public class SectionDataFetcher {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
             Map<String, Object> sectionInputMap = (Map) dataFetchingEnvironment.getArgument("section");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
 
-            String createId =
-                createSectionService.createSection(userId, SectionInputConverter.toSectionInput(sectionInputMap));
+            String createId = createSectionService.createSection(userId,
+                                                                 articleId,
+                                                                 SectionInputConverter.toSectionInput(sectionInputMap));
             return CreateResponse.builder().id(createId).build();
         };
     }
@@ -109,18 +111,6 @@ public class SectionDataFetcher {
             updateSectionService.updateSection(sectionId,
                                                SectionInputConverter.toSectionInput(sectionInputMap),
                                                userId);
-
-            return UpdateResponse.builder().build();
-        };
-    }
-
-    public DataFetcher bookmarkSectionElementDataFetcher() {
-        return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            String sectionId = dataFetchingEnvironment.getArgument("sectionId");
-
-            updateSectionService.bookmarkSection(sectionId, userId);
 
             return UpdateResponse.builder().build();
         };
@@ -143,8 +133,9 @@ public class SectionDataFetcher {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
             String sectionId = dataFetchingEnvironment.getArgument("sectionId");
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
 
-            deleteSectionService.deleteSection(sectionId, userId);
+            deleteSectionService.deleteSection(articleId, sectionId, userId);
 
             return UpdateResponse.builder().build();
         };

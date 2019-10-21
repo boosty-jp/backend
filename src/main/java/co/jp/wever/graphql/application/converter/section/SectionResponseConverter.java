@@ -8,7 +8,7 @@ public class SectionResponseConverter {
         return SectionResponse.builder()
                               .id(section.getId().getValue())
                               .title(section.getTitle())
-                              .texts(section.getTexts())
+                              .text(section.getText())
                               .number(section.getNumber())
                               .statistics(SectionStatisticResponseConverter.toSectionStatisticsResponse(section.getStatistic()))
                               .build();

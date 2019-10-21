@@ -7,7 +7,7 @@ public class SectionEntityConverter {
     public static SectionEntity toSectionEntity(Section section) {
         return SectionEntity.builder()
                             .title(section.getTitle())
-                            .texts(section.getTexts())
+                            .text(section.getText())
                             .number(section.getNumber())
                             .build();
     }

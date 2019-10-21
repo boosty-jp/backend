@@ -9,6 +9,6 @@ import lombok.Data;
 @Builder
 public class SectionInput {
     private String title;
-    private List<String> texts;
+    private String text;
     private int number;
 }
