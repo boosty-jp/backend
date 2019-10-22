@@ -5,26 +5,25 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleOutlineEntity;
 
 @Repository
 public interface FindArticleRepository {
     ArticleDetailEntity findOne(String articleId);
 
-    List<ArticleOutlineEntity> findAll(String userId);
+    List<ArticleDetailEntity> findAll(String userId);
 
-    List<ArticleOutlineEntity> findAllPublished(String userId);
+    List<ArticleDetailEntity> findAllPublished(String userId);
 
-    List<ArticleOutlineEntity> findAllDrafted(String userId);
+    List<ArticleDetailEntity> findAllDrafted(String userId);
 
-    List<ArticleOutlineEntity> findAllLiked(String userId);
+    List<ArticleDetailEntity> findAllLiked(String userId);
 
-    List<ArticleOutlineEntity> findAllLearned(String userId);
+    List<ArticleDetailEntity> findAllLearned(String userId);
 
-    List<ArticleOutlineEntity> findAllBookmarked(String userId);
+    List<ArticleDetailEntity> findAllBookmarked(String userId);
 
-    List<ArticleOutlineEntity> findFamous();
+    List<ArticleDetailEntity> findFamous();
 
-    List<ArticleOutlineEntity> findRelated(String userId);
+    List<ArticleDetailEntity> findRelated(String userId);
 
 }

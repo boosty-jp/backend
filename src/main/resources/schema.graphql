@@ -6,16 +6,16 @@ type Query {
     relatedSections: [Section]!
 
     article(articleId: ID!): ArticleDetail!
-    allArticles(userId: ID!): [ArticleOutline]!
-    allPublishedArticles(userId: ID!): [ArticleOutline]!
-    allDraftedArticles: [ArticleOutline]!
-    allLikedArticles(userId: ID!): [ArticleOutline]!
-    allLearnedArticles(userId: ID!): [ArticleOutline]!
-    famousArticles: [ArticleOutline]!
-    relatedArticles: [ArticleOutline]!
+#    allArticles(userId: ID!): [ArticleDetail]!
+    allPublishedArticles(userId: ID!): [ArticleDetail]!
+    allDraftedArticles: [ArticleDetail]!
+    allLikedArticles(userId: ID!): [ArticleDetail]!
+    allLearnedArticles(userId: ID!): [ArticleDetail]!
+    famousArticles: [ArticleDetail]!
+    relatedArticles: [ArticleDetail]!
 
     plan(planId: ID!): Plan!
-    allPlans(userId: ID!): [Plan]!
+#    allPlans(userId: ID!): [Plan]!
     allPublishedPlans(userId: ID!): [Plan]!
     allDraftedPlans: [Plan]!
     allLikedPlans(userId: ID!): [Plan]!
@@ -40,12 +40,6 @@ type Element {
     title: String
     type: String!
     number: Int!
-}
-
-type ArticleOutline {
-    base: ArticleBase
-    author: User
-    statistics: ArticleStatistics
 }
 
 type ArticleDetail {

@@ -25,7 +25,6 @@ public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
          .drop()
          .iterate();
 
-
         // 論理削除
         long now = System.currentTimeMillis() / 1000L;
         g.V(userId)

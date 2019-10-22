@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.article.ArticleDetailResponseConverter;
 import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
-import co.jp.wever.graphql.application.converter.article.ArticleOutlineResponseConverter;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
 import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
@@ -61,7 +60,7 @@ public class ArticleDataFetcher {
             String userId = tokenVerifier.getUserId(token);
             return findArticleService.findAllArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -71,7 +70,7 @@ public class ArticleDataFetcher {
             String userId = dataFetchingEnvironment.getArgument("userId");
             return findArticleService.findAllPublishedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -82,7 +81,7 @@ public class ArticleDataFetcher {
             String userId = tokenVerifier.getUserId(token);
             return findArticleService.findAllDraftedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -92,7 +91,7 @@ public class ArticleDataFetcher {
             String userId = dataFetchingEnvironment.getArgument("userId");
             return findArticleService.findAllLikedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -103,7 +102,7 @@ public class ArticleDataFetcher {
             String userId = dataFetchingEnvironment.getArgument("userId");
             return findArticleService.findAllLearnedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }

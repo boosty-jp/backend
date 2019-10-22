@@ -10,10 +10,7 @@ import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticleProperty;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
-import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
