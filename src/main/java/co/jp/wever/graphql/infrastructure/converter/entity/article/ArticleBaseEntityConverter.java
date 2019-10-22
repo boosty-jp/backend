@@ -3,7 +3,9 @@ package co.jp.wever.graphql.infrastructure.converter.entity.article;
 import java.util.Map;
 
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.Article;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 public class ArticleBaseEntityConverter {
@@ -12,7 +14,7 @@ public class ArticleBaseEntityConverter {
                                 .title(articleBase.getTitle())
                                 .description(articleBase.getDescription())
                                 .imageUrl(articleBase.getImageUrl())
-                                .status(articleBase.getStatus().name())
+                                .status(articleBase.getStatus().getString())
                                 .createdDate(articleBase.getDate().getUnixCreateDate())
                                 .updatedDate(articleBase.getDate().getUnixUpdateDate())
                                 .build();
@@ -24,7 +26,7 @@ public class ArticleBaseEntityConverter {
                                 .title(articleBase.getTitle())
                                 .description(articleBase.getDescription())
                                 .imageUrl(articleBase.getImageUrl())
-                                .status(articleBase.getStatus().name())
+                                .status(articleBase.getStatus().getString())
                                 .createdDate(articleBase.getDate().getUnixCreateDate())
                                 .updatedDate(articleBase.getDate().getUnixUpdateDate())
                                 .build();
@@ -33,13 +35,17 @@ public class ArticleBaseEntityConverter {
     public static ArticleBaseEntity toArticleBaseEntity(
         Map<Object, Object> articleVertex, String status) {
         return ArticleBaseEntity.builder()
-                                .id(VertexConverter.toString("title", articleVertex))
-                                .imageUrl(VertexConverter.toString("imageUrl", articleVertex))
-                                .description(VertexConverter.toString("description", articleVertex))
-                                .title(VertexConverter.toString("title", articleVertex))
-                                .status("draft") // TODO: あとでなおす
-                                .createdDate(VertexConverter.toLong("createDate", articleVertex))
-                                .updatedDate(VertexConverter.toLong("updateDate", articleVertex))
+                                .id(VertexConverter.toId(articleVertex))
+                                .imageUrl(VertexConverter.toString(ArticleVertexProperty.IMAGE_URL.getString(),
+                                                                   articleVertex))
+                                .description(VertexConverter.toString(ArticleVertexProperty.DESCRIPTION.getString(),
+                                                                      articleVertex))
+                                .title(VertexConverter.toString(ArticleVertexProperty.TITLE.getString(), articleVertex))
+                                .status(status)
+                                .createdDate(VertexConverter.toLong(ArticleVertexProperty.CREATED_TIME.getString(),
+                                                                    articleVertex))
+                                .updatedDate(VertexConverter.toLong(ArticleVertexProperty.UPDATED_TIME.getString(),
+                                                                    articleVertex))
                                 .build();
     }
 }

@@ -25,7 +25,7 @@ public class DeleteArticleService {
         //TODO: 詳細とらずにステータスと著者だけ取るようにしてもいいかも
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
 
-        if (articleDetail.canDelete(UserId.of(userId))) {
+        if (!articleDetail.canDelete(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 

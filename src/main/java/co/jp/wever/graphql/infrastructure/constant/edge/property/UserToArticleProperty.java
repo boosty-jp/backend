@@ -1,7 +1,10 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.property;
 
 public enum UserToArticleProperty {
-    DRAFTED("drafted");
+    PUBLISHED_TIME("publishedTime"),
+    DRAFTED_TIME("draftedTime"),
+    LEARNED_TIME("learnedTime"),
+    LIKED_TIME("likedTime");
 
     private String value;
 

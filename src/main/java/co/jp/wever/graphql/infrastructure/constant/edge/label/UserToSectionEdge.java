@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.label;
 
 public enum UserToSectionEdge {
-    LIKE("like"), CREATED("created"), DELETED("deleted");
+    LIKED("liked"), CREATED("created"), DELETED("deleted");
 
     private String value;
 

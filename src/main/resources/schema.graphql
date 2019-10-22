@@ -102,7 +102,7 @@ type User{
     imageUrl: String!
     description: String!
     url: String!
-    tags: [String]!
+    tags: [Tag]!
 }
 
 type Tag{

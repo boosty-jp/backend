@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.label;
 
 public enum ArticleToSectionEdge {
-    INCLUDE("inclued");
+    INCLUDE("include");
 
     private String value;
 

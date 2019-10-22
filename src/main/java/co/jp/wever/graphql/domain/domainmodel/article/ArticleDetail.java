@@ -36,7 +36,7 @@ public class ArticleDetail {
             return false;
         }
 
-        return !base.getStatus().name().equals(ArticleStatus.DELETED.name());
+        return !base.getStatus().getString().equals(ArticleStatus.DELETED.getString());
     }
 
     public boolean canUpdate(UserId userId) {
@@ -44,7 +44,7 @@ public class ArticleDetail {
             return false;
         }
 
-        return !base.getStatus().name().equals(ArticleStatus.DELETED.name());
+        return !base.getStatus().getString().equals(ArticleStatus.DELETED.getString());
     }
 
     public boolean canPublish(UserId userId) {
@@ -52,11 +52,11 @@ public class ArticleDetail {
             return false;
         }
 
-        if (base.getStatus().name().equals(ArticleStatus.DELETED.name())) {
+        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
             return false;
         }
 
-        return !base.getStatus().name().equals(ArticleStatus.PUBLISHED.name());
+        return !base.getStatus().getString().equals(ArticleStatus.PUBLISHED.getString());
     }
 
     public boolean canDraft(UserId userId) {
@@ -64,11 +64,11 @@ public class ArticleDetail {
             return false;
         }
 
-        if (base.getStatus().name().equals(ArticleStatus.DELETED.name())) {
+        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
             return false;
         }
 
-        return !base.getStatus().name().equals(ArticleStatus.DRAFTED.name());
+        return !base.getStatus().getString().equals(ArticleStatus.DRAFTED.getString());
     }
 
     public ArticleBase getBase() {

@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.label;
 
 public enum UserToUserEdge {
-    FOLLOW("follow");
+    FOLLOWED("followed");
 
 
     private String value;

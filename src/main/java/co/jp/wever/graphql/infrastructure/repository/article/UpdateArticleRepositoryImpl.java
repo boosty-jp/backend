@@ -4,19 +4,18 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.repository.article.UpdateArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticleProperty;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
-import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
@@ -37,16 +36,16 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
         long now = System.currentTimeMillis() / 1000L;
 
         g.V(targetArticle.getId())
-         .property(single, ArticleVertexProperty.TITLE.name(), targetArticle.getTitle())
-         .property(single, ArticleVertexProperty.DESCRIPTION.name(), targetArticle.getDescription())
-         .property(single, ArticleVertexProperty.IMAGE_URL.name(), targetArticle.getImageUrl())
-         .property(single, ArticleVertexProperty.UPDATE_TIME.name(), now)
+         .property(single, ArticleVertexProperty.TITLE.getString(), targetArticle.getTitle())
+         .property(single, ArticleVertexProperty.DESCRIPTION.getString(), targetArticle.getDescription())
+         .property(single, ArticleVertexProperty.IMAGE_URL.getString(), targetArticle.getImageUrl())
+         .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
         // タグの張替え
         // TODO:タグの変更がないときは更新しないようにしたい
-        g.V(targetArticle.getId()).outE(PlanToTagEdge.RELATED.name()).hasLabel(VertexLabel.TAG.name()).drop();
-        g.V(tagIds).addE(PlanToTagEdge.RELATED.name()).from(g.V(targetArticle.getId())).next();
+        g.V(targetArticle.getId()).outE(ArticleToTagEdge.RELATED.getString()).drop().iterate();
+        g.V(tagIds).addE(PlanToTagEdge.RELATED.getString()).from(g.V(targetArticle.getId())).next();
 
         // TODO: Algolia更新
     }
@@ -55,14 +54,17 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     public void publishOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        g.V(articleId).inE(UserToPlanEdge.DRAFT.name(), UserToPlanEdge.DELETE.name()).from(g.V(userId)).drop();
+        g.V(articleId)
+         .inE(UserToArticleEdge.DRAFTED.getString(), UserToArticleEdge.DELETED.getString())
+         .drop()
+         .iterate();
 
         long now = System.currentTimeMillis() / 1000L;
 
         g.V(userId)
-         .addE(UserToArticleEdge.PUBLISHED.name())
+         .addE(UserToArticleEdge.PUBLISHED.getString())
          .to(g.V(articleId))
-         .property(UserToPlanProperty.PUBLISHED.name(), now)
+         .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now)
          .next();
 
         // TODO: Algoliaに追加
@@ -70,14 +72,45 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
 
     @Override
     public void draftOne(String articleId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
 
+        g.V(articleId)
+         .inE(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DELETED.getString())
+         .drop()
+         .iterate();
+
+        long now = System.currentTimeMillis() / 1000L;
+
+        g.V(userId)
+         .addE(UserToArticleEdge.DRAFTED.getString())
+         .to(g.V(articleId))
+         .property(UserToArticleProperty.DRAFTED_TIME.getString(), now)
+         .next();
+
+        // TODO: Algoliaに追加
     }
 
     @Override
     public void likeOne(String articleId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        long now = System.currentTimeMillis() / 1000L;
+        g.V(articleId)
+         .addE(UserToArticleEdge.LIKED.getString())
+         .from(g.V(userId))
+         .property(UserToArticleProperty.LIKED_TIME.getString(), now)
+         .next();
     }
 
     @Override
     public void finishOne(String articleId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        long now = System.currentTimeMillis() / 1000L;
+        g.V(articleId)
+         .addE(UserToArticleEdge.LEARNED.getString())
+         .from(g.V(userId))
+         .property(UserToArticleProperty.LEARNED_TIME.getString(), now)
+         .next();
     }
 }

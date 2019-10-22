@@ -28,17 +28,17 @@ public class DeleteSectionRepositoryImpl implements DeleteSectionRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis() / 1000L;
 
-        g.V(sectionId).outE(UserToSectionEdge.CREATED.name()).to(g.V(userId)).drop();
+        g.V(sectionId).outE(UserToSectionEdge.CREATED.getString()).to(g.V(userId)).drop();
         g.V(userId)
-         .addE(UserToSectionEdge.DELETED.name())
-         .property(UserToSectionProperty.DELETED_DATE.name(), now)
+         .addE(UserToSectionEdge.DELETED.getString())
+         .property(UserToSectionProperty.DELETED_TIME.getString(), now)
          .to(g.V(userId));
 
         // 削除するセクションより後のものは番号をでデクリメントする
         g.V(decrementIds)
-         .inE(ArticleToSectionEdge.INCLUDE.name())
-         .property(ArticleToSectionProperty.NUMBER.name(),
-                   union(values(ArticleToSectionProperty.NUMBER.name()), __.constant(-1).sum()));
+         .inE(ArticleToSectionEdge.INCLUDE.getString())
+         .property(ArticleToSectionProperty.NUMBER.getString(),
+                   union(values(ArticleToSectionProperty.NUMBER.getString()), __.constant(-1).sum()));
 
     }
 }

@@ -24,9 +24,9 @@ public class UpdateSectionRepositoryImpl implements UpdateSectionRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis() / 1000L;
         g.V(sectionEntity.getId())
-         .property(SectionVertexProperty.TITLE.name(), sectionEntity.getTitle())
-         .property(SectionVertexProperty.TEXT.name(), sectionEntity.getText())
-         .property(SectionVertexProperty.UPDATE_TIME.name(), now)
+         .property(SectionVertexProperty.TITLE.getString(), sectionEntity.getTitle())
+         .property(SectionVertexProperty.TEXT.getString(), sectionEntity.getText())
+         .property(SectionVertexProperty.UPDATE_TIME.getString(), now)
          .next();
 
         //TODO: Algoliaのデータ更新する
@@ -37,8 +37,8 @@ public class UpdateSectionRepositoryImpl implements UpdateSectionRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis() / 1000L;
         g.V(sectionId)
-         .addE(UserToSectionEdge.LIKE.name())
-         .property(UserToSectionProperty.LIKED_DATE, now)
+         .addE(UserToSectionEdge.LIKED.getString())
+         .property(UserToSectionProperty.LIKED_TIME, now)
          .from(g.V(userId))
          .next();
         //TODO: Algoliaのデータ更新する

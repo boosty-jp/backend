@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.property;
 
 public enum ArticleToSectionProperty {
-    NUMBER("number"), CREATE_TIME("createTime"), UPDATE_TIME("updateTime");
+    NUMBER("number"), CREATED_TIME("createdTime"), UPDATED_TIME("updatedTime");
 
     private String value;
 

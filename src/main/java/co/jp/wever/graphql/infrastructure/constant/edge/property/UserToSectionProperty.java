@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.property;
 
 public enum UserToSectionProperty {
-    LIKED_DATE("likedDate"), CREATED_DATE("createdDate"), UPDATED_DATE("updatedDate"), DELETED_DATE("deletedDate");
+    LIKED_TIME("likedTime"), CREATED_TIME("createdTime"), UPDATED_TIME("updatedTime"), DELETED_TIME("deletedTime");
 
 
     private String value;

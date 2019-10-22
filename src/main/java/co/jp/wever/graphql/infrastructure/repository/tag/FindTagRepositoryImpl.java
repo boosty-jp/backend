@@ -1,8 +1,6 @@
 package co.jp.wever.graphql.infrastructure.repository.tag;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.domain.repository.tag.FindTagRepository;
@@ -20,6 +18,6 @@ public class FindTagRepositoryImpl implements FindTagRepository {
 
     public boolean exists(String name) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        return g.V().hasLabel(VertexLabel.TAG.name()).has(TagVertexProperty.NAME.name(), name).hasNext();
+        return g.V().hasLabel(VertexLabel.TAG.getString()).has(TagVertexProperty.NAME.getString(), name).hasNext();
     }
 }

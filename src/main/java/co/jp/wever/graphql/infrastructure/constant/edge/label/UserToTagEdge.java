@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.label;
 
 public enum UserToTagEdge {
-    RELATED("tagRelated");
+    RELATED("related");
 
     private String value;
 

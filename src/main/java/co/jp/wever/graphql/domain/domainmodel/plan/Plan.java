@@ -42,6 +42,6 @@ public class Plan {
     }
 
     public boolean readableUser(UserId userId) {
-        return base.getStatus().name().equals(PlanStatus.PUBLISHED.name()) || !base.getAuthorId().same(userId);
+        return base.getStatus().name().equals(PlanStatus.PUBLISHED.getString()) || !base.getAuthorId().same(userId);
     }
 }

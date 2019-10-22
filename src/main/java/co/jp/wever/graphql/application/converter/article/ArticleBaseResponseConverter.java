@@ -10,7 +10,7 @@ public class ArticleBaseResponseConverter {
                                   .title(articleBase.getTitle())
                                   .createDate(articleBase.getDate().getCreateDate().toString())
                                   .updateDate(articleBase.getDate().getUpdateDate().toString())
-                                  .status(articleBase.getStatus().name())
+                                  .status(articleBase.getStatus().getString())
                                   .description(articleBase.getDescription())
                                   .build();
     }

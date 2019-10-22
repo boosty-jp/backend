@@ -11,11 +11,9 @@ import java.util.Map;
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
-import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 
 @Component
@@ -36,35 +34,35 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
         Map<String, Object> allResult = g.V(sectionId)
                                          .project("base", "author", "article", "like")
                                          .by(__.valueMap().with(WithOptions.tokens))
-                                         .by(__.in(UserToSectionEdge.CREATED.name())
+                                         .by(__.in(UserToSectionEdge.CREATED.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens))
-                                         .by(__.in(ArticleToSectionEdge.INCLUDE.name())
-                                               .hasLabel(VertexLabel.ARTICLE.name())
+                                         .by(__.in(ArticleToSectionEdge.INCLUDE.getString())
+                                               .hasLabel(VertexLabel.ARTICLE.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens))
-                                         .by(__.in(UserToSectionEdge.LIKE.name()).count())
+                                         .by(__.in(UserToSectionEdge.LIKED.getString()).count())
                                          .next();
 
         //        Map<Object, Object> articleResult = g.V(articleId).valueMap().with(WithOptions.tokens).next();
         //
         //        List<Map<Object, Object>> tagResults = g.V(articleId)
-        //                                                .out(ArticleToTagEdge.RELATED.name())
-        //                                                .hasLabel(VertexLabel.TAG.name())
+        //                                                .out(ArticleToTagEdge.RELATED.getString())
+        //                                                .hasLabel(VertexLabel.TAG.getString())
         //                                                .valueMap()
         //                                                .with(WithOptions.tokens)
         //                                                .toList();
         //
         //        // TODO: ↓のクエリがラベルを取得できるかチェックする
         //        Map<Object, Object> authorResult = g.V(articleId)
-        //                                            .in(UserToArticleEdge.DRAFTED.name(), UserToArticleEdge.PUBLISHED.name())
-        //                                            .hasLabel(VertexLabel.USER.name())
+        //                                            .in(UserToArticleEdge.DRAFTED.getString(), UserToArticleEdge.PUBLISHED.getString())
+        //                                            .hasLabel(VertexLabel.USER.getString())
         //                                            .valueMap()
         //                                            .with(WithOptions.tokens)
         //                                            .next();
         //
-        //        long like = g.V(articleId).out(UserToArticleEdge.LIKE.name()).count().next();
-        //        long bookmark = g.V(articleId).out(UserToArticleEdge.LEARNED.name()).count().next();
+        //        long like = g.V(articleId).out(UserToArticleEdge.LIKE.getString()).count().next();
+        //        long bookmark = g.V(articleId).out(UserToArticleEdge.LEARNED.getString()).count().next();
         //
         //        //TODO Neptuneの動きを見て↑を最適化する
         //        //TODO クエリの時間とか
@@ -80,11 +78,11 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
     public List<SectionEntity> findAllOnArticle(String articleId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> allResult = g.V(articleId)
-                                               .out(ArticleToSectionEdge.INCLUDE.name())
-                                               .hasLabel(VertexLabel.ARTICLE.name())
+                                               .out(ArticleToSectionEdge.INCLUDE.getString())
+                                               .hasLabel(VertexLabel.ARTICLE.getString())
                                                .project("base", "like")
                                                .by(__.valueMap().with(WithOptions.tokens))
-                                               .by(__.in(UserToArticleEdge.LIKE.name()).count())
+                                               .by(__.in(UserToArticleEdge.LIKED.getString()).count())
                                                .toList();
 
         return null;
