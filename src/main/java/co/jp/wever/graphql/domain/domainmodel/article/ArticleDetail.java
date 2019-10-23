@@ -52,9 +52,9 @@ public class ArticleDetail {
             return false;
         }
 
-        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
-            return false;
-        }
+//        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
+//            return false;
+//        }
 
         return !base.getStatus().getString().equals(ArticleStatus.PUBLISHED.getString());
     }

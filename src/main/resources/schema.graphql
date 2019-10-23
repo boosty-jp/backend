@@ -60,12 +60,12 @@ type ArticleBase {
     updateDate: String!
 }
 
-type ArticleAction{
+type ArticleStatistics {
     like: Int!
     learned: Int!
 }
 
-type ArticleStatistics{
+type ArticleAction {
     liked: Boolean!
     learned: Boolean!
 }
@@ -77,17 +77,11 @@ type Section {
     number: Int!
     authorId: String!
     statistics: SectionStatistics
-    action: SectionAction
+    liked: Boolean!
 }
 
 type SectionStatistics{
     like: Int!
-    bookmark: Int!
-}
-
-type SectionAction{
-    liked: Boolean!
-    bookmarked: Boolean!
 }
 
 type User{
@@ -107,7 +101,7 @@ type Tag{
 input SectionInput{
     title: String!
     text: String!
-    number: Int
+    number: Int!
 }
 
 input ArticleInput {
@@ -143,7 +137,7 @@ input UserInput{
 type Mutation {
     createSection(articleId: ID!, section: SectionInput!): CreateResponse
     updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
-    deleteSection(articleId: ID!,sectionId: ID! ): UpdateResponse
+    deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
 
     createArticle(article: ArticleInput): CreateResponse

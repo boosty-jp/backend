@@ -23,7 +23,14 @@ public class NeptuneClient implements AutoCloseable {
         @Value("${aws.neptune.minConnectionPoolSize}") int minConnectionPoolSize,
         @Value("${aws.neptune.maxSimultaneousUsagePerConnection}") int maxSimultaneousUsagePerConnection,
         @Value("${aws.neptune.minSimultaneousUsagePerConnection}") int minSimultaneousUsagePerConnection) {
-        init(endpoint, port, maxInProcessPerConnection, minInProcessPerConnection, maxConnectionPoolSize, minConnectionPoolSize, maxSimultaneousUsagePerConnection, minSimultaneousUsagePerConnection);
+        init(endpoint,
+             port,
+             maxInProcessPerConnection,
+             minInProcessPerConnection,
+             maxConnectionPoolSize,
+             minConnectionPoolSize,
+             maxSimultaneousUsagePerConnection,
+             minSimultaneousUsagePerConnection);
     }
 
     private void init(
@@ -36,13 +43,20 @@ public class NeptuneClient implements AutoCloseable {
         int maxSimultaneousUsagePerConnection,
         int minSimultaneousUsagePerConnection) {
         try {
-            /*cluster = Cluster.build().addContactPoint(endpoint).port(port).maxInProcessPerConnection(maxInProcessPerConnection).minInProcessPerConnection(minInProcessPerConnection)
-                .maxConnectionPoolSize(maxConnectionPoolSize).minConnectionPoolSize(minConnectionPoolSize).maxSimultaneousUsagePerConnection(maxSimultaneousUsagePerConnection)
-                .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection).create();
-*/
+            cluster = Cluster.build()
+                             .addContactPoint(endpoint)
+                             .port(port)
+                             .maxInProcessPerConnection(maxInProcessPerConnection)
+                             .minInProcessPerConnection(minInProcessPerConnection)
+                             .maxConnectionPoolSize(maxConnectionPoolSize)
+                             .minConnectionPoolSize(minConnectionPoolSize)
+                             .maxSimultaneousUsagePerConnection(maxSimultaneousUsagePerConnection)
+                             .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection)
+                             .create();
+
 
             //TODO: Neptuneへの接続パラメータのチューニング行う
-            cluster = Cluster.build().addContactPoint(endpoint).port(port).create();
+            //            cluster = Cluster.build().addContactPoint(endpoint).port(port).create();
             g = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 
         } catch (Exception e) {

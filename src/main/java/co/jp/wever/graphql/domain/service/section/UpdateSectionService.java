@@ -28,11 +28,11 @@ public class UpdateSectionService {
         Section target = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
         Section updateSection = SectionConverter.toSection(sectionInput, userId);
 
-        if (target.canUpdate(UserId.of(userId), updateSection.getSectionNumber())) {
+        if (!target.canUpdate(UserId.of(userId), updateSection.getSectionNumber())) {
             throw new IllegalAccessException();
         }
 
-        updateSectionRepository.updateOne(SectionEntityConverter.toSectionEntity(updateSection));
+        updateSectionRepository.updateOne(SectionEntityConverter.toSectionEntity(updateSection, sectionId));
     }
 
     public void likeSection(String sectionId, String userId) {

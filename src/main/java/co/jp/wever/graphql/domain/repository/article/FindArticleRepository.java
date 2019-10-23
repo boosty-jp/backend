@@ -20,8 +20,6 @@ public interface FindArticleRepository {
 
     List<ArticleDetailEntity> findAllLearned(String userId);
 
-    List<ArticleDetailEntity> findAllBookmarked(String userId);
-
     List<ArticleDetailEntity> findFamous();
 
     List<ArticleDetailEntity> findRelated(String userId);

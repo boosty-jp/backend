@@ -25,7 +25,7 @@ public class FindArticleService {
 
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
-        if (articleDetail.canRead(UserId.of(userId))) {
+        if (!articleDetail.canRead(UserId.of(userId))) {
             throw new IllegalAccessException();
         }
 

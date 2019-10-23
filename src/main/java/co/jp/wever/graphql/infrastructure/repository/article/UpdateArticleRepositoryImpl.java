@@ -14,6 +14,8 @@ import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticlePr
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal.Symbols.outV;
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
 @Component
@@ -91,6 +93,10 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     public void likeOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
+        // 二重に登録されるのを防止する
+        // TODO: いいやり方検討する
+        g.V(articleId).inE(UserToArticleEdge.LIKED.getString()).where(outV().hasId(userId)).drop().iterate();
+
         long now = System.currentTimeMillis() / 1000L;
         g.V(articleId)
          .addE(UserToArticleEdge.LIKED.getString())
@@ -102,6 +108,10 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     @Override
     public void finishOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
+
+        // 二重に登録されるのを防止する
+        // TODO: いいやり方検討する
+        g.V(articleId).inE(UserToArticleEdge.LEARNED.getString()).where(outV().hasId(userId)).drop().iterate();
 
         long now = System.currentTimeMillis() / 1000L;
         g.V(articleId)
