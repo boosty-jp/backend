@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.article.ArticleDetailResponseConverter;
 import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
-import co.jp.wever.graphql.application.converter.article.ArticleOutlineResponseConverter;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
 import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
@@ -57,10 +56,11 @@ public class ArticleDataFetcher {
 
     public DataFetcher allArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             return findArticleService.findAllArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -70,7 +70,7 @@ public class ArticleDataFetcher {
             String userId = dataFetchingEnvironment.getArgument("userId");
             return findArticleService.findAllPublishedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -81,7 +81,7 @@ public class ArticleDataFetcher {
             String userId = tokenVerifier.getUserId(token);
             return findArticleService.findAllDraftedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -91,17 +91,18 @@ public class ArticleDataFetcher {
             String userId = dataFetchingEnvironment.getArgument("userId");
             return findArticleService.findAllLikedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLearnedArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
+
             String userId = dataFetchingEnvironment.getArgument("userId");
             return findArticleService.findAllLearnedArticle(userId)
                                      .stream()
-                                     .map(a -> ArticleOutlineResponseConverter.toArticleOutlineResponse(a))
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
         };
     }
@@ -124,7 +125,9 @@ public class ArticleDataFetcher {
     public DataFetcher createArticleDataFetcher() {
 
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+
             Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("article");
             String articleId =
                 createArticleService.createArticle(userId, ArticleInputConverter.toArticleInput(articleInputMap));
@@ -135,8 +138,10 @@ public class ArticleDataFetcher {
 
     public DataFetcher updateArticleDataFetcher() {
         return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            String userId = dataFetchingEnvironment.getArgument("userId");
+
             Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("article");
             updateArticleService.updateArticle(articleId,
                                                userId,
@@ -147,7 +152,8 @@ public class ArticleDataFetcher {
 
     public DataFetcher deleteArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
             deleteArticleService.deleteArticle(articleId, userId);
 
@@ -157,7 +163,8 @@ public class ArticleDataFetcher {
 
     public DataFetcher publishArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
             updateArticleService.publishArticle(articleId, userId);
 
@@ -167,7 +174,8 @@ public class ArticleDataFetcher {
 
     public DataFetcher draftArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
             updateArticleService.draftArticle(articleId, userId);
 
@@ -177,7 +185,8 @@ public class ArticleDataFetcher {
 
     public DataFetcher likeArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
             updateArticleService.likeArticle(articleId, userId);
 
@@ -187,7 +196,8 @@ public class ArticleDataFetcher {
 
     public DataFetcher finishArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
             updateArticleService.finishArticle(articleId, userId);
 

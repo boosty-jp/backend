@@ -7,8 +7,8 @@ import java.util.List;
 
 import co.jp.wever.graphql.domain.repository.article.CreateArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticleProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
@@ -27,20 +27,24 @@ public class CreateArticleRepositoryImpl implements CreateArticleRepository {
     @Override
     public String createOne(ArticleBaseEntity articleBaseEntity, List<String> tagIds, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        String articleId = g.addV(VertexLabel.ARTICLE.name())
-                            .property(ArticleVertexProperty.TITLE.name(), articleBaseEntity.getTitle())
-                            .property(ArticleVertexProperty.DESCRIPTION.name(), articleBaseEntity.getDescription())
-                            .property(PlanVertexProperty.IMAGE_URL.name(), articleBaseEntity.getImageUrl())
+
+        long now = System.currentTimeMillis() / 1000L;
+        String articleId = g.addV(VertexLabel.ARTICLE.getString())
+                            .property(ArticleVertexProperty.TITLE.getString(), articleBaseEntity.getTitle())
+                            .property(ArticleVertexProperty.DESCRIPTION.getString(), articleBaseEntity.getDescription())
+                            .property(ArticleVertexProperty.IMAGE_URL.getString(), articleBaseEntity.getImageUrl())
+                            .property(ArticleVertexProperty.CREATED_TIME.getString(), now)
+                            .property(ArticleVertexProperty.UPDATED_TIME.getString(), now)
                             .next()
                             .id()
                             .toString();
 
-        g.V(tagIds).addE(PlanToTagEdge.RELATED.name()).from(g.V(articleId)).next();
-        long now = System.currentTimeMillis() / 1000L;
-        g.V(userId)
-         .addE(UserToArticleEdge.DRAFTED.name())
-         .to(g.V(articleId))
-         .property(UserToArticleProperty.DRAFTED.name(), now)
+        g.V(tagIds).addE(ArticleToTagEdge.RELATED.getString()).from(g.V(articleId)).next();
+
+        g.V(articleId)
+         .addE(UserToArticleEdge.DRAFTED.getString())
+         .from(g.V(userId))
+         .property(UserToArticleProperty.DRAFTED_TIME.getString(), now)
          .next();
         return articleId;
     }

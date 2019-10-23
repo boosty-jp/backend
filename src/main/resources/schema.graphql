@@ -6,16 +6,16 @@ type Query {
     relatedSections: [Section]!
 
     article(articleId: ID!): ArticleDetail!
-    allArticles(userId: ID!): [ArticleOutline]!
-    allPublishedArticles(userId: ID!): [ArticleOutline]!
-    allDraftedArticles: [ArticleOutline]!
-    allLikedArticles(userId: ID!): [ArticleOutline]!
-    allLearnedArticles(userId: ID!): [ArticleOutline]!
-    famousArticles: [ArticleOutline]!
-    relatedArticles: [ArticleOutline]!
+#    allArticles(userId: ID!): [ArticleDetail]!
+    allPublishedArticles(userId: ID!): [ArticleDetail]!
+    allDraftedArticles: [ArticleDetail]!
+    allLikedArticles(userId: ID!): [ArticleDetail]!
+    allLearnedArticles(userId: ID!): [ArticleDetail]!
+    famousArticles: [ArticleDetail]!
+    relatedArticles: [ArticleDetail]!
 
     plan(planId: ID!): Plan!
-    allPlans(userId: ID!): [Plan]!
+#    allPlans(userId: ID!): [Plan]!
     allPublishedPlans(userId: ID!): [Plan]!
     allDraftedPlans: [Plan]!
     allLikedPlans(userId: ID!): [Plan]!
@@ -42,12 +42,6 @@ type Element {
     number: Int!
 }
 
-type ArticleOutline {
-    base: ArticleBase
-    author: User
-    statistics: ArticleStatistics
-}
-
 type ArticleDetail {
     base: ArticleBase
     tags: [Tag]
@@ -66,12 +60,12 @@ type ArticleBase {
     updateDate: String!
 }
 
-type ArticleAction{
+type ArticleStatistics {
     like: Int!
     learned: Int!
 }
 
-type ArticleStatistics{
+type ArticleAction {
     liked: Boolean!
     learned: Boolean!
 }
@@ -83,17 +77,11 @@ type Section {
     number: Int!
     authorId: String!
     statistics: SectionStatistics
-    action: SectionAction
+    liked: Boolean!
 }
 
 type SectionStatistics{
     like: Int!
-    bookmark: Int!
-}
-
-type SectionAction{
-    liked: Boolean!
-    bookmarked: Boolean!
 }
 
 type User{
@@ -102,7 +90,7 @@ type User{
     imageUrl: String!
     description: String!
     url: String!
-    tags: [String]!
+    tags: [Tag]!
 }
 
 type Tag{
@@ -113,7 +101,7 @@ type Tag{
 input SectionInput{
     title: String!
     text: String!
-    number: Int
+    number: Int!
 }
 
 input ArticleInput {
@@ -149,7 +137,7 @@ input UserInput{
 type Mutation {
     createSection(articleId: ID!, section: SectionInput!): CreateResponse
     updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
-    deleteSection(articleId: ID!,sectionId: ID! ): UpdateResponse
+    deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
 
     createArticle(article: ArticleInput): CreateResponse

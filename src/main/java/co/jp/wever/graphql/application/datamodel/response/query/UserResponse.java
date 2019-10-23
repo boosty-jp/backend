@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class UserResponse {
-    private String userId;
+    private String id;
     private String displayName;
     private String description;
     private String imageUrl;

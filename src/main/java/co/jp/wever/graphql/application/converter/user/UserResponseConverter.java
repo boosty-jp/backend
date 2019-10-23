@@ -9,7 +9,7 @@ import co.jp.wever.graphql.domain.domainmodel.user.User;
 public class UserResponseConverter {
     public static UserResponse toUserResponse(User user) {
         return UserResponse.builder()
-                           .userId(user.getUserId().getValue())
+                           .id(user.getUserId().getValue())
                            .displayName(user.getDisplayName().getValue())
                            .description(user.getDescription().getValue())
                            .imageUrl(user.getImageUrl().getValue())

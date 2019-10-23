@@ -29,22 +29,22 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
     @Override
     public String createBase(String userId, PlanBaseEntity planBaseEntity) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        String planId = g.addV(VertexLabel.PLAN.name())
-                         .property(PlanVertexProperty.TITLE.name(), planBaseEntity.getTitle())
-                         .property(PlanVertexProperty.DESCRIPTION.name(), planBaseEntity.getDescription())
-                         .property(PlanVertexProperty.IMAGE_URL.name(), planBaseEntity.getImageUrl())
+        String planId = g.addV(VertexLabel.PLAN.getString())
+                         .property(PlanVertexProperty.TITLE.getString(), planBaseEntity.getTitle())
+                         .property(PlanVertexProperty.DESCRIPTION.getString(), planBaseEntity.getDescription())
+                         .property(PlanVertexProperty.IMAGE_URL.getString(), planBaseEntity.getImageUrl())
                          .next()
                          .id()
                          .toString();
 
-        g.V(planBaseEntity.getTagIds()).addE(PlanToTagEdge.RELATED.name()).from(g.V(planId)).next();
+        g.V(planBaseEntity.getTagIds()).addE(PlanToTagEdge.RELATED.getString()).from(g.V(planId)).next();
 
         long now = System.currentTimeMillis() / 1000L;
 
         g.V(userId)
-         .addE(UserToPlanEdge.DRAFT.name())
+         .addE(UserToPlanEdge.DRAFTED.getString())
          .to(g.V(planId))
-         .property(UserToPlanProperty.DRAFTED.name(), now)
+         .property(UserToPlanProperty.DRAFTED_TIME.getString(), now)
          .next();
 
         //TODO: Algoliaにデータ追加する
@@ -60,13 +60,13 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
         IntStream.range(0, planElementEntities.size()).forEach(i -> {
             if (i == planElementEntities.size()) {
                 g.V(planId)
-                 .addE(PlanToPlanElementEdge.INCLUDE.name())
+                 .addE(PlanToPlanElementEdge.INCLUDE.getString())
                  .to(g.V(planElementEntities.get(i).getTargetId()))
                  .property(PlanToPlanElementProperty.NUMBER, planElementEntities.get(i).getNumber())
                  .next();
             } else {
                 g.V(planId)
-                 .addE(PlanToPlanElementEdge.INCLUDE.name())
+                 .addE(PlanToPlanElementEdge.INCLUDE.getString())
                  .to(g.V(planElementEntities.get(i).getTargetId()))
                  .property(PlanToPlanElementProperty.NUMBER, planElementEntities.get(i).getNumber());
             }

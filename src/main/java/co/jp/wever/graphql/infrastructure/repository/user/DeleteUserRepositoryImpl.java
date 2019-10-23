@@ -17,7 +17,6 @@ public class DeleteUserRepositoryImpl implements DeleteUserRepository {
     @Override
     public void deleteUser(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
-        g.V(userId).drop();
+        g.V(userId).drop().iterate();
     }
 }

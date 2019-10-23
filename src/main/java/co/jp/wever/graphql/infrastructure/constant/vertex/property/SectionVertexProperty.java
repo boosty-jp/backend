@@ -8,4 +8,8 @@ public enum SectionVertexProperty {
     private SectionVertexProperty(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

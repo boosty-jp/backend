@@ -7,6 +7,8 @@ import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.TagVertexProperty;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
+
 @Component
 public class CreateTagRepositoryImpl {
     private final NeptuneClient neptuneClient;
@@ -19,9 +21,11 @@ public class CreateTagRepositoryImpl {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         long now = System.currentTimeMillis() / 1000L;
-        String tagId = g.addV(VertexLabel.TAG.name())
-                        .property(TagVertexProperty.NAME.name(), name)
-                        .property(TagVertexProperty.CREATED_TIME.name(), now)
+
+        // TODO: 同じタグがあったときのトランザクション制御したい
+        String tagId = g.addV(VertexLabel.TAG.getString())
+                        .property(TagVertexProperty.NAME.getString(), name)
+                        .property(TagVertexProperty.CREATED_TIME.getString(), now)
                         .next()
                         .id()
                         .toString();

@@ -36,7 +36,7 @@ public class CreatePlanService {
                                         planBaseInput.getImageUrl(),
                                         planBaseInput.getTags(),
                                         userId,
-                                        PlanStatus.DRAFTED.name());
+                                        PlanStatus.DRAFTED.getString());
 
         PlanBaseEntity planBaseEntity = PlanBaseEntityConverter.toPlanBaseEntity(planBase);
         return createPlanRepository.createBase(userId, planBaseEntity);

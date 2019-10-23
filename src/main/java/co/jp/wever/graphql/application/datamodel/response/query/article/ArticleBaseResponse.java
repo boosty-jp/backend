@@ -8,6 +8,7 @@ import lombok.Data;
 public class ArticleBaseResponse {
     private String id;
     private String title;
+    private String imageUrl;
     private String description;
     private String status;
     private String createDate;
