@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 import co.jp.wever.graphql.infrastructure.repository.section.DeleteSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 
@@ -29,15 +30,16 @@ public class DeleteSectionService {
             throw new IllegalAccessException();
         }
 
-        List<Section> sections = findSectionRepository.findAllOnArticle(articleId)
-                                                      .stream()
-                                                      .map(s -> SectionConverter.toSection(s))
-                                                      .collect(Collectors.toList());
-        List<String> decrementIds = sections.stream()
-                                            .filter(s -> s.getNumber() > section.getNumber())
-                                            .map(s -> s.getId().getValue())
-                                            .collect(Collectors.toList());
+        List<SectionNumberEntity> sectionNumbers = findSectionRepository.findAllNumberOnArticle(articleId);
+        List<SectionNumberEntity> decrementNumbers = sectionNumbers.stream()
+                                                                   .filter(s -> s.getNumber() > section.getNumber())
+                                                                   .map(s -> SectionNumberEntity.builder()
+                                                                                                .id(s.getId())
+                                                                                                .number(
+                                                                                                    s.getNumber() - 1)
+                                                                                                .build())
+                                                                   .collect(Collectors.toList());
 
-        deleteSectionRepository.deleteOne(sectionId, userId, decrementIds);
+        deleteSectionRepository.deleteOne(articleId, sectionId, userId, decrementNumbers);
     }
 }

@@ -9,6 +9,8 @@ public class Section {
     private SectionTitle title;
     private SectionText text;
     private SectionNumber number;
+
+
     private UserId authorId;
     private SectionStatistic statistic;
 
@@ -43,16 +45,17 @@ public class Section {
         return number;
     }
 
+    public String getAuthorId() {
+        return authorId.getValue();
+    }
+
     public int getNumber() {
         return number.getValue();
     }
 
     public boolean canUpdate(UserId userId, SectionNumber sectionNumber) {
-        if (!authorId.same(userId)) {
-            return false;
-        }
-
-        return number.isSame(sectionNumber);
+        return authorId.same(userId);
+        //        return number.isSame(sectionNumber);
     }
 
     public SectionStatistic getStatistic() {
@@ -60,6 +63,7 @@ public class Section {
     }
 
     public boolean canDelete(UserId userId) {
+
         return authorId.same(userId);
     }
 }

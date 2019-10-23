@@ -11,7 +11,7 @@ public class PlanBaseResponseConverter {
                                .description(planBase.getDescription())
                                .tags(null)
                                .image(planBase.getImageUrl())
-                               .status(planBase.getStatus().name())
+                               .status(planBase.getStatus().getString())
                                .author(null)
                                .build();
     }

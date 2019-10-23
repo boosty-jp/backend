@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.infrastructure.repository.section;
 
-import org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +11,11 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEd
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToSectionProperty;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToSectionProperty;
+import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
+import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 
-import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.union;
-import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.user;
 
 @Component
 public class DeleteSectionRepositoryImpl implements DeleteSectionRepository {
@@ -24,21 +25,27 @@ public class DeleteSectionRepositoryImpl implements DeleteSectionRepository {
         this.neptuneClient = neptuneClient;
     }
 
-    public void deleteOne(String sectionId, String userId, List<String> decrementIds) {
+    public void deleteOne(
+        String articleId, String sectionId, String userId, List<SectionNumberEntity> decrementNumbers) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis() / 1000L;
 
-        g.V(sectionId).outE(UserToSectionEdge.CREATED.name()).to(g.V(userId)).drop();
+        g.E(userId + "-" + sectionId).hasLabel(UserToSectionEdge.CREATED.getString()).drop().iterate();
         g.V(userId)
-         .addE(UserToSectionEdge.DELETED.name())
-         .property(UserToSectionProperty.DELETED_DATE.name(), now)
-         .to(g.V(userId));
+         .addE(UserToSectionEdge.DELETED.getString())
+         .property(UserToSectionProperty.DELETED_TIME.getString(), now)
+         .to(g.V(sectionId))
+         .iterate();
 
         // 削除するセクションより後のものは番号をでデクリメントする
-        g.V(decrementIds)
-         .inE(ArticleToSectionEdge.INCLUDE.name())
-         .property(ArticleToSectionProperty.NUMBER.name(),
-                   union(values(ArticleToSectionProperty.NUMBER.name()), __.constant(-1).sum()));
+        decrementNumbers.stream().forEach(s -> {
+            g.E(articleId + "-" + s.getId())
+             .property(ArticleToSectionProperty.NUMBER.getString(), s.getNumber())
+             .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
+             .iterate();
+        });
 
+        // TODO: セクションが作者以外からのリファレンスをうけるようになるときは、修正する
+        g.V(sectionId).inE(ArticleToSectionEdge.INCLUDE.getString()).where(outV().hasId(articleId)).drop().iterate();
     }
 }

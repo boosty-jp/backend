@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 import co.jp.wever.graphql.domain.repository.article.DeleteArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
 
 @Component
 public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
@@ -21,15 +19,18 @@ public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
 
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        // 作者とのエッジを切る
-        g.V(articleId).inE(UserToArticleEdge.PUBLISHED.name(), UserToArticleEdge.DRAFTED.name()).from(g.V(userId)).drop();
+        // 著者のID指定したい
+        g.V(articleId)
+         .inE(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DRAFTED.getString())
+         .drop()
+         .iterate();
 
         // 論理削除
         long now = System.currentTimeMillis() / 1000L;
         g.V(userId)
-         .addE(UserToArticleEdge.DELETED.name())
+         .addE(UserToArticleEdge.DELETED.getString())
          .to(g.V(articleId))
-         .property(UserToArticleEdge.DELETED.name(), now)
+         .property(UserToArticleEdge.DELETED.getString(), now)
          .next();
 
         // TODO: Algoliaからデータを削除する

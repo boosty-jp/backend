@@ -7,5 +7,4 @@ import lombok.Data;
 @Builder
 public class SectionStatisticsResponse {
     private int like;
-    private int bookmark;
 }

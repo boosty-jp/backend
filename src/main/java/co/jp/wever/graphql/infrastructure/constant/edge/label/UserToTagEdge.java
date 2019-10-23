@@ -8,4 +8,8 @@ public enum UserToTagEdge {
     private UserToTagEdge(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

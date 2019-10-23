@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.domain.converter.article;
 
 import java.util.Date;
+import java.util.Map;
 
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
@@ -18,7 +19,7 @@ public class ArticleBaseConverter {
                                Articletitle.of(articleBaseEntity.getTitle()),
                                ArticleDescription.of(articleBaseEntity.getDescription()),
                                ArticleImageUrl.of(articleBaseEntity.getImageUrl()),
-                               ArticleStatus.valueOf(articleBaseEntity.getStatus()),
+                               ArticleStatus.fromString(articleBaseEntity.getStatus()),
                                ArticleDate.of(new Date(articleBaseEntity.getCreatedDate()),
                                               new Date(articleBaseEntity.getUpdatedDate())));
     }
@@ -29,7 +30,7 @@ public class ArticleBaseConverter {
                                Articletitle.of(articleInput.getTitle()),
                                ArticleDescription.of(articleInput.getDescription()),
                                ArticleImageUrl.of(articleInput.getImageUrl()),
-                               ArticleStatus.valueOf(ArticleStatus.DRAFTED.name()),
+                               ArticleStatus.DRAFTED,
                                ArticleDate.of(now, now));
     }
 }

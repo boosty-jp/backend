@@ -22,14 +22,14 @@ public class DeletePlanRepositoryImpl implements DeletePlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         // 作者とのエッジを切る
-        g.V(planId).inE(UserToPlanEdge.PUBLISH.name(), UserToPlanEdge.DRAFT.name()).from(g.V(userId)).drop();
+        g.V(planId).inE(UserToPlanEdge.PUBLISHED.getString(), UserToPlanEdge.DRAFTED.getString()).from(g.V(userId)).drop();
 
         // 論理削除
         long now = System.currentTimeMillis() / 1000L;
         g.V(userId)
-         .addE(UserToPlanEdge.DELETE.name())
+         .addE(UserToPlanEdge.DELETED.getString())
          .to(g.V(planId))
-         .property(UserToPlanProperty.DELETED.name(), now)
+         .property(UserToPlanProperty.DELETED_TIME.getString(), now)
          .next();
 
         // TODO: Algoliaからデータを削除する

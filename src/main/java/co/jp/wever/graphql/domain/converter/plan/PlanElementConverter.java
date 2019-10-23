@@ -20,6 +20,6 @@ public class PlanElementConverter {
         return new PlanElement(PlanElementId.of(planElementEntity.getTargetId()),
                                PlanElementTitle.of(planElementEntity.getTitle()),
                                PlanElementNumber.of(planElementEntity.getNumber()),
-                               PlanElementType.valueOf(planElementEntity.getType().name()));
+                               PlanElementType.valueOf(planElementEntity.getType().getString()));
     }
 }

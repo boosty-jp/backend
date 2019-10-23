@@ -21,6 +21,10 @@ public class UpdateUserService {
     public void updateUser(UserInput userInput, String userId) {
         User user = UserConverter.toUser(userInput, userId);
 
+        if (user.hasDuplicatedTagIds()) {
+            throw new IllegalArgumentException();
+        }
+
         this.updateUserRepository.updateOne(UserEntityConverter.toUserEntity(user));
     }
 

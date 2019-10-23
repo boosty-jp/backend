@@ -10,7 +10,8 @@ public class SectionEntity {
     private String title;
     private int number;
     private String text;
-    private Boolean deleted;
     private String authorId;
-    private SectionStatisticEntity statisticEntity;
+    private String status;
+    private int likeCount;
+    private boolean liked;
 }

@@ -37,7 +37,7 @@ public class FindSectionService {
             throw new IllegalAccessException();
         }
 
-        return findSectionRepository.findAllOnArticle(articleId)
+        return findSectionRepository.findAllDetailOnArticle(articleId)
                                     .stream()
                                     .map(s -> SectionConverter.toSection(s))
                                     .collect(Collectors.toList());

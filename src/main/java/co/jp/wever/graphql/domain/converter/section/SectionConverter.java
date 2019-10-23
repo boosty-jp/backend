@@ -18,7 +18,7 @@ public class SectionConverter {
                            SectionText.of(sectionInput.getText()),
                            SectionNumber.of(sectionInput.getNumber()),
                            UserId.of(userId),
-                           SectionStatistic.of(0, 0)); //TODO: ドメインじゃないので分離したい
+                           SectionStatistic.of(0)); //TODO: ドメインじゃないので分離したい
     }
 
     public static Section toSection(SectionEntity sectionEntity) {
@@ -27,7 +27,6 @@ public class SectionConverter {
                            SectionText.of(sectionEntity.getText()),
                            SectionNumber.of(sectionEntity.getNumber()),
                            UserId.of(sectionEntity.getAuthorId()),
-                           SectionStatistic.of(sectionEntity.getStatisticEntity().getLike(),
-                                               sectionEntity.getStatisticEntity().getBookmark()));
+                           SectionStatistic.of(sectionEntity.getLikeCount()));
     }
 }

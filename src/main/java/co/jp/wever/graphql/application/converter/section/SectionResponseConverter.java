@@ -10,6 +10,8 @@ public class SectionResponseConverter {
                               .title(section.getTitle())
                               .text(section.getText())
                               .number(section.getNumber())
+                              .authorId(section.getAuthorId())
+                              .liked(false) //TODO: あとで直す
                               .statistics(SectionStatisticResponseConverter.toSectionStatisticsResponse(section.getStatistic()))
                               .build();
     }

@@ -23,7 +23,7 @@ public class PlanElement {
     }
 
     public String getElementType() {
-        return elementType.name();
+        return elementType.getString();
     }
 
     public String getTitle() {

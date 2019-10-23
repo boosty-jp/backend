@@ -1,6 +1,8 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 
@@ -52,4 +54,8 @@ public class User {
         return tags;
     }
 
+    public boolean hasDuplicatedTagIds() {
+        List<String> tagIds = tags.stream().map(t -> t.getId().getValue()).collect(Collectors.toList());
+        return tagIds.stream().filter(t -> Collections.frequency(tagIds, t) > 1).count() > 0 ? true : false;
+    }
 }

@@ -8,4 +8,8 @@ public enum UserToUserProperty {
     private UserToUserProperty(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

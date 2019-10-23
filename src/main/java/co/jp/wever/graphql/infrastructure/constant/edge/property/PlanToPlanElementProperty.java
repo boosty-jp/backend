@@ -8,4 +8,8 @@ public enum PlanToPlanElementProperty {
     private PlanToPlanElementProperty(String value) {
         this.value = value;
     }
+
+    public String getString() {
+        return this.value;
+    }
 }

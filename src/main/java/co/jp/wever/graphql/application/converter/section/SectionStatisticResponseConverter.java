@@ -7,7 +7,6 @@ public class SectionStatisticResponseConverter {
     public static SectionStatisticsResponse toSectionStatisticsResponse(SectionStatistic sectionStatistic) {
         return SectionStatisticsResponse.builder()
                                         .like(sectionStatistic.getLike().getValue())
-                                        .bookmark(sectionStatistic.getBookmark().getValue())
                                         .build();
     }
 }
