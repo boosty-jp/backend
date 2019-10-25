@@ -10,7 +10,6 @@ public class ArticleInputConverter {
         try {
             return ArticleInput.builder()
                                .title(input.get("title").toString())
-                               .description(input.get("description").toString())
                                .imageUrl(input.get("imageUrl").toString())
                                .tags((List<String>) input.get("tags"))
                                .build();

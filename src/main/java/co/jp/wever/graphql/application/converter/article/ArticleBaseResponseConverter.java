@@ -9,7 +9,6 @@ public class ArticleBaseResponseConverter {
                                   .id(articleBase.getId())
                                   .title(articleBase.getTitle())
                                   .imageUrl(articleBase.getImageUrl())
-                                  .description(articleBase.getDescription())
                                   .status(articleBase.getStatus().getString())
                                   .createDate(articleBase.getDate().getCreateDate().toString())
                                   .updateDate(articleBase.getDate().getUpdateDate().toString())

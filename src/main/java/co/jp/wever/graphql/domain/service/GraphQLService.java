@@ -66,8 +66,8 @@ public class GraphQLService {
                                                                        sectionDataFetcher.relatedSectionsDataFetcher())
                                                           .dataFetcher("article",
                                                                        articleDataFetcher.articleDataFetcher())
-//                                                          .dataFetcher("allArticles",
-//                                                                       articleDataFetcher.allArticlesDataFetcher())
+                                                          //                                                          .dataFetcher("allArticles",
+                                                          //                                                                       articleDataFetcher.allArticlesDataFetcher())
                                                           .dataFetcher("allPublishedArticles",
                                                                        articleDataFetcher.allPublishedArticlesDataFetcher())
                                                           .dataFetcher("allDraftedArticles",
@@ -81,8 +81,8 @@ public class GraphQLService {
                                                           .dataFetcher("relatedArticles",
                                                                        articleDataFetcher.relatedArticlesDataFetcher())
                                                           .dataFetcher("plan", planDataFetchers.planDataFetcher())
-//                                                          .dataFetcher("allPlans",
-//                                                                       planDataFetchers.allPlanDataFetcher())
+                                                          //                                                          .dataFetcher("allPlans",
+                                                          //                                                                       planDataFetchers.allPlanDataFetcher())
                                                           .dataFetcher("allPublishedPlans",
                                                                        planDataFetchers.allPublishedPlansDataFetcher())
                                                           .dataFetcher("allDraftedPlans",
@@ -107,10 +107,16 @@ public class GraphQLService {
                                                                        sectionDataFetcher.likeSectionElementDataFetcher())
                                                           .dataFetcher("deleteSection",
                                                                        sectionDataFetcher.deleteSectionElementDataFetcher())
-                                                          .dataFetcher("createArticle",
-                                                                       articleDataFetcher.createArticleDataFetcher())
-                                                          .dataFetcher("updateArticle",
-                                                                       articleDataFetcher.updateArticleDataFetcher())
+                                                          .dataFetcher("initArticle",
+                                                                       articleDataFetcher.initArticleDataFetcher())
+                                                          //                                                          .dataFetcher("updateArticle",
+                                                          //                                                                       articleDataFetcher.updateArticleDataFetcher())
+                                                          .dataFetcher("updateArticleTitle",
+                                                                       articleDataFetcher.updateArticleTitleDataFetcher())
+                                                          .dataFetcher("updateArticleImageUrl",
+                                                                       articleDataFetcher.updateArticleImageUrlDataFetcher())
+                                                          .dataFetcher("updateArticleTags",
+                                                                       articleDataFetcher.updateArticleImageUrlDataFetcher())
                                                           .dataFetcher("deleteArticle",
                                                                        articleDataFetcher.deleteArticleDataFetcher())
                                                           .dataFetcher("publishArticle",

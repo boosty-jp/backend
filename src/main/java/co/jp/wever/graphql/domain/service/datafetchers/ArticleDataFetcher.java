@@ -2,11 +2,10 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.article.ArticleDetailResponseConverter;
-import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
 import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
@@ -122,30 +121,64 @@ public class ArticleDataFetcher {
     ///////////////////////////////
     ///////// Mutations   /////////
     ///////////////////////////////
-    public DataFetcher createArticleDataFetcher() {
+    public DataFetcher initArticleDataFetcher() {
 
         return dataFetchingEnvironment -> {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
 
-            Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("article");
-            String articleId =
-                createArticleService.createArticle(userId, ArticleInputConverter.toArticleInput(articleInputMap));
+            String articleId = createArticleService.initArticle(userId);
 
             return CreateResponse.builder().id(articleId).build();
         };
     }
 
-    public DataFetcher updateArticleDataFetcher() {
+    //    public DataFetcher updateArticleDataFetcher() {
+    //        return dataFetchingEnvironment -> {
+    //            String token = (String) dataFetchingEnvironment.getContext();
+    //            String userId = tokenVerifier.getUserId(token);
+    //            String articleId = dataFetchingEnvironment.getArgument("articleId");
+    //
+    //            Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("article");
+    //            updateArticleService.updateArticle(articleId,
+    //                                               userId,
+    //                                               ArticleInputConverter.toArticleInput(articleInputMap));
+    //            return UpdateResponse.builder().build();
+    //        };
+    //    }
+
+    public DataFetcher updateArticleTitleDataFetcher() {
         return dataFetchingEnvironment -> {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
+            String title = dataFetchingEnvironment.getArgument("title");
 
-            Map<String, Object> articleInputMap = (Map) dataFetchingEnvironment.getArgument("article");
-            updateArticleService.updateArticle(articleId,
-                                               userId,
-                                               ArticleInputConverter.toArticleInput(articleInputMap));
+            updateArticleService.updateArticleTitle(articleId, userId, title);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher updateArticleImageUrlDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            String imageUrl = dataFetchingEnvironment.getArgument("imageUrl");
+
+            updateArticleService.updateArticleImageUrl(articleId,userId, imageUrl);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher updateArticleTagsDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            List<String> tags = (List<String>) dataFetchingEnvironment.getArgument("tags");
+
+            updateArticleService.updateArticleTags(articleId, userId, tags);
             return UpdateResponse.builder().build();
         };
     }

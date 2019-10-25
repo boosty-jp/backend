@@ -5,14 +5,12 @@ import java.util.Map;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.Article;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 public class ArticleBaseEntityConverter {
     public static ArticleBaseEntity toArticleBaseEntity(ArticleBase articleBase) {
         return ArticleBaseEntity.builder()
                                 .title(articleBase.getTitle())
-                                .description(articleBase.getDescription())
                                 .imageUrl(articleBase.getImageUrl())
                                 .status(articleBase.getStatus().getString())
                                 .createdDate(articleBase.getDate().getUnixCreateDate())
@@ -24,7 +22,6 @@ public class ArticleBaseEntityConverter {
         return ArticleBaseEntity.builder()
                                 .id(articleId)
                                 .title(articleBase.getTitle())
-                                .description(articleBase.getDescription())
                                 .imageUrl(articleBase.getImageUrl())
                                 .status(articleBase.getStatus().getString())
                                 .createdDate(articleBase.getDate().getUnixCreateDate())
@@ -38,8 +35,6 @@ public class ArticleBaseEntityConverter {
                                 .id(VertexConverter.toId(articleVertex))
                                 .imageUrl(VertexConverter.toString(ArticleVertexProperty.IMAGE_URL.getString(),
                                                                    articleVertex))
-                                .description(VertexConverter.toString(ArticleVertexProperty.DESCRIPTION.getString(),
-                                                                      articleVertex))
                                 .title(VertexConverter.toString(ArticleVertexProperty.TITLE.getString(), articleVertex))
                                 .status(status)
                                 .createdDate(VertexConverter.toLong(ArticleVertexProperty.CREATED_TIME.getString(),

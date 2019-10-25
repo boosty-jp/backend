@@ -8,7 +8,13 @@ import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 @Repository
 public interface UpdateArticleRepository {
-    void updateOne(ArticleBaseEntity base, List<String> tagIds);
+//    void updateOne(ArticleBaseEntity base, List<String> tagIds);
+
+    void updateTitle(String articleId, String title);
+
+    void updateImageUrl(String articleId, String imageUrl);
+
+    void updateTags(String articleId, List<String> tagIds);
 
     void publishOne(String articleId, String userId);
 

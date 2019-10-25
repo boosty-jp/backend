@@ -16,12 +16,8 @@ public class CreateArticleService {
         this.createArticleRepository = createArticleRepository;
     }
 
-    public String createArticle(String userId, ArticleInput articleInput) {
+    public String initArticle(String userId) {
 
-        ArticleBase articleBase = ArticleBaseConverter.toArticleBase(articleInput);
-
-        return createArticleRepository.createOne(ArticleBaseEntityConverter.toArticleBaseEntity(articleBase),
-                                                 articleInput.getTags(),
-                                                 userId);
+        return createArticleRepository.initOne(userId);
     }
 }

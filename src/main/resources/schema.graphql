@@ -107,7 +107,6 @@ input SectionInput{
 input ArticleInput {
     title: String!
     imageUrl: String
-    description: String
     tags: [String]!
 }
 
@@ -140,8 +139,11 @@ type Mutation {
     deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
 
-    createArticle(article: ArticleInput): CreateResponse
-    updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    initArticle: CreateResponse
+   # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
+    updateArticleImageUrl(articleId: ID!, url: String!): UpdateResponse
+    updateArticleTags(articleId: ID!, tags: [String!]!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
     publishArticle(articleId: ID!): UpdateResponse
     draftArticle(articleId: ID!): UpdateResponse
