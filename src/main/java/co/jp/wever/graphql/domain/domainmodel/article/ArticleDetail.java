@@ -64,11 +64,7 @@ public class ArticleDetail {
             return false;
         }
 
-        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
-            return false;
-        }
-
-        return !base.getStatus().getString().equals(ArticleStatus.DRAFTED.getString());
+        return !base.getStatus().getString().equals(ArticleStatus.DELETED.getString());
     }
 
     public ArticleBase getBase() {

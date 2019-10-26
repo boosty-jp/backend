@@ -12,7 +12,7 @@ public interface FindSectionRepository {
 
     SectionEntity findOne(String sectionId);
 
-    List<SectionEntity> findAllDetailOnArticle(String articleId);
+    List<SectionEntity> findAllDetailOnArticle(String articleId, String userId);
 
     List<SectionEntity> findAllLiked(String userId);
 

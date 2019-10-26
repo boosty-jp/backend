@@ -24,7 +24,7 @@ public class CreateUserRepositoryImpl implements CreateUserRepository {
     public String createOne(UserEntity userEntity) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         String userId = g.addV(VertexLabel.USER.getString())
                          .property(T.id, userEntity.getUserId())
                          .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getUserId())

@@ -105,11 +105,18 @@ public class UpdateArticleService {
     }
 
     public void likeArticle(String articleId, String userId) {
-
         updateArticleRepository.likeOne(articleId, userId);
+    }
+
+    public void deleteLikeArticle(String articleId, String userId) {
+        updateArticleRepository.deleteLikeOne(articleId, userId);
     }
 
     public void finishArticle(String articleId, String userId) {
         updateArticleRepository.finishOne(articleId, userId);
+    }
+
+    public void deleteFinishArticle(String articleId, String userId) {
+        updateArticleRepository.deleteFinishOne(articleId, userId);
     }
 }

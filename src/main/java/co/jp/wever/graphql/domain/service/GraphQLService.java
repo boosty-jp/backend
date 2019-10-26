@@ -66,8 +66,8 @@ public class GraphQLService {
                                                                        sectionDataFetcher.relatedSectionsDataFetcher())
                                                           .dataFetcher("article",
                                                                        articleDataFetcher.articleDataFetcher())
-                                                          //                                                          .dataFetcher("allArticles",
-                                                          //                                                                       articleDataFetcher.allArticlesDataFetcher())
+                                                          .dataFetcher("allArticles",
+                                                                       articleDataFetcher.allArticlesDataFetcher())
                                                           .dataFetcher("allPublishedArticles",
                                                                        articleDataFetcher.allPublishedArticlesDataFetcher())
                                                           .dataFetcher("allDraftedArticles",
@@ -105,6 +105,8 @@ public class GraphQLService {
                                                                        sectionDataFetcher.updateSectionElementDataFetcher())
                                                           .dataFetcher("likeSection",
                                                                        sectionDataFetcher.likeSectionElementDataFetcher())
+                                                          .dataFetcher("deleteLikeSection",
+                                                                       sectionDataFetcher.deleteLikeSectionElementDataFetcher())
                                                           .dataFetcher("deleteSection",
                                                                        sectionDataFetcher.deleteSectionElementDataFetcher())
                                                           .dataFetcher("initArticle",
@@ -125,8 +127,12 @@ public class GraphQLService {
                                                                        articleDataFetcher.draftArticleDataFetcher())
                                                           .dataFetcher("likeArticle",
                                                                        articleDataFetcher.likeArticleDataFetcher())
+                                                          .dataFetcher("deleteLikeArticle",
+                                                                       articleDataFetcher.deleteLikeArticleDataFetcher())
                                                           .dataFetcher("finishArticle",
                                                                        articleDataFetcher.finishArticleDataFetcher())
+                                                          .dataFetcher("deleteFinishArticle",
+                                                                       articleDataFetcher.deleteFinishArticleDataFetcher())
                                                           .dataFetcher("createPlanBase",
                                                                        planDataFetchers.createPlanBaseDataFetcher())
                                                           .dataFetcher("updatePlanBase",

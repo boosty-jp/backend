@@ -31,7 +31,7 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
     public void updateOne(UserEntity userEntity) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         // サインアップ時にユーザー作成に失敗する可能性もあるので、アップサートにする
         g.V()
@@ -61,7 +61,7 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
     public void followUser(String targetUserId, String followerUserId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         g.V(followerUserId)
          .as("follower")

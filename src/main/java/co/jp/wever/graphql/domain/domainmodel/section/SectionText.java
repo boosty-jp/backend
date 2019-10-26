@@ -2,7 +2,7 @@ package co.jp.wever.graphql.domain.domainmodel.section;
 
 public class SectionText {
     private final static int MIN_WORD_COUNT = 1;
-    private final static int MAX_WORD_COUNT = 1000;
+    private final static int MAX_WORD_COUNT = 10000;
     private String value;
 
     private SectionText(String value) {

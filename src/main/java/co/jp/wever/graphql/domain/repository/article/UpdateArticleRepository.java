@@ -22,5 +22,9 @@ public interface UpdateArticleRepository {
 
     void likeOne(String articleId, String userId);
 
+    void deleteLikeOne(String articleId, String userId);
+
     void finishOne(String articleId, String userId);
+
+    void deleteFinishOne(String articleId, String userId);
 }

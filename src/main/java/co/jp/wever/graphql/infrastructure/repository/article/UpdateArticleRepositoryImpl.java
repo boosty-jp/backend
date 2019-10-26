@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.infrastructure.repository.article;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,8 +13,10 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticleProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
+import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
 @Component
@@ -30,7 +33,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     //    public void updateOne(ArticleBaseEntity targetArticle, List<String> tagIds) {
     //        GraphTraversalSource g = neptuneClient.newTraversal();
     //
-    //        long now = System.currentTimeMillis() / 1000L;
+    //        long now = System.currentTimeMillis();
     //
     //        g.V(targetArticle.getId())
     //         .property(single, ArticleVertexProperty.TITLE.getString(), targetArticle.getTitle())
@@ -50,7 +53,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     public void updateTitle(String articleId, String title) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         g.V(articleId)
          .hasLabel(VertexLabel.ARTICLE.getString())
@@ -65,7 +68,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     public void updateImageUrl(String articleId, String imageUrl) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         g.V(articleId)
          .hasLabel(VertexLabel.ARTICLE.getString())
@@ -80,7 +83,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     public void updateTags(String articleId, List<String> tags) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         g.V(articleId)
          .hasLabel(VertexLabel.ARTICLE.getString())
@@ -115,13 +118,18 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .drop()
          .iterate();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
-        g.V(userId)
-         .hasLabel(VertexLabel.USER.getString())
-         .addE(UserToArticleEdge.PUBLISHED.getString())
-         .to(g.V(articleId).hasLabel(VertexLabel.USER.getString()))
-         .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now)
+        g.E(UserToArticleEdge.PUBLISHED.getString())
+         .hasId(EdgeIdCreator.userPublishArticle(userId, articleId))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .hasLabel(VertexLabel.USER.getString())
+                    .addE(UserToArticleEdge.PUBLISHED.getString())
+                    .property(T.id, EdgeIdCreator.userPublishArticle(userId, articleId))
+                    .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
+                    .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now))
          .next();
 
         // TODO: Algoliaに追加
@@ -138,15 +146,19 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .drop()
          .iterate();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
-        g.V(userId)
-         .hasLabel(VertexLabel.USER.getString())
-         .addE(UserToArticleEdge.DRAFTED.getString())
-         .to(g.V(articleId).hasLabel(VertexLabel.USER.getString()))
-         .property(UserToArticleProperty.DRAFTED_TIME.getString(), now)
+        g.E(UserToArticleEdge.DRAFTED.getString())
+         .hasId(EdgeIdCreator.userDraftArticle(userId, articleId))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .hasLabel(VertexLabel.USER.getString())
+                    .addE(UserToArticleEdge.DRAFTED.getString())
+                    .property(T.id, EdgeIdCreator.userDraftArticle(userId, articleId))
+                    .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
+                    .property(UserToArticleProperty.DRAFTED_TIME.getString(), now))
          .next();
-
         // TODO: Algoliaに追加
     }
 
@@ -154,38 +166,60 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     public void likeOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        // 二重に登録されるのを防止する
-        // TODO: いいやり方検討する
+        long now = System.currentTimeMillis();
+
+        g.E(UserToArticleEdge.LIKED.getString())
+         .hasId(EdgeIdCreator.userLikeArticle(userId, articleId))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(articleId)
+                    .hasLabel(VertexLabel.ARTICLE.getString())
+                    .addE(UserToArticleEdge.LIKED.getString())
+                    .property(T.id, EdgeIdCreator.userLikeArticle(userId, articleId))
+                    .property(UserToArticleProperty.LIKED_TIME.getString(), now)
+                    .from(g.V(userId).hasLabel(VertexLabel.USER.getString())))
+         .next();
+    }
+
+    @Override
+    public void deleteLikeOne(String articleId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
         g.V(articleId)
-         .hasLabel(VertexLabel.USER.getString())
          .inE(UserToArticleEdge.LIKED.getString())
-         .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+         .hasId(EdgeIdCreator.userLikeArticle(userId, articleId))
          .drop()
          .iterate();
-
-        long now = System.currentTimeMillis() / 1000L;
-        g.V(articleId)
-         .hasLabel(VertexLabel.ARTICLE.getString())
-         .addE(UserToArticleEdge.LIKED.getString())
-         .from(g.V(userId).hasLabel(VertexLabel.USER.getString()))
-         .property(UserToArticleProperty.LIKED_TIME.getString(), now)
-         .next();
     }
 
     @Override
     public void finishOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        // 二重に登録されるのを防止する
-        // TODO: いいやり方検討する
-        g.V(articleId).inE(UserToArticleEdge.LEARNED.getString()).where(outV().hasId(userId)).drop().iterate();
+        long now = System.currentTimeMillis();
 
-        long now = System.currentTimeMillis() / 1000L;
-        g.V(articleId)
-         .hasLabel(VertexLabel.ARTICLE.getString())
-         .addE(UserToArticleEdge.LEARNED.getString())
-         .from(g.V(userId).hasLabel(VertexLabel.USER.getString()))
-         .property(UserToArticleProperty.LEARNED_TIME.getString(), now)
+
+        g.E(UserToArticleEdge.LEARNED.getString())
+         .hasId(EdgeIdCreator.userLearnArticle(userId, articleId))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(articleId)
+                    .hasLabel(VertexLabel.ARTICLE.getString())
+                    .addE(UserToArticleEdge.LEARNED.getString())
+                    .property(T.id, EdgeIdCreator.userLearnArticle(userId, articleId))
+                    .property(UserToArticleProperty.LEARNED_TIME.getString(), now)
+                    .from(g.V(userId).hasLabel(VertexLabel.USER.getString())))
          .next();
+    }
+
+    @Override
+    public void deleteFinishOne(String articleId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        g.V(articleId)
+         .inE(UserToArticleEdge.LEARNED.getString())
+         .hasId(EdgeIdCreator.userLearnArticle(userId, articleId))
+         .drop()
+         .iterate();
     }
 }

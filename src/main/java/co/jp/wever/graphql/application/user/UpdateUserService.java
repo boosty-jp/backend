@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.service.user;
+package co.jp.wever.graphql.application.user;
 
 import org.springframework.stereotype.Service;
 

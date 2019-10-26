@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.domain.domainmodel.section;
 
 public class SectionNumber {
-    private final static int MIN_NUMBER = 1;
+    private final static int MIN_NUMBER = 0;
     private final static int MAX_NUMBER = 100;
     private int value;
 

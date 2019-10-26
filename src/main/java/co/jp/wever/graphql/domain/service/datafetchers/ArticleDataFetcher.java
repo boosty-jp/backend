@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.article.ArticleDetailResponseConverter;
+import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
 import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
@@ -164,10 +165,10 @@ public class ArticleDataFetcher {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            String imageUrl = dataFetchingEnvironment.getArgument("imageUrl");
+            String imageUrl = dataFetchingEnvironment.getArgument("url");
 
-            updateArticleService.updateArticleImageUrl(articleId,userId, imageUrl);
-            return UpdateResponse.builder().build();
+            updateArticleService.updateArticleImageUrl(articleId, userId, imageUrl);
+            return UpdateImageResponse.builder().url(imageUrl).build();
         };
     }
 
@@ -227,12 +228,34 @@ public class ArticleDataFetcher {
         };
     }
 
+    public DataFetcher deleteLikeArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            updateArticleService.deleteLikeArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
+    }
+
     public DataFetcher finishArticleDataFetcher() {
         return dataFetchingEnvironment -> {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
             updateArticleService.finishArticle(articleId, userId);
+
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher deleteFinishArticleDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+            String articleId = dataFetchingEnvironment.getArgument("articleId");
+            updateArticleService.deleteFinishArticle(articleId, userId);
 
             return UpdateResponse.builder().build();
         };

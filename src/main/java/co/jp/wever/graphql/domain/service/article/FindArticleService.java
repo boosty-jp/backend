@@ -35,12 +35,7 @@ public class FindArticleService {
     public List<ArticleDetail> findAllArticle(String userId) {
         List<ArticleDetailEntity> results = findArticleRepository.findAll(userId);
 
-        List<ArticleDetail> details =
-            results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
-
-        // 公開していない　かつ　そのユーザーじゃないものは含めない
-        UserId readUserId = UserId.of(userId);
-        return details.stream().filter(e -> e.canRead(readUserId)).collect(Collectors.toList());
+        return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
     public List<ArticleDetail> findAllPublishedArticle(String userId) {
