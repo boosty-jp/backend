@@ -9,7 +9,6 @@ import lombok.Data;
 public class ArticleBaseEntity {
     private String id;
     private String title;
-    private String description;
     private String imageUrl;
     private String status;
     private long createdDate;

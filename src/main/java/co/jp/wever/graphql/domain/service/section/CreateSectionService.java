@@ -39,19 +39,21 @@ public class CreateSectionService {
                                                                    .collect(Collectors.toList());
 
         // TODO: Numberのチェックはドメインに閉じ込める
-        if (sectionInput.getNumber() < 1) {
+        if (sectionInput.getNumber() < 0) {
             throw new IllegalArgumentException();
         }
 
-        int maxNumber = sectionNumbers.stream()
-                                      .map(s -> s.getNumber())
-                                      .collect(Collectors.toList())
-                                      .stream()
-                                      .mapToInt(v -> v)
-                                      .max()
-                                      .orElseThrow(IllegalArgumentException::new);
-        if (sectionInput.getNumber() > maxNumber + 1) {
-            throw new IllegalArgumentException();
+        if(!sectionNumbers.isEmpty()){
+            int maxNumber = sectionNumbers.stream()
+                                          .map(s -> s.getNumber())
+                                          .collect(Collectors.toList())
+                                          .stream()
+                                          .mapToInt(v -> v)
+                                          .max()
+                                          .orElseThrow(IllegalArgumentException::new);
+            if (sectionInput.getNumber() > maxNumber + 1) {
+                throw new IllegalArgumentException();
+            }
         }
 
         return createSectionRepository.addOne(userId,

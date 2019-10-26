@@ -1,11 +1,13 @@
 package co.jp.wever.graphql.infrastructure.repository.article;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.domain.repository.article.DeleteArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
+import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 @Component
 public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
@@ -26,9 +28,10 @@ public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
          .iterate();
 
         // 論理削除
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         g.V(userId)
          .addE(UserToArticleEdge.DELETED.getString())
+         .property(T.id, EdgeIdCreator.userDeleteArticle(userId, articleId))
          .to(g.V(articleId))
          .property(UserToArticleEdge.DELETED.getString(), now)
          .next();

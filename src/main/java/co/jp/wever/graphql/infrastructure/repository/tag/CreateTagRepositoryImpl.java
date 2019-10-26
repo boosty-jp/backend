@@ -20,7 +20,7 @@ public class CreateTagRepositoryImpl {
     public String createTag(String name) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         // TODO: 同じタグがあったときのトランザクション制御したい
         String tagId = g.addV(VertexLabel.TAG.getString())

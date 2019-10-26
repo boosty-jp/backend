@@ -23,8 +23,9 @@ import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionNumber
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal.Symbols.outV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
 
 @Component
 public class FindSectionRepositoryImpl implements FindSectionRepository {
@@ -58,7 +59,7 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
         return SectionEntityConverter.toSectionEntity(result);
     }
 
-    public List<SectionEntity> findAllDetailOnArticle(String articleId) {
+    public List<SectionEntity> findAllDetailOnArticle(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         //        List<Map<String, Object>> allResults = g.V(articleId)
         //                                                .out(ArticleToSectionEdge.INCLUDE.getString())
@@ -69,27 +70,33 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
         //                                                .by(__.inE(UserToSectionEdge.LIKED.getString()).label().fold())
         //                                                .toList();
         List<Map<String, Object>> results = g.V(articleId)
-                                            .out(ArticleToSectionEdge.INCLUDE.getString())
-                                            .hasLabel(VertexLabel.SECTION.getString())
-                                            .project("base", "author", "status", "like", "number")
-                                            .by(__.valueMap().with(WithOptions.tokens))
-                                            .by(__.in(UserToSectionEdge.CREATED.getString(),
-                                                      UserToSectionEdge.DELETED.getString())
-                                                  .hasLabel(VertexLabel.USER.getString())
-                                                  .id())
-                                            .by(__.inE(UserToSectionEdge.CREATED.getString(),
-                                                       UserToSectionEdge.DELETED.getString()).label())
-                                            .by(__.in(UserToSectionEdge.LIKED.getString()).count())
-                                            .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
-                                                  .values(ArticleToSectionProperty.NUMBER.getString()))
-                                            .toList();
+                                             .out(ArticleToSectionEdge.INCLUDE.getString())
+                                             .hasLabel(VertexLabel.SECTION.getString())
+                                             .project("base", "author", "status", "like", "number", "liked")
+                                             .by(__.valueMap().with(WithOptions.tokens))
+                                             .by(__.in(UserToSectionEdge.CREATED.getString(),
+                                                       UserToSectionEdge.DELETED.getString())
+                                                   .hasLabel(VertexLabel.USER.getString())
+                                                   .id())
+                                             .by(__.inE(UserToSectionEdge.CREATED.getString(),
+                                                        UserToSectionEdge.DELETED.getString()).label())
+                                             .by(__.in(UserToSectionEdge.LIKED.getString()).count())
+                                             .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
+                                                   .values(ArticleToSectionProperty.NUMBER.getString()))
+                                             //                                             .by(__.inE(UserToSectionEdge.LIKED.getString())
+                                             //                                                   .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()).count()))
+                                             .by(coalesce(__.inE(UserToSectionEdge.LIKED.getString())
+                                                            .where(outV().hasId(userId)
+                                                                         .hasLabel(VertexLabel.USER.getString()))
+                                                            .limit(1)
+                                                            .constant(true), constant(false)))
+                                             .toList();
 
         return results.stream().map(r -> SectionEntityConverter.toSectionEntity(r)).collect(Collectors.toList());
     }
 
     public List<SectionNumberEntity> findAllNumberOnArticle(String articleId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
 
         List<Map<String, Object>> allResults = g.V(articleId)
                                                 .out(ArticleToSectionEdge.INCLUDE.getString())

@@ -6,7 +6,7 @@ type Query {
     relatedSections: [Section]!
 
     article(articleId: ID!): ArticleDetail!
-#    allArticles(userId: ID!): [ArticleDetail]!
+    allArticles: [ArticleDetail]!
     allPublishedArticles(userId: ID!): [ArticleDetail]!
     allDraftedArticles: [ArticleDetail]!
     allLikedArticles(userId: ID!): [ArticleDetail]!
@@ -53,7 +53,6 @@ type ArticleDetail {
 type ArticleBase {
     id: ID!
     title: String!
-    description: String!
     imageUrl: String!
     status: String!
     createDate: String!
@@ -107,7 +106,6 @@ input SectionInput{
 input ArticleInput {
     title: String!
     imageUrl: String
-    description: String
     tags: [String]!
 }
 
@@ -139,14 +137,20 @@ type Mutation {
     updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
     deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
+    deleteLikeSection(sectionId: ID!): UpdateResponse
 
-    createArticle(article: ArticleInput): CreateResponse
-    updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    initArticle: CreateResponse
+   # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
+    updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
+    updateArticleTags(articleId: ID!, tags: [String!]!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
     publishArticle(articleId: ID!): UpdateResponse
     draftArticle(articleId: ID!): UpdateResponse
     likeArticle(articleId: ID!): UpdateResponse
+    deleteLikeArticle(articleId: ID!): UpdateResponse
     finishArticle(articleId: ID!): UpdateResponse
+    deleteFinishArticle(articleId: ID!): UpdateResponse
 
     createPlanBase(planBase: PlanBase): CreateResponse
     updatePlanBase(planId: ID!, planBase: PlanBase!): UpdateResponse
@@ -175,6 +179,11 @@ type CreateResponse {
 }
 
 type UpdateResponse {
+    error: Error
+}
+
+type UpdateImageResponse {
+    url: String
     error: Error
 }
 

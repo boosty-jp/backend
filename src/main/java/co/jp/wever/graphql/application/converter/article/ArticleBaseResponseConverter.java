@@ -2,6 +2,7 @@ package co.jp.wever.graphql.application.converter.article;
 
 import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleBaseResponse;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
+import co.jp.wever.graphql.infrastructure.util.DateToStringConverter;
 
 public class ArticleBaseResponseConverter {
     public static ArticleBaseResponse toArticleBaseResponse(ArticleBase articleBase) {
@@ -9,10 +10,9 @@ public class ArticleBaseResponseConverter {
                                   .id(articleBase.getId())
                                   .title(articleBase.getTitle())
                                   .imageUrl(articleBase.getImageUrl())
-                                  .description(articleBase.getDescription())
                                   .status(articleBase.getStatus().getString())
-                                  .createDate(articleBase.getDate().getCreateDate().toString())
-                                  .updateDate(articleBase.getDate().getUpdateDate().toString())
+                                  .createDate(DateToStringConverter.toDateString(articleBase.getDate().getCreateDate()))
+                                  .updateDate(DateToStringConverter.toDateString(articleBase.getDate().getUpdateDate()))
                                   .build();
     }
 }

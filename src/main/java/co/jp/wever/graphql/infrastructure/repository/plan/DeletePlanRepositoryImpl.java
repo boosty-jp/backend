@@ -25,7 +25,7 @@ public class DeletePlanRepositoryImpl implements DeletePlanRepository {
         g.V(planId).inE(UserToPlanEdge.PUBLISHED.getString(), UserToPlanEdge.DRAFTED.getString()).from(g.V(userId)).drop();
 
         // 論理削除
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         g.V(userId)
          .addE(UserToPlanEdge.DELETED.getString())
          .to(g.V(planId))

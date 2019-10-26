@@ -39,7 +39,7 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
 
         g.V(planBaseEntity.getTagIds()).addE(PlanToTagEdge.RELATED.getString()).from(g.V(planId)).next();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         g.V(userId)
          .addE(UserToPlanEdge.DRAFTED.getString())

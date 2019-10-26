@@ -38,5 +38,9 @@ public class UpdateSectionService {
     public void likeSection(String sectionId, String userId) {
         updateSectionRepository.likeOne(sectionId, userId);
     }
+
+    public void deleteLikeSection(String sectionId, String userId) {
+        updateSectionRepository.deleteLikeOne(sectionId,userId);
+    }
 }
 

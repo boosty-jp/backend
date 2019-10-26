@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import co.jp.wever.graphql.domain.service.GraphQLService;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
@@ -21,12 +24,16 @@ public class ApplicationController {
     GraphQLService graphQLService;
 
     @PostMapping
-        public ResponseEntity<Object> getPlans(@RequestHeader(value = "AuthorizationToken", required = false) String token, @RequestBody String query) {
+    public ResponseEntity<Object> getPlans(
+        @RequestHeader(value = "AuthorizationToken", required = false) String token, @RequestBody Map body) {
+        String queryString = (String) body.get("query");
+        Map<String, Object> variables = (Map<String, Object>) body.get("variables");
+        if (variables == null) {
+            variables = new LinkedHashMap<>();
+        }
 
-        ExecutionInput executionInput = ExecutionInput.newExecutionInput()
-                                                      .query(query)
-                                                      .context(token)
-                                                      .build();
+        ExecutionInput executionInput =
+            ExecutionInput.newExecutionInput().query(queryString).variables(variables).context(token).build();
 
         ExecutionResult execute = graphQLService.getGraphQL().execute(executionInput);
 

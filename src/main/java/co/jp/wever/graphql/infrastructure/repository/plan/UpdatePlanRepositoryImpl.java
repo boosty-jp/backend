@@ -65,7 +65,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
 
         g.V(planId).inE(UserToPlanEdge.DRAFTED.getString(), UserToPlanEdge.DELETED.getString()).from(g.V(userId)).drop();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         g.V(userId)
          .addE(UserToPlanEdge.PUBLISHED.getString())
          .to(g.V(planId))
@@ -81,7 +81,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
 
         g.V(planId).inE(UserToPlanEdge.PUBLISHED.getString(), UserToPlanEdge.DELETED.getString()).from(g.V(userId)).drop();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         g.V(userId)
          .addE(UserToPlanEdge.DRAFTED.getString())
          .to(g.V(planId))
@@ -94,7 +94,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
     public void startOne(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         g.V(userId)
          .addE(UserToPlanEdge.LEARNING.getString())
          .to(g.V(planId))
@@ -117,7 +117,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
             throw new IllegalArgumentException();
         }
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
         g.V(userId)
          .addE(UserToPlanEdge.LEARNED.getString())
          .to(g.V(planId))

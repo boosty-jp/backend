@@ -34,7 +34,7 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
         String authorId, String articleId, SectionEntity sectionEntity, List<SectionNumberEntity> incrementNumbers) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        long now = System.currentTimeMillis() / 1000L;
+        long now = System.currentTimeMillis();
 
         String sectionId = g.addV(VertexLabel.SECTION.getString())
                             .property(single, SectionVertexProperty.TITLE.getString(), sectionEntity.getTitle())

@@ -35,6 +35,7 @@ public class SectionEntityConverter {
                             .title(VertexConverter.toString("title", base))
                             .text(VertexConverter.toString("text", base))
                             .likeCount(Math.toIntExact((long) resultMap.get("like")))
+                            .liked((boolean) resultMap.get("liked"))
                             .build();
     }
 }
