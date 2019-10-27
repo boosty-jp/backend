@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.infrastructure.converter.entity.user;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

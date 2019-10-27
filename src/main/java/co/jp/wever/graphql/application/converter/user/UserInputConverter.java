@@ -11,7 +11,6 @@ public class UserInputConverter {
             return UserInput.builder()
                             .displayName(input.get("displayName").toString())
                             .description(input.get("description").toString())
-                            .imageUrl(input.get("imageUrl").toString())
                             .url(input.get("url").toString())
                             .tags((List<String>) input.get("tags"))
                             .build();

@@ -155,6 +155,8 @@ public class GraphQLService {
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",
                                                                        userDataFetcher.updateUserDataFetcher())
+                                                          .dataFetcher("updateUserImage",
+                                                                       userDataFetcher.updateUserImageDataFetcher())
                                                           .dataFetcher("deleteUser",
                                                                        userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("followUser",

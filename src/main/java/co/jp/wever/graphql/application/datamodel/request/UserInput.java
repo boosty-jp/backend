@@ -10,7 +10,6 @@ import lombok.Data;
 public class UserInput {
     private String displayName;
     private String description;
-    private String imageUrl;
     private String url;
     private List<String> tags;
 }

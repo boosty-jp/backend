@@ -28,6 +28,10 @@ public class UpdateUserService {
         this.updateUserRepository.updateOne(UserEntityConverter.toUserEntity(user));
     }
 
+    public void updateUserImage(String imageUrl, String userId) {
+        this.updateUserRepository.updateImageUrl(imageUrl, userId);
+    }
+
     public void followUser(String targetUserId, String followerUserId) {
         if (UserId.of(targetUserId).same(UserId.of(followerUserId))) {
             throw new IllegalArgumentException();

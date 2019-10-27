@@ -126,7 +126,6 @@ input PlanElementInput{
 input UserInput{
     displayName: String!
     description: String
-    imageUrl: String
     url: String
     tags: [String]
 }
@@ -166,6 +165,7 @@ type Mutation {
 
     createUser(user: UserInput!): CreateResponse
     updateUser(user: UserInput!): UpdateResponse
+    updateUserImage(imageUrl: String!):UpdateImageResponse
     deleteUser: UpdateResponse
     followUser(userId: ID!): UpdateResponse
     unFollowUser(userId: ID!): UpdateResponse
