@@ -10,6 +10,8 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.UserVertexProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
+
 
 @Component
 public class CreateUserRepositoryImpl implements CreateUserRepository {
@@ -25,13 +27,17 @@ public class CreateUserRepositoryImpl implements CreateUserRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         long now = System.currentTimeMillis();
-        String userId = g.addV(VertexLabel.USER.getString())
-                         .property(T.id, userEntity.getUserId())
-                         .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getUserId())
-                         .property(UserVertexProperty.CREATED_TIME.getString(), now)
-                         .next()
-                         .id()
-                         .toString();
+
+        String userId = g.V(userEntity.getUserId())
+         .fold()
+         .coalesce(unfold(),
+                   g.addV(VertexLabel.USER.getString())
+                    .property(T.id, userEntity.getUserId())
+                    .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getUserId())
+                    .property(UserVertexProperty.CREATED_TIME.getString(), now))
+         .next()
+         .id()
+         .toString();
 
         //TODO: Algoliaにデータ追加する
         return userId;

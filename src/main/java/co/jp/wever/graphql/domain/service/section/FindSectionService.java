@@ -1,18 +1,19 @@
 package co.jp.wever.graphql.domain.service.section;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
-import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
-import co.jp.wever.graphql.domain.repository.article.FindArticleRepository;
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 
@@ -28,13 +29,14 @@ public class FindSectionService {
         this.findSectionRepository = findSectionRepository;
     }
 
-    public List<Section> findAllSectionsOnArticle(String articleId, String userId) throws IllegalAccessException {
+    public List<Section> findAllSectionsOnArticle(String articleId, String userId) {
         // TODO: ステータスだけ見たいので別の軽いクエリにしたい
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
         if (!articleDetail.canRead(UserId.of(userId))) {
-            throw new IllegalAccessException();
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         return findSectionRepository.findAllDetailOnArticle(articleId, userId)

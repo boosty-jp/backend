@@ -1,5 +1,10 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+
 public class UserId {
     private String value;
 
@@ -9,8 +14,8 @@ public class UserId {
 
     public static UserId of(String value) {
         if (value.isEmpty()) {
-            // TODO: Exception検討する
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.USER_ID_EMPTY.getString());
         }
 
         return new UserId(value);

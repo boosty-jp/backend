@@ -1,5 +1,9 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import io.netty.util.internal.StringUtil;
 
 public class UserImageUrl {
@@ -15,14 +19,15 @@ public class UserImageUrl {
         this.value = value;
     }
 
-    public static UserImageUrl of(String value) throws IllegalArgumentException {
+    public static UserImageUrl of(String value) {
         //TODO: URL先の画像が存在するかどうかチェックしたい
         if (StringUtil.isNullOrEmpty(value)) {
             return new UserImageUrl(DEFAULT_IMAGE_URL);
         }
 
         if (value.length() > MAX_URL_SIZE) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.INVALID_IMAGE_URL.getString());
         }
 
         // TODO: S3にアップロードされているURLかチェックする

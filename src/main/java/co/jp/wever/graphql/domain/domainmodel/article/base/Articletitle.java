@@ -1,5 +1,10 @@
 package co.jp.wever.graphql.domain.domainmodel.article.base;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+
 public class Articletitle {
 
     private String value;
@@ -9,9 +14,10 @@ public class Articletitle {
         this.value = value;
     }
 
-    public static Articletitle of(String value) throws IllegalArgumentException {
+    public static Articletitle of(String value) {
         if (value.length() > MAX_WORD_COUNT) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.TITLE_OVER.getString());
         }
 
         return new Articletitle(value);

@@ -1,14 +1,17 @@
 package co.jp.wever.graphql.infrastructure.repository.plan;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.repository.plan.UpdatePlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
@@ -114,7 +117,8 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
             learnStartTime = (long) edgeResult.get(UserToPlanProperty.LEARN_STARTED_TIME.getString());
             g.V(planId).inE(UserToPlanEdge.LEARNING.getString()).from(g.V(userId)).drop();
         } catch (Exception e) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
         long now = System.currentTimeMillis();

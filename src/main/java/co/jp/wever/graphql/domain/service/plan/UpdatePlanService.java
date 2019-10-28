@@ -1,17 +1,18 @@
 package co.jp.wever.graphql.domain.service.plan;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
-import co.jp.wever.graphql.domain.converter.plan.PlanElementConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanBaseEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
@@ -29,8 +30,7 @@ public class UpdatePlanService {
         this.findPlanRepository = findPlanRepository;
     }
 
-    public void updatePlanBase(String planId, String userId, PlanBaseInput planBaseInput)
-        throws IllegalAccessException {
+    public void updatePlanBase(String planId, String userId, PlanBaseInput planBaseInput) {
 
         // 対象のユーザーのプランかチェック
         PlanEntity planEntity = findPlanRepository.findOne(planId);
@@ -39,7 +39,8 @@ public class UpdatePlanService {
 
         UserId updaterId = UserId.of(userId);
         if (!updaterId.same(plan.getAuthorId())) {
-            throw new IllegalAccessException();
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         PlanBase updatePlanBase = PlanBase.of(planBaseInput.getTitle(),
@@ -61,14 +62,15 @@ public class UpdatePlanService {
         updatePlanRepository.updateElements(planId, null);
     }
 
-    public void publishPlan(String planId, String userId) throws IllegalAccessException {
+    public void publishPlan(String planId, String userId) {
 
         PlanEntity targetPlanEntity = findPlanRepository.findOne(planId);
         Plan plan = PlanConverter.toPlan(targetPlanEntity);
 
         UserId publisherId = UserId.of(userId);
         if (!publisherId.same(plan.getAuthorId())) {
-            throw new IllegalAccessException();
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         // 公開できるかチェック
@@ -77,13 +79,14 @@ public class UpdatePlanService {
         updatePlanRepository.publishOne(planId, userId);
     }
 
-    public void draftPlan(String planId, String userId) throws IllegalAccessException {
+    public void draftPlan(String planId, String userId) {
         PlanEntity targetPlanEntity = findPlanRepository.findOne(planId);
 
         Plan plan = PlanConverter.toPlan(targetPlanEntity);
         UserId draftUserId = UserId.of(userId);
         if (!draftUserId.same(plan.getAuthorId())) {
-            throw new IllegalAccessException();
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         // TODO:下書き化できるかチェック

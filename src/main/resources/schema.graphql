@@ -163,18 +163,24 @@ type Mutation {
     stopPlan(planId: ID!): UpdateResponse
     finishPlan(planId: ID!): UpdateResponse
 
-    createUser(user: UserInput!): CreateResponse
+    createUser(user: UserInput!): UpdateResponse
     updateUser(user: UserInput!): UpdateResponse
     updateUserImage(imageUrl: String!):UpdateImageResponse
     deleteUser: UpdateResponse
     followUser(userId: ID!): UpdateResponse
     unFollowUser(userId: ID!): UpdateResponse
 
-    createTag(name: String!): CreateResponse
+    createTag(name: String!): CreateTagResponse
 }
 
 type CreateResponse {
     id: ID!,
+    error: Error
+}
+
+type CreateTagResponse {
+    id: ID!,
+    name: String!
     error: Error
 }
 
@@ -186,6 +192,7 @@ type UpdateImageResponse {
     url: String
     error: Error
 }
+
 
 type Error{
     errorCode: String
