@@ -16,6 +16,7 @@ public class FindUserService {
     }
 
     public User findUser(String userId) {
+
         return UserConverter.toUser(findUserRepository.findOne(userId));
     }
 }

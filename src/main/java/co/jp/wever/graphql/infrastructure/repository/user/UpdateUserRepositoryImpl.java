@@ -40,13 +40,12 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
          .coalesce(unfold().V(userEntity.getUserId())
                            .property(single, UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
                            .property(single, UserVertexProperty.URL.getString(), userEntity.getUrl())
-                           .property(single, UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
+                           .property(single, UserVertexProperty.DESCRIPTION.getString(), userEntity.getDescription())
                            .property(single, UserVertexProperty.UPDATED_TIME.getString(), now),
                    g.addV(VertexLabel.USER.getString()).property("id", userEntity.getUserId()))
          .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
          .property(UserVertexProperty.DESCRIPTION.getString(), userEntity.getDescription())
          .property(UserVertexProperty.URL.getString(), userEntity.getUrl())
-         .property(UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
          .property(UserVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
@@ -56,6 +55,18 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
         g.V(tagIds).addE(UserToTagEdge.RELATED.getString()).from(g.V(userEntity.getUserId())).next();
 
         //TODO: Algoliaにデータ追加する
+    }
+
+    public void updateImageUrl(String imageUrl, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        long now = System.currentTimeMillis();
+
+        g.V(userId)
+         .hasLabel(VertexLabel.USER.getString())
+         .property(single, UserVertexProperty.IMAGE_URL.getString(), imageUrl)
+         .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
+         .next();
     }
 
     public void followUser(String targetUserId, String followerUserId) {

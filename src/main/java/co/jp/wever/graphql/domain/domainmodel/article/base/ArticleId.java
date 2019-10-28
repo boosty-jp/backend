@@ -9,10 +9,7 @@ public class ArticleId {
     }
 
     // TODO: ドメインじゃないので消したい
-    public static ArticleId of(String value) throws IllegalArgumentException {
-        //        if (StringUtil.isNullOrEmpty(value)) {
-        //            throw new IllegalArgumentException();
-        //        }
+    public static ArticleId of(String value) {
 
         return new ArticleId(value);
     }

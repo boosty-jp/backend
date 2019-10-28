@@ -1,18 +1,28 @@
 package co.jp.wever.graphql.infrastructure.repository.article;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.repository.article.UpdateArticleRepository;
+import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticleProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
+import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleSearchEntityConverter;
+import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionSearchEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.algolia.ArticleSearchEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
@@ -23,9 +33,12 @@ import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.
 public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
 
     private final NeptuneClient neptuneClient;
+    private final AlgoliaClient algoliaClient;
 
-    public UpdateArticleRepositoryImpl(NeptuneClient neptuneClient) {
+    public UpdateArticleRepositoryImpl(
+        NeptuneClient neptuneClient, AlgoliaClient algoliaClient) {
         this.neptuneClient = neptuneClient;
+        this.algoliaClient = algoliaClient;
     }
 
     //
@@ -61,7 +74,6 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
-        // TODO: Algolia更新
     }
 
     @Override
@@ -76,7 +88,6 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
-        // TODO: Algolia更新
     }
 
     @Override
@@ -90,6 +101,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
+        System.out.println(g.V(articleId).out(ArticleToTagEdge.RELATED.getString()).valueMap().toList());
         // タグの張替え
         // TODO:タグの変更がないときは更新しないようにしたい
         g.V(articleId)
@@ -98,13 +110,14 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .drop()
          .iterate();
 
+        System.out.println(g.V(articleId).out(ArticleToTagEdge.RELATED.getString()).valueMap().toList());
         g.V(tags)
          .hasLabel(VertexLabel.TAG.getString())
          .addE(ArticleToTagEdge.RELATED.getString())
          .from(g.V(articleId))
          .next();
 
-        // TODO: Algolia更新
+        System.out.println(g.V(articleId).out(ArticleToTagEdge.RELATED.getString()).valueMap().toList());
     }
 
     @Override
@@ -132,7 +145,39 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
                     .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now))
          .next();
 
-        // TODO: Algoliaに追加
+        // Algoliaに追加
+        Map<String, Object> result = g.V(articleId)
+                                      .project("base", "tags", "liked", "learned")
+                                      .by(__.valueMap().with(WithOptions.tokens))
+                                      .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                            .hasLabel(VertexLabel.TAG.getString())
+                                            .valueMap()
+                                            .with(WithOptions.tokens)
+                                            .fold())
+                                      .by(__.in(UserToArticleEdge.LIKED.getString()).count())
+                                      .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                      .next();
+
+        algoliaClient.getArticleIndex()
+                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(result,
+                                                                                         userId,
+                                                                                         articleId,
+                                                                                         now));
+
+        List<Map<String, Object>> results = g.V(articleId)
+                                             .out(ArticleToSectionEdge.INCLUDE.getString())
+                                             .hasLabel(VertexLabel.SECTION.getString())
+                                             .project("base", "liked")
+                                             .by(__.valueMap().with(WithOptions.tokens))
+                                             .by(__.in(UserToSectionEdge.LIKED.getString()).count())
+                                             .toList();
+
+        algoliaClient.getSectionIndex()
+                     .saveObjectsAsync(results.stream()
+                                              .map(r -> SectionSearchEntityConverter.toSectionSearchEntity(r,
+                                                                                                           userId,
+                                                                                                           now))
+                                              .collect(Collectors.toList()));
     }
 
     @Override
@@ -148,8 +193,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
 
         long now = System.currentTimeMillis();
 
-        g.E(UserToArticleEdge.DRAFTED.getString())
-         .hasId(EdgeIdCreator.userDraftArticle(userId, articleId))
+        g.E(EdgeIdCreator.userDraftArticle(userId, articleId))
          .fold()
          .coalesce(unfold(),
                    g.V(userId)
@@ -159,7 +203,18 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
                     .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
                     .property(UserToArticleProperty.DRAFTED_TIME.getString(), now))
          .next();
-        // TODO: Algoliaに追加
+
+        // Algoliaから削除
+        // TODO: バッチにして更新頻度下げる
+        algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
+
+        List<Object> draftSectionIds = g.V(articleId)
+                                        .out(ArticleToSectionEdge.INCLUDE.getString())
+                                        .hasLabel(VertexLabel.SECTION.getString())
+                                        .id()
+                                        .toList();
+        algoliaClient.getSectionIndex()
+                     .deleteObjectsAsync(draftSectionIds.stream().map(r -> (String) r).collect(Collectors.toList()));
     }
 
     @Override
@@ -179,6 +234,16 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
                     .property(UserToArticleProperty.LIKED_TIME.getString(), now)
                     .from(g.V(userId).hasLabel(VertexLabel.USER.getString())))
          .next();
+
+        // Algolia更新
+        // TODO: バッチにして更新頻度下げる
+        long like = g.V(articleId)
+                     .in(UserToArticleEdge.LIKED.getString())
+                     .hasLabel(VertexLabel.USER.getString())
+                     .count()
+                     .next();
+        algoliaClient.getArticleIndex()
+                     .partialUpdateObjectAsync(ArticleSearchEntity.builder().objectID(articleId).like(like).build());
     }
 
     @Override
@@ -190,6 +255,16 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .hasId(EdgeIdCreator.userLikeArticle(userId, articleId))
          .drop()
          .iterate();
+
+        // Algolia更新
+        // TODO: バッチにして更新頻度下げる
+        long like = g.V(articleId)
+                     .in(UserToArticleEdge.LIKED.getString())
+                     .hasLabel(VertexLabel.USER.getString())
+                     .count()
+                     .next();
+        algoliaClient.getArticleIndex()
+                     .partialUpdateObjectAsync(ArticleSearchEntity.builder().objectID(articleId).like(like).build());
     }
 
     @Override
@@ -210,6 +285,19 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
                     .property(UserToArticleProperty.LEARNED_TIME.getString(), now)
                     .from(g.V(userId).hasLabel(VertexLabel.USER.getString())))
          .next();
+
+        // Algolia更新
+        // TODO: バッチにして更新頻度下げる
+        long learned = g.V(articleId)
+                        .in(UserToArticleEdge.LEARNED.getString())
+                        .hasLabel(VertexLabel.USER.getString())
+                        .count()
+                        .next();
+        algoliaClient.getArticleIndex()
+                     .partialUpdateObjectAsync(ArticleSearchEntity.builder()
+                                                                  .objectID(articleId)
+                                                                  .learned(learned)
+                                                                  .build());
     }
 
     @Override
@@ -221,5 +309,18 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .hasId(EdgeIdCreator.userLearnArticle(userId, articleId))
          .drop()
          .iterate();
+
+        // Algolia更新
+        // TODO: バッチにして更新頻度下げる
+        long learned = g.V(articleId)
+                        .in(UserToArticleEdge.LEARNED.getString())
+                        .hasLabel(VertexLabel.USER.getString())
+                        .count()
+                        .next();
+        algoliaClient.getArticleIndex()
+                     .partialUpdateObjectAsync(ArticleSearchEntity.builder()
+                                                                  .objectID(articleId)
+                                                                  .learned(learned)
+                                                                  .build());
     }
 }

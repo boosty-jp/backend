@@ -13,10 +13,6 @@ public class CreateArticleService {
     }
 
     public String initArticle(String userId) {
-
-//        if(!userId.isEmpty()){
-//            throw new GraphQLCustomException(400, "A custom error message");
-//        }
         return createArticleRepository.initOne(userId);
     }
 }

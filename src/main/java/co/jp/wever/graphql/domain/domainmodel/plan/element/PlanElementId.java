@@ -1,5 +1,9 @@
 package co.jp.wever.graphql.domain.domainmodel.plan.element;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import io.netty.util.internal.StringUtil;
 
 public class PlanElementId {
@@ -9,9 +13,10 @@ public class PlanElementId {
         this.value = value;
     }
 
-    public static PlanElementId of(String value) throws IllegalArgumentException {
+    public static PlanElementId of(String value) {
         if (StringUtil.isNullOrEmpty(value)) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.PLAN_ELEMENT_ID_EMPTY.getString());
         }
 
         return new PlanElementId(value);

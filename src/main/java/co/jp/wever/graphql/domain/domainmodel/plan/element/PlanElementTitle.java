@@ -1,5 +1,10 @@
 package co.jp.wever.graphql.domain.domainmodel.plan.element;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+
 public class PlanElementTitle {
     private String value;
 
@@ -9,7 +14,8 @@ public class PlanElementTitle {
 
     public static PlanElementTitle of(String value) {
         if (value.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.EMPTY_TITLE.getString());
         }
 
         return new PlanElementTitle(value);

@@ -36,6 +36,7 @@ public class FindUserRepositoryImpl implements FindUserRepository {
                                          //                                               .values(TagVertexProperty.NAME.getString())
                                          //                                               .fold())
                                          .by(__.out(UserToTagEdge.RELATED.getString())
+                                               .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens)
                                                .fold())

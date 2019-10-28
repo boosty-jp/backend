@@ -118,7 +118,7 @@ public class GraphQLService {
                                                           .dataFetcher("updateArticleImageUrl",
                                                                        articleDataFetcher.updateArticleImageUrlDataFetcher())
                                                           .dataFetcher("updateArticleTags",
-                                                                       articleDataFetcher.updateArticleImageUrlDataFetcher())
+                                                                       articleDataFetcher.updateArticleTagsDataFetcher())
                                                           .dataFetcher("deleteArticle",
                                                                        articleDataFetcher.deleteArticleDataFetcher())
                                                           .dataFetcher("publishArticle",
@@ -155,6 +155,8 @@ public class GraphQLService {
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",
                                                                        userDataFetcher.updateUserDataFetcher())
+                                                          .dataFetcher("updateUserImage",
+                                                                       userDataFetcher.updateUserImageDataFetcher())
                                                           .dataFetcher("deleteUser",
                                                                        userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("followUser",

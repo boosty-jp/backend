@@ -5,6 +5,7 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.domain.repository.article.DeleteArticleRepository;
+import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
@@ -12,9 +13,12 @@ import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 @Component
 public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
     private final NeptuneClient neptuneClient;
+    private final AlgoliaClient algoliaClient;
 
-    public DeleteArticleRepositoryImpl(NeptuneClient neptuneClient) {
+    public DeleteArticleRepositoryImpl(
+        NeptuneClient neptuneClient, AlgoliaClient algoliaClient) {
         this.neptuneClient = neptuneClient;
+        this.algoliaClient = algoliaClient;
     }
 
     public void deleteOne(String articleId, String userId) {
@@ -36,6 +40,7 @@ public class DeleteArticleRepositoryImpl implements DeleteArticleRepository {
          .property(UserToArticleEdge.DELETED.getString(), now)
          .next();
 
-        // TODO: Algoliaからデータを削除する
+        // Algoliaから削除
+        algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
     }
 }

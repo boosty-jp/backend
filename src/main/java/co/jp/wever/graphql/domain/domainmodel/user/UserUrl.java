@@ -1,5 +1,10 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+
 public class UserUrl {
     private String value;
 
@@ -9,9 +14,10 @@ public class UserUrl {
         this.value = value;
     }
 
-    public static UserUrl of(String value) throws IllegalArgumentException {
+    public static UserUrl of(String value) {
         if (value.length() > MAX_URL_SIZE) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.INVALID_USER_URL.getString());
         }
 
         // TODO: URL先のリンクが存在するかどうかチェックしたい

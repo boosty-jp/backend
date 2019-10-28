@@ -17,11 +17,6 @@ public class CreateTagService {
     }
 
     public String createTag(String name) {
-        // 同じタグがないかチェックする
-        if (findTagRepository.exists(name)) {
-            throw new IllegalArgumentException();
-        }
-
         return createTagRepository.createTag(name);
     }
 }

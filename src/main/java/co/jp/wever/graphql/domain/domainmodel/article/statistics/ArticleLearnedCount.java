@@ -1,5 +1,10 @@
 package co.jp.wever.graphql.domain.domainmodel.article.statistics;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+
 public class ArticleLearnedCount {
 
     private long value;
@@ -12,11 +17,13 @@ public class ArticleLearnedCount {
 
     public static ArticleLearnedCount of(long value) {
         if (value < MIN_VALUE) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
         if (value > MAX_VALUE) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
         return new ArticleLearnedCount(value);
