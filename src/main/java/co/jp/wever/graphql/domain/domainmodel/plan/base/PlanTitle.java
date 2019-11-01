@@ -15,10 +15,10 @@ public class PlanTitle {
     }
 
     public static PlanTitle of(String title) {
-        if (title.length() < MIN_WORD_COUNT) {
-            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
-                                             GraphQLErrorMessage.EMPTY_TITLE.getString());
-        }
+//        if (title.length() < MIN_WORD_COUNT) {
+//            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+//                                             GraphQLErrorMessage.EMPTY_TITLE.getString());
+//        }
 
         if (title.length() > MAX_WORD_COUNT) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),

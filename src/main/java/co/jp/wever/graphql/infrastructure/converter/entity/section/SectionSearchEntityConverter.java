@@ -14,7 +14,7 @@ public class SectionSearchEntityConverter {
         return SectionSearchEntity.builder()
                                   .objectID(VertexConverter.toId(base))
                                   .authorId(authorId)
-                                  .like((long) result.get("like"))
+                                  .like((long) result.get("liked"))
                                   .text(VertexConverter.toString("text", base))
                                   .title(VertexConverter.toString("title", base))
                                   .updateDate(publishTime)

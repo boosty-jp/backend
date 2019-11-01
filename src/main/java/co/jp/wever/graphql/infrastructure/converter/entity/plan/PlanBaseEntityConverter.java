@@ -3,6 +3,7 @@ package co.jp.wever.graphql.infrastructure.converter.entity.plan;
 import java.util.Map;
 
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 
@@ -12,25 +13,23 @@ public class PlanBaseEntityConverter {
                              .title(planBase.getTitle())
                              .description(planBase.getDescription())
                              .imageUrl(planBase.getImageUrl())
-                             .tagIds(planBase.getTagIds())
                              .status(planBase.getStatus().getString())
-                             .authorId(planBase.getAuthorId().getValue())
                              .build();
     }
 
-    public static PlanBaseEntity toPlanBaseEntity(
-        Map<Object, Object> planVertex,
-        Map<Object, Object> tagVertex,
-        Map<Object, Object> userVertex,
-        Map<Object, Object> statusVertex) {
-
+    public static PlanBaseEntity toPlanBaseEntity(Map<Object, Object> planVertex, String status) {
         return PlanBaseEntity.builder()
-                             .title(VertexConverter.toString("title", planVertex))
-                             .imageUrl(VertexConverter.toString("image", planVertex))
-                             .description(VertexConverter.toString("description", planVertex))
-                             .tagIds(null)   // TODO: Neptuneでデータを確認してから
-                             .authorId(null) // TODO: Neptuneでデータを確認してから
-                             .status(null) // TODO: Neptuneでデータを確認してから
+                             .id(VertexConverter.toId(planVertex))
+                             .title(VertexConverter.toString(PlanVertexProperty.TITLE.getString(), planVertex))
+                             .imageUrl(VertexConverter.toString(PlanVertexProperty.IMAGE_URL.getString(), planVertex))
+                             .description(VertexConverter.toString(PlanVertexProperty.DESCRIPTION.getString(),
+                                                                   planVertex))
+                             .createdDate(VertexConverter.toLong(PlanVertexProperty.CREATED_TIME.getString(),
+                                                                 planVertex))
+                             .updatedDate(VertexConverter.toLong(PlanVertexProperty.UPDATED_TIME.getString(),
+                                                                 planVertex))
+
+                             .status(status)
                              .build();
     }
 }

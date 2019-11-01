@@ -14,30 +14,60 @@ type Query {
     famousArticles: [ArticleDetail]!
     relatedArticles: [ArticleDetail]!
 
-    plan(planId: ID!): Plan!
-#    allPlans(userId: ID!): [Plan]!
-    allPublishedPlans(userId: ID!): [Plan]!
-    allDraftedPlans: [Plan]!
-    allLikedPlans(userId: ID!): [Plan]!
-    allLearningPlans(userId: ID!): [Plan]!
-    allLearnedPlans(userId: ID!): [Plan]!
-    famousPlans: [Plan]!
-    relatedPlans: [Plan]!
+    plan(planId: ID!): PlanDetail!
+    allPlans: [PlanListItem]!
+    allPublishedPlans(userId: ID!): [PlanDetail]!
+    allDraftedPlans: [PlanDetail]!
+    allLikedPlans(userId: ID!): [PlanDetail]!
+    allLearningPlans(userId: ID!): [PlanDetail]!
+    allLearnedPlans(userId: ID!): [PlanDetail]!
+    famousPlans: [PlanDetail]!
+    relatedPlans: [PlanDetail]!
 
     user(userId: ID!): User
 }
 
-type Plan {
+type PlanListItem{
+    base:PlanBase
+    tags: [Tag]
+    statistics: PlanStatistics
+}
+
+type PlanDetail {
+    base: PlanBase
+    author: User
+    tags: [Tag]
+    elements: [Element]
+    statistics: PlanStatistics,
+    action: PlanAction
+}
+
+type PlanBase{
     id: ID!
     title: String!
     description: String!
-    elements: [Element]
-    image: String!
+    imageUrl: String!
+    status: String!
+    createDate: String!
+    updateDate: String!
+}
+
+type PlanStatistics {
+    like: Int!
+    learning: Int!
+    learned: Int!
+}
+
+type PlanAction {
+    liked: Boolean!
+    learning: Boolean!
+    learned: Boolean!
 }
 
 type Element {
     id: ID!
     title: String
+    imageUrl: String
     type: String!
     number: Int!
 }
@@ -89,7 +119,7 @@ type User{
     imageUrl: String!
     description: String!
     url: String!
-    tags: [Tag]!
+    tags: [Tag]
 }
 
 type Tag{
@@ -109,7 +139,7 @@ input ArticleInput {
     tags: [String]!
 }
 
-input PlanBase {
+input PlanBaseInput {
     title: String!
     description: String!
     tags: [String]!
@@ -117,8 +147,9 @@ input PlanBase {
 }
 
 input PlanElementInput{
-    targetId: ID!
-    title: String!
+    id: ID!
+    title: String,
+    imageUrl: String,
     type: String!
     number: Int!
 }
@@ -142,7 +173,7 @@ type Mutation {
    # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
     updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
     updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
-    updateArticleTags(articleId: ID!, tags: [String!]!): UpdateResponse
+    updateArticleTags(articleId: ID!, tags: [String]!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
     publishArticle(articleId: ID!): UpdateResponse
     draftArticle(articleId: ID!): UpdateResponse
@@ -151,13 +182,19 @@ type Mutation {
     finishArticle(articleId: ID!): UpdateResponse
     deleteFinishArticle(articleId: ID!): UpdateResponse
 
-    createPlanBase(planBase: PlanBase): CreateResponse
-    updatePlanBase(planId: ID!, planBase: PlanBase!): UpdateResponse
+    initPlan: CreateResponse
+    updatePlanTitle(planId: ID!, title: String!): UpdateResponse
+    updatePlanImageUrl(planId: ID!, url: String!): UpdateImageResponse
+    updatePlanTags(planId: ID!, tags: [String]!): UpdateResponse
+    updatePlanDescription(planId: ID!, description: String!): UpdateResponse
+    createPlanBase(planBase: PlanBaseInput): CreateResponse
+    updatePlanBase(planId: ID!, planBase: PlanBaseInput!): UpdateResponse
     createPlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
     updatePlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
 
     deletePlan(planId: ID!): UpdateResponse
     publishPlan(planId: ID!): UpdateResponse
+    savePlan(planId: ID!, elements: [PlanElementInput], description: String, tags: [String]): UpdateResponse
     draftPlan(planId: ID!): UpdateResponse
     startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse

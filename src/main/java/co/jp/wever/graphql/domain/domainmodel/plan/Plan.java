@@ -5,7 +5,6 @@ import java.util.List;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanStatus;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
-import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 
 public class Plan {
@@ -15,10 +14,6 @@ public class Plan {
     public Plan(PlanBase planBase, List<PlanElement> elements) {
         this.base = planBase;
         this.elements = elements;
-    }
-
-    public UserId getAuthorId() {
-        return base.getAuthorId();
     }
 
     public String getTitle() {
@@ -41,7 +36,12 @@ public class Plan {
         return base.getStatus();
     }
 
-    public boolean readableUser(UserId userId) {
-        return base.getStatus().name().equals(PlanStatus.PUBLISHED.getString()) || !base.getAuthorId().same(userId);
+    public boolean canRead(UserId userId) {
+        if(base.getStatus().name().equals(PlanStatus.PUBLISHED.getString())){
+            return true;
+        }
+
+//        return base.getAuthorId().same(userId);
+        return false;
     }
 }

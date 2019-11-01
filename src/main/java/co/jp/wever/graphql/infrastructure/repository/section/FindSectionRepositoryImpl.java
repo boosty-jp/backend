@@ -56,7 +56,8 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
                                             .values(ArticleToSectionProperty.NUMBER.getString()))
                                       .next();
 
-        return SectionEntityConverter.toSectionEntity(result);
+
+        return SectionEntityConverter.toSectionEntity(result, true);
     }
 
     public List<SectionEntity> findAllDetailOnArticle(String articleId, String userId) {
@@ -92,7 +93,7 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
                                                             .constant(true), constant(false)))
                                              .toList();
 
-        return results.stream().map(r -> SectionEntityConverter.toSectionEntity(r)).collect(Collectors.toList());
+        return results.stream().map(r -> SectionEntityConverter.toSectionEntity(r, false)).collect(Collectors.toList());
     }
 
     public List<SectionNumberEntity> findAllNumberOnArticle(String articleId) {

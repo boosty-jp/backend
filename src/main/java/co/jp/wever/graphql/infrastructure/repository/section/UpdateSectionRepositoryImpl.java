@@ -13,7 +13,6 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.property.SectionVertex
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
-import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
@@ -45,28 +44,21 @@ public class UpdateSectionRepositoryImpl implements UpdateSectionRepository {
 
         long now = System.currentTimeMillis();
 
-        g.E(UserToSectionEdge.LIKED.getString())
-         .hasId(EdgeIdCreator.userLikeSection(userId, sectionId))
+        g.E(EdgeIdCreator.userLikeSection(userId, sectionId))
          .fold()
          .coalesce(unfold(),
                    g.V(sectionId)
-                    .hasLabel(VertexLabel.SECTION.getString())
                     .addE(UserToSectionEdge.LIKED.getString())
                     .property(T.id, EdgeIdCreator.userLikeSection(userId, sectionId))
                     .property(UserToSectionProperty.LIKED_TIME.getString(), now)
                     .from(g.V(userId).hasLabel(VertexLabel.USER.getString())))
-         .next();
+         .iterate();
     }
 
     @Override
     public void deleteLikeOne(String sectionId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        g.V(sectionId)
-         .inE(UserToSectionEdge.LIKED.getString())
-         .hasId(sectionId + "-" + userId)
-         .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
-         .drop()
-         .iterate();
+        g.E(EdgeIdCreator.userLikeSection(userId, sectionId)).drop().iterate();
     }
 }

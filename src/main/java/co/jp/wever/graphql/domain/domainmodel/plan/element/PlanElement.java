@@ -4,12 +4,19 @@ public class PlanElement {
 
     private PlanElementId id;
     private PlanElementTitle title;
+    private String imageUrl; //TODO: ドメイン化する
     private PlanElementNumber number;
     private PlanElementType elementType;
 
-    public PlanElement(PlanElementId id, PlanElementTitle title, PlanElementNumber number, PlanElementType elementType) {
+    public PlanElement(
+        PlanElementId id,
+        PlanElementTitle title,
+        String imageUrl,
+        PlanElementNumber number,
+        PlanElementType elementType) {
         this.id = id;
         this.title = title;
+        this.imageUrl = imageUrl;
         this.number = number;
         this.elementType = elementType;
     }
@@ -29,4 +36,9 @@ public class PlanElement {
     public String getTitle() {
         return title.getValue();
     }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
 }

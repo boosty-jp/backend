@@ -9,9 +9,6 @@ import io.netty.util.internal.StringUtil;
 public class PlanImageUrl {
     private String value;
 
-    // TODO: サンプル画像のURLを入れる
-    private final static String DEFAULT_IMAGE_URL = "http://defaultimage.png";
-
     // TODO: S3の画像URLのサイズを確認する
     private final static int MAX_URL_SIZE = 2048;
 
@@ -20,9 +17,8 @@ public class PlanImageUrl {
     }
 
     public static PlanImageUrl of(String value) {
-        //TODO: URL先の画像が存在するかどうかチェックしたい
         if (StringUtil.isNullOrEmpty(value)) {
-            return new PlanImageUrl(DEFAULT_IMAGE_URL);
+            return new PlanImageUrl("");
         }
 
         if (value.length() > MAX_URL_SIZE) {
@@ -30,6 +26,7 @@ public class PlanImageUrl {
                                              GraphQLErrorMessage.INVALID_IMAGE_URL.getString());
         }
 
+        // TODO: URL先の画像が存在するかどうかチェックしたい
         // TODO: S3にアップロードされているURLかチェックする
 
         return new PlanImageUrl(value);

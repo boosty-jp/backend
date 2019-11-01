@@ -24,6 +24,12 @@ public class UpdateUserService {
     public void updateUser(UserInput userInput, String userId) {
         User user = UserConverter.toUser(userInput, userId);
 
+        // ドメインに移動させる
+        if(user.getTags().size() > 5) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.INVALID_TAG_COUNT.getString());
+        }
+
         if (user.hasDuplicatedTagIds()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.TAG_DUPLICATED.getString());

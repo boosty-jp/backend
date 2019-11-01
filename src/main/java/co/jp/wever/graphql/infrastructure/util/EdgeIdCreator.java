@@ -1,8 +1,12 @@
 package co.jp.wever.graphql.infrastructure.util;
 
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToTagEdge;
 
 public class EdgeIdCreator {
     public static String userLikeArticle(String userId, String articleId) {
@@ -39,5 +43,25 @@ public class EdgeIdCreator {
 
     public static String userCreateSection(String userId, String sectionId) {
         return userId + "-" + UserToSectionEdge.CREATED.getString() + "-" + sectionId;
+    }
+
+    public static String userRelatedTag(String userId, String tagId) {
+        return userId + "-" + UserToTagEdge.RELATED.getString() + "-" + tagId;
+    }
+
+    public static String userDraftedPlan(String userId, String planId) {
+        return userId + "-" + UserToPlanEdge.DRAFTED.getString() + "-" + planId;
+    }
+
+    public static String articleRelatedTag(String articleId, String tagId) {
+        return articleId + "-" + ArticleToTagEdge.RELATED.getString() + "-" + tagId;
+    }
+
+    public static String planRelatedTag(String planId, String tagId) {
+        return planId + "-" + PlanToTagEdge.RELATED.getString() + "-" + tagId;
+    }
+
+    public static String userDeletePlan(String userId, String planId) {
+        return userId + "-" + UserToPlanEdge.DELETED.getString() + "-" + planId;
     }
 }

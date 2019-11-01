@@ -12,14 +12,16 @@ public class PlanElementConverter {
     public static PlanElement toPlanElement(PlanElementInput planElementInput) {
         return new PlanElement(PlanElementId.of(planElementInput.getTargetId()),
                                PlanElementTitle.of(planElementInput.getTitle()),
+                               planElementInput.getImageUrl(),
                                PlanElementNumber.of(planElementInput.getNumber()),
-                               PlanElementType.valueOf(planElementInput.getType()));
+                               PlanElementType.fromString(planElementInput.getType()));
     }
 
     public static PlanElement toPlanElement(PlanElementEntity planElementEntity) {
         return new PlanElement(PlanElementId.of(planElementEntity.getTargetId()),
                                PlanElementTitle.of(planElementEntity.getTitle()),
+                               planElementEntity.getImageUrl(),
                                PlanElementNumber.of(planElementEntity.getNumber()),
-                               PlanElementType.valueOf(planElementEntity.getType().getString()));
+                               PlanElementType.fromString(planElementEntity.getType().getString()));
     }
 }

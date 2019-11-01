@@ -6,7 +6,7 @@ import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
 public class SectionNumber {
-    private final static int MIN_NUMBER = 0;
+    private final static int MIN_NUMBER = 1;
     private final static int MAX_NUMBER = 30;
     private int value;
 

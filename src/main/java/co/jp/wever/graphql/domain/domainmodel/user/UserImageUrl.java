@@ -9,9 +9,6 @@ import io.netty.util.internal.StringUtil;
 public class UserImageUrl {
     private String value;
 
-    // TODO: サンプル画像のURLを入れる
-    private final static String DEFAULT_IMAGE_URL = "http://defaultimage.png";
-
     // TODO: S3の画像URLのサイズを確認する
     private final static int MAX_URL_SIZE = 2048;
 
@@ -20,9 +17,8 @@ public class UserImageUrl {
     }
 
     public static UserImageUrl of(String value) {
-        //TODO: URL先の画像が存在するかどうかチェックしたい
         if (StringUtil.isNullOrEmpty(value)) {
-            return new UserImageUrl(DEFAULT_IMAGE_URL);
+            return new UserImageUrl("");
         }
 
         if (value.length() > MAX_URL_SIZE) {
@@ -31,6 +27,7 @@ public class UserImageUrl {
         }
 
         // TODO: S3にアップロードされているURLかチェックする
+        // TODO: URL先の画像が存在するかどうかチェックしたい
 
         return new UserImageUrl(value);
     }

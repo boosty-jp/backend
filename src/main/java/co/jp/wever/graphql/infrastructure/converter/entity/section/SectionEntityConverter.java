@@ -24,8 +24,10 @@ public class SectionEntityConverter {
                             .build();
     }
 
-    public static SectionEntity toSectionEntity(Map<String, Object> resultMap) {
+    public static SectionEntity toSectionEntity(Map<String, Object> resultMap, boolean noLike) {
         Map<Object, Object> base = (Map<Object, Object>) resultMap.get("base");
+
+        boolean liked = noLike ? false : (boolean) resultMap.get("liked");
 
         return SectionEntity.builder()
                             .id(VertexConverter.toId(base))
@@ -35,7 +37,7 @@ public class SectionEntityConverter {
                             .title(VertexConverter.toString("title", base))
                             .text(VertexConverter.toString("text", base))
                             .likeCount(Math.toIntExact((long) resultMap.get("like")))
-                            .liked((boolean) resultMap.get("liked"))
+                            .liked(liked)
                             .build();
     }
 }

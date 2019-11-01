@@ -25,18 +25,14 @@ public class DeletePlanService {
 
     public void deletePlan(String planId, String userId) {
 
-        PlanBaseEntity planBaseEntity = findPlanRepository.findBase(planId);
-        PlanBase planBase = PlanBaseConverter.toPlanBase(planBaseEntity);
+        UserId authorId = UserId.of(findPlanRepository.findAuthorId(planId));
 
         UserId deleterId = UserId.of(userId);
-        if (!deleterId.same(planBase.getAuthorId())) {
+        if (!deleterId.same(authorId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        // 削除できるかチェック
         deletePlanRepository.deleteOne(planId, userId);
     }
-
-
 }

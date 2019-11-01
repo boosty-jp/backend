@@ -9,6 +9,8 @@ import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementEntity;
 
 @Repository
 public interface CreatePlanRepository {
+    String initOne(String userId);
+
     String createBase(String userId, PlanBaseEntity planBaseEntity);
 
     void createElements(String planId, List<PlanElementEntity> planElementEntities);

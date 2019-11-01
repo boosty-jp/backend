@@ -1,7 +1,8 @@
 package co.jp.wever.graphql.infrastructure.constant.vertex.property;
 
 public enum PlanVertexProperty {
-    TITLE("title"), DESCRIPTION("description"), IMAGE_URL("imageUrl");
+    TITLE("title"), DESCRIPTION("description"), IMAGE_URL("imageUrl"), CREATED_TIME("created_time"), UPDATED_TIME(
+        "updateTime");
 
     private String value;
 

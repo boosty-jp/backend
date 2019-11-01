@@ -25,7 +25,10 @@ import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionSearch
 import co.jp.wever.graphql.infrastructure.datamodel.algolia.ArticleSearchEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
@@ -101,23 +104,22 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
-        System.out.println(g.V(articleId).out(ArticleToTagEdge.RELATED.getString()).valueMap().toList());
         // タグの張替え
         // TODO:タグの変更がないときは更新しないようにしたい
         g.V(articleId)
          .hasLabel(VertexLabel.ARTICLE.getString())
          .outE(ArticleToTagEdge.RELATED.getString())
+         .where(inV().hasLabel(VertexLabel.TAG.getString()))
          .drop()
          .iterate();
 
-        System.out.println(g.V(articleId).out(ArticleToTagEdge.RELATED.getString()).valueMap().toList());
-        g.V(tags)
-         .hasLabel(VertexLabel.TAG.getString())
-         .addE(ArticleToTagEdge.RELATED.getString())
-         .from(g.V(articleId))
-         .next();
-
-        System.out.println(g.V(articleId).out(ArticleToTagEdge.RELATED.getString()).valueMap().toList());
+        if(!tags.isEmpty()){
+            g.V(tags)
+             .hasLabel(VertexLabel.TAG.getString())
+             .addE(ArticleToTagEdge.RELATED.getString())
+             .from(g.V(articleId))
+             .next();
+        }
     }
 
     @Override
@@ -133,17 +135,15 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
 
         long now = System.currentTimeMillis();
 
-        g.E(UserToArticleEdge.PUBLISHED.getString())
-         .hasId(EdgeIdCreator.userPublishArticle(userId, articleId))
+        g.E(EdgeIdCreator.userPublishArticle(userId, articleId))
          .fold()
          .coalesce(unfold(),
                    g.V(userId)
-                    .hasLabel(VertexLabel.USER.getString())
                     .addE(UserToArticleEdge.PUBLISHED.getString())
                     .property(T.id, EdgeIdCreator.userPublishArticle(userId, articleId))
                     .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
                     .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now))
-         .next();
+         .iterate();
 
         // Algoliaに追加
         Map<String, Object> result = g.V(articleId)
@@ -156,6 +156,11 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
                                             .fold())
                                       .by(__.in(UserToArticleEdge.LIKED.getString()).count())
                                       .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                      .by(coalesce(__.inE(UserToSectionEdge.LIKED.getString())
+                                                     .where(outV().hasId(userId)
+                                                                  .hasLabel(VertexLabel.USER.getString()))
+                                                     .limit(1)
+                                                     .constant(true), constant(false)))
                                       .next();
 
         algoliaClient.getArticleIndex()
@@ -213,8 +218,11 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
                                         .hasLabel(VertexLabel.SECTION.getString())
                                         .id()
                                         .toList();
-        algoliaClient.getSectionIndex()
-                     .deleteObjectsAsync(draftSectionIds.stream().map(r -> (String) r).collect(Collectors.toList()));
+
+        if(!draftSectionIds.isEmpty()){
+            algoliaClient.getSectionIndex()
+                         .deleteObjectsAsync(draftSectionIds.stream().map(r -> (String) r).collect(Collectors.toList()));
+        }
     }
 
     @Override

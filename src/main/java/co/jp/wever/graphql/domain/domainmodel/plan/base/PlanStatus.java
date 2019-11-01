@@ -12,4 +12,13 @@ public enum PlanStatus {
     public String getString() {
         return this.value;
     }
+
+    public static PlanStatus fromString(String value) {
+        for (PlanStatus s : PlanStatus.values()) {
+            if (s.value.equalsIgnoreCase(value)) {
+                return s;
+            }
+        }
+        return null;
+    }
 }

@@ -6,12 +6,14 @@ import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
 
 @Repository
 public interface FindPlanRepository {
-    PlanEntity findOne(String planId);
+    PlanDetailEntity findOne(String planId);
 
-    List<PlanEntity> findAll(String id);
+    List<PlanListItemEntity> findAll(String id);
 
     List<PlanEntity> findAllPublished(String id);
 
@@ -31,4 +33,5 @@ public interface FindPlanRepository {
 
     List<String> findPublishedPlanElementIds(List<String> ids);
 
+    String findAuthorId(String planId);
 }

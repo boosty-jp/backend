@@ -6,6 +6,7 @@ public enum GraphQLErrorMessage {
     TITLE_OVER("タイトルは100文字以内で入力してください"),
     EMPTY_TEXT("内容を入力してください"),
     TEXT_OVER("内容は10000文字以内で入力してください"),
+    DESCRIPTION_OVER("説明文は500文字以内で入力してください"),
     PLAN_ELEMENT_EMPTY("プランの要素は1つ以上入力してください"),
     PLAN_ELEMENT_OVER("プランの要素は30までです"),
     PLAN_ELEMENT_ID_EMPTY("プランの要素を指定してください"),

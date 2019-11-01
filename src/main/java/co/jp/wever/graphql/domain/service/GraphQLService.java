@@ -81,8 +81,8 @@ public class GraphQLService {
                                                           .dataFetcher("relatedArticles",
                                                                        articleDataFetcher.relatedArticlesDataFetcher())
                                                           .dataFetcher("plan", planDataFetchers.planDataFetcher())
-                                                          //                                                          .dataFetcher("allPlans",
-                                                          //                                                                       planDataFetchers.allPlanDataFetcher())
+                                                          .dataFetcher("allPlans",
+                                                                       planDataFetchers.allPlanDataFetcher())
                                                           .dataFetcher("allPublishedPlans",
                                                                        planDataFetchers.allPublishedPlansDataFetcher())
                                                           .dataFetcher("allDraftedPlans",
@@ -133,8 +133,18 @@ public class GraphQLService {
                                                                        articleDataFetcher.finishArticleDataFetcher())
                                                           .dataFetcher("deleteFinishArticle",
                                                                        articleDataFetcher.deleteFinishArticleDataFetcher())
+                                                          .dataFetcher("initPlan",
+                                                                       planDataFetchers.initPlanDataFetcher())
                                                           .dataFetcher("createPlanBase",
                                                                        planDataFetchers.createPlanBaseDataFetcher())
+                                                          .dataFetcher("updatePlanTitle",
+                                                                       planDataFetchers.updatePlanTitleDataFetcher())
+                                                          .dataFetcher("updatePlanTags",
+                                                                       planDataFetchers.updatePlanTagsDataFetcher())
+                                                          .dataFetcher("updatePlanDescription",
+                                                                       planDataFetchers.updatePlanDescriptionDataFetcher())
+                                                          .dataFetcher("updatePlanImageUrl",
+                                                                       planDataFetchers.updatePlanImageUrlDataFetcher())
                                                           .dataFetcher("updatePlanBase",
                                                                        planDataFetchers.updatePlanBaseDataFetcher())
                                                           .dataFetcher("createPlanElements",
@@ -147,6 +157,8 @@ public class GraphQLService {
                                                                        planDataFetchers.publishPlanDataFetcher())
                                                           .dataFetcher("draftPlan",
                                                                        planDataFetchers.draftPlanDataFetcher())
+                                                          .dataFetcher("savePlan",
+                                                                       planDataFetchers.savePlanDataFetcher())
                                                           .dataFetcher("startPlan",
                                                                        planDataFetchers.startPlanDataFetcher())
                                                           .dataFetcher("stopPlan",

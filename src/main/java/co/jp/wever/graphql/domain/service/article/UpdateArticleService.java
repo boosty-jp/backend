@@ -61,6 +61,12 @@ public class UpdateArticleService {
         // このクエリは重いので負荷がかかってしまうと思われる
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
 
+        // TODO: ドメインに移動させる
+        if(tags.size() > 5 ){
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.INVALID_TAG_COUNT.getString());
+        }
+
         if (!articleDetail.canUpdate(UserId.of(userId))) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
