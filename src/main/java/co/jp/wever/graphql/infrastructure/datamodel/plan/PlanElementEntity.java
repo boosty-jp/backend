@@ -9,6 +9,7 @@ import lombok.Data;
 public class PlanElementEntity {
     private String targetId;
     private String title;
+    private String imageUrl;
     private PlanElementType Type;
     private int number;
 }

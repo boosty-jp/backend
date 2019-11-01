@@ -7,12 +7,13 @@ import java.util.Map;
 import co.jp.wever.graphql.application.converter.user.UserInputConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
-import co.jp.wever.graphql.domain.service.user.CreateUserService;
-import co.jp.wever.graphql.domain.service.user.DeleteUserService;
-import co.jp.wever.graphql.domain.service.user.FindUserService;
-import co.jp.wever.graphql.domain.service.user.UpdateUserService;
+import co.jp.wever.graphql.application.user.CreateUserService;
+import co.jp.wever.graphql.application.user.DeleteUserService;
+import co.jp.wever.graphql.application.user.FindUserService;
+import co.jp.wever.graphql.application.user.UpdateUserService;
 import graphql.schema.DataFetcher;
 
 @Component
@@ -63,7 +64,6 @@ public class UserDataFetcher {
     }
 
     public DataFetcher updateUserDataFetcher() {
-        //TODO: 操作者と更新対象のユーザーが同じかチェック
         return dataFetchingEnvironment -> {
             Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("user");
             String token = (String) dataFetchingEnvironment.getContext();
@@ -71,6 +71,17 @@ public class UserDataFetcher {
 
             updateUserService.updateUser(UserInputConverter.toUserInput(userInputMap), userId);
             return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher updateUserImageDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+            String imageUrl = dataFetchingEnvironment.getArgument("imageUrl");
+
+            updateUserService.updateUserImage(imageUrl, userId);
+            return UpdateImageResponse.builder().url(imageUrl).build();
         };
     }
 

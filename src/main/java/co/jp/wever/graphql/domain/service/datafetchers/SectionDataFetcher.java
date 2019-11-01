@@ -2,6 +2,7 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import co.jp.wever.graphql.application.converter.section.SectionInputConverter;
 import co.jp.wever.graphql.application.converter.section.SectionResponseConverter;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
+import co.jp.wever.graphql.domain.domainmodel.section.Section;
 import co.jp.wever.graphql.domain.service.section.CreateSectionService;
 import co.jp.wever.graphql.domain.service.section.DeleteSectionService;
 import co.jp.wever.graphql.domain.service.section.FindSectionService;
@@ -49,6 +51,7 @@ public class SectionDataFetcher {
 
             return findSectionService.findAllSectionsOnArticle(articleId, userId)
                                      .stream()
+                                     .sorted(Comparator.comparing(Section::getNumber)) //番号順にする
                                      .map(s -> SectionResponseConverter.toSectionResponse(s))
                                      .collect(Collectors.toList());
         };
@@ -123,6 +126,18 @@ public class SectionDataFetcher {
             String sectionId = dataFetchingEnvironment.getArgument("sectionId");
 
             updateSectionService.likeSection(sectionId, userId);
+
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher deleteLikeSectionElementDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String token = (String) dataFetchingEnvironment.getContext();
+            String userId = tokenVerifier.getUserId(token);
+            String sectionId = dataFetchingEnvironment.getArgument("sectionId");
+
+            updateSectionService.deleteLikeSection(sectionId, userId);
 
             return UpdateResponse.builder().build();
         };

@@ -52,6 +52,8 @@ public class NeptuneClient implements AutoCloseable {
                              .minConnectionPoolSize(minConnectionPoolSize)
                              .maxSimultaneousUsagePerConnection(maxSimultaneousUsagePerConnection)
                              .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection)
+                             .keepAliveInterval(6000000)
+                             .reconnectInterval(3000)
                              .create();
 
 

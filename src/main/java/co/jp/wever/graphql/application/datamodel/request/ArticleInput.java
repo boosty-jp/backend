@@ -10,7 +10,6 @@ import lombok.Data;
 @Builder
 public class ArticleInput {
     private String title;
-    private String description;
     private String imageUrl;
     private List<String> tags;
 }

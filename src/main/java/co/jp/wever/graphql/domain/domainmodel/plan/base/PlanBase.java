@@ -1,42 +1,38 @@
 package co.jp.wever.graphql.domain.domainmodel.plan.base;
 
-import java.util.List;
-
-import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import java.util.Date;
 
 public class PlanBase {
     private PlanId id;
     private PlanTitle title;
     private PlanDescription description;
     private PlanImageUrl imageUrl;
-    private PlanTagIds tagIds;
     private PlanStatus status;
-    private UserId authorId;
+    private PlanDate date;
 
     private PlanBase(
+        PlanId id,
         PlanTitle title,
         PlanDescription description,
         PlanImageUrl imageUrl,
-        PlanTagIds tagIds,
-        UserId userId,
-        PlanStatus status) {
+        PlanStatus status,
+        PlanDate date) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.tagIds = tagIds;
         this.status = status;
-        this.authorId = userId;
+        this.date = date;
     }
 
     public static PlanBase of(
-        String title, String description, String imageUrl, List<String> tagIds, String userId, String status) {
-        return new PlanBase(PlanTitle.of(title),
+        String id, String title, String description, String imageUrl, String status, Date createDate, Date updateDate) {
+        return new PlanBase(PlanId.of(id),
+                            PlanTitle.of(title),
                             PlanDescription.of(description),
                             PlanImageUrl.of(imageUrl),
-                            PlanTagIds.of(tagIds),
-                            UserId.of(userId),
-                            PlanStatus.valueOf(status));
+                            PlanStatus.fromString(status),
+                            PlanDate.of(createDate, updateDate));
     }
 
     public String getTitle() {
@@ -51,20 +47,16 @@ public class PlanBase {
         return imageUrl.getValue();
     }
 
-    public List<String> getTagIds() {
-        return tagIds.getValue();
-    }
-
     public String getPlanId() {
         return id.getValue();
     }
 
-    public UserId getAuthorId() {
-        return authorId;
-    }
-
     public PlanStatus getStatus() {
         return status;
+    }
+
+    public PlanDate getDate() {
+        return date;
     }
 
     public boolean isPublished() {

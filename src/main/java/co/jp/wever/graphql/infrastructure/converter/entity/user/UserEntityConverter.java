@@ -9,6 +9,7 @@ import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.UserVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
 public class UserEntityConverter {
@@ -53,6 +54,17 @@ public class UserEntityConverter {
                          .tags(tagVertexMaps.stream()
                                             .map(t -> TagEntityConverter.toTagEntity(t))
                                             .collect(Collectors.toList()))
+                         .build();
+    }
+
+    public static UserEntity toUserEntityNoTag(Map<Object, Object> userVertex) {
+        return UserEntity.builder()
+                         .userId(VertexConverter.toId(userVertex))
+                         .url(VertexConverter.toString(UserVertexProperty.URL.getString(), userVertex))
+                         .imageUrl(VertexConverter.toString(UserVertexProperty.IMAGE_URL.getString(), userVertex))
+                         .displayName(VertexConverter.toString(UserVertexProperty.DISPLAY_NAME.getString(), userVertex))
+                         .description(VertexConverter.toString(UserVertexProperty.DESCRIPTION.getString(), userVertex))
+                         .tags(new ArrayList<TagEntity>())
                          .build();
     }
 }

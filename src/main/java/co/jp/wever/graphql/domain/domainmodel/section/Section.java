@@ -10,9 +10,9 @@ public class Section {
     private SectionText text;
     private SectionNumber number;
 
-
     private UserId authorId;
     private SectionStatistic statistic;
+    private boolean liked; //TODO: あとでドメインに直す
 
     public Section(
         SectionId id,
@@ -20,13 +20,15 @@ public class Section {
         SectionText text,
         SectionNumber number,
         UserId authorId,
-        SectionStatistic statistic) {
+        SectionStatistic statistic,
+        boolean liked) {
         this.id = id;
         this.title = title;
         this.text = text;
         this.number = number;
         this.authorId = authorId;
         this.statistic = statistic;
+        this.liked = liked;
     }
 
     public SectionId getId() {
@@ -66,4 +68,9 @@ public class Section {
 
         return authorId.same(userId);
     }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
 }

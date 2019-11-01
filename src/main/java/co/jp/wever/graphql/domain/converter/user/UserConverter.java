@@ -28,7 +28,7 @@ public class UserConverter {
         return new User(UserId.of(userId),
                         UserDisplayName.of(userInput.getDisplayName()),
                         UserDescription.of(userInput.getDescription()),
-                        UserImageUrl.of(userInput.getImageUrl()),
+                        UserImageUrl.of(""),
                         UserUrl.of(userInput.getUrl()),
                         userInput.getTags().stream().map(t -> Tag.of(t)).collect(Collectors.toList()));
     }

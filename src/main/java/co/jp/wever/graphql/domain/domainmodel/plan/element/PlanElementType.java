@@ -12,4 +12,13 @@ public enum PlanElementType {
     public String getString() {
         return this.value;
     }
+
+    public static PlanElementType fromString(String value) {
+        for (PlanElementType s : PlanElementType.values()) {
+            if (s.value.equalsIgnoreCase(value)) {
+                return s;
+            }
+        }
+        return null;
+    }
 }

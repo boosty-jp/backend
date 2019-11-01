@@ -10,7 +10,7 @@ public class PlanElementInputConverter {
             return PlanElementInput.builder()
                                    .number((int) input.get("number"))
                                    .title(input.get("title").toString())
-                                   .targetId(input.get("targetId").toString())
+                                   .targetId(input.get("id").toString())
                                    .type(input.get("type").toString())
                                    .build();
         } catch (Exception e) {

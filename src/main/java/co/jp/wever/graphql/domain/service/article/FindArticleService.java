@@ -1,13 +1,16 @@
 package co.jp.wever.graphql.domain.service.article;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 
@@ -20,13 +23,14 @@ public class FindArticleService {
         this.findArticleRepository = findArticleRepository;
     }
 
-    public ArticleDetail findArticleDetail(String articleId, String userId) throws IllegalAccessException {
+    public ArticleDetail findArticleDetail(String articleId, String userId) {
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
 
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
         if (!articleDetail.canRead(UserId.of(userId))) {
-            throw new IllegalAccessException();
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         return articleDetail;
@@ -35,12 +39,7 @@ public class FindArticleService {
     public List<ArticleDetail> findAllArticle(String userId) {
         List<ArticleDetailEntity> results = findArticleRepository.findAll(userId);
 
-        List<ArticleDetail> details =
-            results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
-
-        // 公開していない　かつ　そのユーザーじゃないものは含めない
-        UserId readUserId = UserId.of(userId);
-        return details.stream().filter(e -> e.canRead(readUserId)).collect(Collectors.toList());
+        return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
     public List<ArticleDetail> findAllPublishedArticle(String userId) {

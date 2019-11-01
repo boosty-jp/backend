@@ -1,12 +1,14 @@
 package co.jp.wever.graphql.domain.service.section;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.section.SectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.Section;
-import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.UpdateSectionRepositoryImpl;
@@ -23,13 +25,13 @@ public class UpdateSectionService {
         this.updateSectionRepository = updateSectionRepository;
     }
 
-    public void updateSection(String sectionId, SectionInput sectionInput, String userId)
-        throws IllegalAccessException {
+    public void updateSection(String sectionId, SectionInput sectionInput, String userId) {
         Section target = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
         Section updateSection = SectionConverter.toSection(sectionInput, userId);
 
         if (!target.canUpdate(UserId.of(userId), updateSection.getSectionNumber())) {
-            throw new IllegalAccessException();
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         updateSectionRepository.updateOne(SectionEntityConverter.toSectionEntity(updateSection, sectionId));
@@ -37,6 +39,10 @@ public class UpdateSectionService {
 
     public void likeSection(String sectionId, String userId) {
         updateSectionRepository.likeOne(sectionId, userId);
+    }
+
+    public void deleteLikeSection(String sectionId, String userId) {
+        updateSectionRepository.deleteLikeOne(sectionId, userId);
     }
 }
 

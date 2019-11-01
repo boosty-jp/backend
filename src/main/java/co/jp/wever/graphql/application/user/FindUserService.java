@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.service.user;
+package co.jp.wever.graphql.application.user;
 
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,7 @@ public class FindUserService {
     }
 
     public User findUser(String userId) {
+
         return UserConverter.toUser(findUserRepository.findOne(userId));
     }
 }

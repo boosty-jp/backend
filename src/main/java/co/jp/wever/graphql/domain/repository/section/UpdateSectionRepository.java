@@ -10,5 +10,7 @@ public interface UpdateSectionRepository {
     void updateOne(SectionEntity sectionEntity);
 
     void likeOne(String sectionId, String userId);
+
+    void deleteLikeOne(String sectionId, String userId);
 }
 

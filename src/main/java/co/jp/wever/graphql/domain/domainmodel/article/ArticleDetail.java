@@ -48,15 +48,13 @@ public class ArticleDetail {
     }
 
     public boolean canPublish(UserId userId) {
-        if (!author.getUserId().same(userId)) {
-            return false;
-        }
+        return author.getUserId().same(userId);
 
 //        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
 //            return false;
 //        }
 
-        return !base.getStatus().getString().equals(ArticleStatus.PUBLISHED.getString());
+//        return !base.getStatus().getString().equals(ArticleStatus.PUBLISHED.getString());
     }
 
     public boolean canDraft(UserId userId) {
@@ -64,11 +62,7 @@ public class ArticleDetail {
             return false;
         }
 
-        if (base.getStatus().getString().equals(ArticleStatus.DELETED.getString())) {
-            return false;
-        }
-
-        return !base.getStatus().getString().equals(ArticleStatus.DRAFTED.getString());
+        return !base.getStatus().getString().equals(ArticleStatus.DELETED.getString());
     }
 
     public ArticleBase getBase() {

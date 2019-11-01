@@ -8,5 +8,5 @@ import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 @Repository
 public interface CreateArticleRepository {
-    String createOne(ArticleBaseEntity articleBaseEntity, List<String> tagIds, String userId);
+    String initOne(String userId);
 }

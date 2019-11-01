@@ -11,3 +11,6 @@ aws:
     minConnectionPoolSize: ${AWS_NEPTUNE_MIN_CONNECTION_POOL_SIZE}
     maxSimultaneousUsagePerConnection: ${AWS_NEPTUNE_MAX_SIMULTANIOUS_USAGE_PER_CONNECTION}
     minSimultaneousUsagePerConnection: ${AWS_NEPTUNE_MIN_SIMULTANIOUS_USAGE_PER_CONNECTION}
+algolia:
+  applicationId: ${ALGOLIA_APPLICATION_ID}
+  adminKey: ${ALGOLIA_ADMIN_KEY}

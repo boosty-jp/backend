@@ -1,14 +1,14 @@
 package co.jp.wever.graphql.domain.domainmodel.article.base;
 
-import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanImageUrl;
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import io.netty.util.internal.StringUtil;
 
 public class ArticleImageUrl {
 
     private String value;
-
-    // TODO: サンプル画像のURLを入れる
-    private final static String DEFAULT_IMAGE_URL = "http://defaultimage.png";
 
     // TODO: S3の画像URLのサイズを確認する
     private final static int MAX_URL_SIZE = 2048;
@@ -17,17 +17,18 @@ public class ArticleImageUrl {
         this.value = value;
     }
 
-    public static ArticleImageUrl of(String value) throws IllegalArgumentException {
-        //TODO: URL先の画像が存在するかどうかチェックしたい
+    public static ArticleImageUrl of(String value) {
         if (StringUtil.isNullOrEmpty(value)) {
-            return new ArticleImageUrl(DEFAULT_IMAGE_URL);
+            return new ArticleImageUrl("");
         }
 
         if (value.length() > MAX_URL_SIZE) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.INVALID_IMAGE_URL.getString());
         }
 
         // TODO: S3にアップロードされているURLかチェックする
+        // TODO: URL先の画像が存在するかどうかチェックしたい
 
         return new ArticleImageUrl(value);
     }

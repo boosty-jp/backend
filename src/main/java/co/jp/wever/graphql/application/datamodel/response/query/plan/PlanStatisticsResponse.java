@@ -5,9 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ElementResponse {
-    private String id;
-    private String title;
-    private String type;
-    private int number;
+public class PlanStatisticsResponse {
+    private long like;
+    private long learning;
+    private long learned;
 }

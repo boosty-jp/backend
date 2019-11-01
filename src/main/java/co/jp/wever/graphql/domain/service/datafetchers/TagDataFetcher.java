@@ -2,7 +2,7 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
-import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.mutation.CreateTagResponse;
 import co.jp.wever.graphql.domain.service.tag.CreateTagService;
 import graphql.schema.DataFetcher;
 
@@ -17,11 +17,12 @@ public class TagDataFetcher {
     public DataFetcher createTagDataFetcher() {
 
         return dataFetchingEnvironment -> {
-            String name = dataFetchingEnvironment.getArgument("name");
+            String nameRequest = dataFetchingEnvironment.getArgument("name");
+            String name = nameRequest.toLowerCase();
             String tagId = createTagService.createTag(name);
             //TODO: リクエストヘッダから取得する
 
-            return CreateResponse.builder().id(tagId).build();
+            return CreateTagResponse.builder().id(tagId).name(name).build();
         };
     }
 }

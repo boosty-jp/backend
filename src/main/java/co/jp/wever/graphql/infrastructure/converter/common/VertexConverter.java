@@ -63,5 +63,22 @@ public class VertexConverter {
             return "";
         }
     }
+
+    public static String toLabel(Map<Object, Object> target) {
+        try {
+
+            Set<Object> keys = target.keySet();
+            for (Object key : keys) {
+                if (key.toString().equals("label")) {
+                    return (target.get(key).toString());
+                }
+            }
+            // TODO: Exception発生させる
+            return "";
+        } catch (NumberFormatException e) {
+            //TODO: Exception発生させる
+            return "";
+        }
+    }
 }
 

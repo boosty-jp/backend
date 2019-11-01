@@ -1,17 +1,23 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
+import org.springframework.http.HttpStatus;
+
+import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+
 public class UserDisplayName {
 
     private String value;
-    private final static int MAX_WORD_COUNT = 60;
+    private final static int MAX_WORD_COUNT = 30;
 
     private UserDisplayName(String value) {
         this.value = value;
     }
 
-    public static UserDisplayName of(String value) throws IllegalArgumentException {
+    public static UserDisplayName of(String value) {
         if (value.length() > MAX_WORD_COUNT) {
-            throw new IllegalArgumentException();
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.USER_NAME_OVER.getString());
         }
 
         return new UserDisplayName(value);
