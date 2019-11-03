@@ -40,7 +40,7 @@ public class VertexConverter {
 
     public static int toInt(String key, Map<Object, Object> target) {
         try {
-            return Integer.parseInt(toString(key, target));
+           return Integer.parseInt(toString(key, target));
         } catch (NumberFormatException e) {
             //TODO: ログ
             return 0;
@@ -78,6 +78,22 @@ public class VertexConverter {
         } catch (NumberFormatException e) {
             //TODO: Exception発生させる
             return "";
+        }
+    }
+
+    public static int toNumber(Map<Object, Object> target) {
+        try {
+            Set<Object> keys = target.keySet();
+            for (Object key : keys) {
+                if (key.toString().equals("number")) {
+                    return Integer.parseInt(target.get(key).toString());
+                }
+            }
+            // TODO: Exception発生させる
+            return 0;
+        } catch (NumberFormatException e) {
+            //TODO: Exception発生させる
+            return 0;
         }
     }
 }

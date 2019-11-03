@@ -16,6 +16,5 @@ public class PlanSearchEntity {
     private String imageUrl;
     private String authorId;
     private List<String> tags;
-    private long publishDate;
     private long updateDate;
 }

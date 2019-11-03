@@ -30,7 +30,7 @@ public class PlanDetailEntityConverter {
                                .base(PlanBaseEntityConverter.toPlanBaseEntity(baseResult, statusResult))
                                .elementEntities(elementResults.stream()
                                                               .map(e -> PlanElementEntityConverter.toPlanElementEntity((Map<Object, Object>) e
-                                                                  .get("element"), (int) e.get("number")))
+                                                                  .get("element"), (Map<Object, Object>)e.get("edge")))
                                                               .collect(Collectors.toList()))
                                .tags(tagResult.stream()
                                               .map(t -> TagEntityConverter.toTagEntity(t))

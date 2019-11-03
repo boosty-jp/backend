@@ -56,7 +56,6 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
          .iterate();
 
 
-        System.out.println(g.V(articleId).outE().valueMap().with(WithOptions.tokens).toList());
         // TODO: クエリがおもすぎるので改善する
         incrementNumbers.stream().forEach(s -> {
             g.E(EdgeIdCreator.articleIncludeSection(articleId, s.getId()))
@@ -64,7 +63,6 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
              .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
              .iterate();
         });
-        System.out.println(g.V(articleId).outE().valueMap().with(WithOptions.tokens).toList());
 
         g.V(authorId)
          .addE(UserToSectionEdge.CREATED.getString())

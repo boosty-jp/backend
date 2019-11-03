@@ -10,10 +10,10 @@ import co.jp.wever.graphql.application.datamodel.response.mutation.CreateRespons
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
-import co.jp.wever.graphql.application.user.CreateUserService;
-import co.jp.wever.graphql.application.user.DeleteUserService;
-import co.jp.wever.graphql.application.user.FindUserService;
-import co.jp.wever.graphql.application.user.UpdateUserService;
+import co.jp.wever.graphql.domain.service.user.CreateUserService;
+import co.jp.wever.graphql.domain.service.user.DeleteUserService;
+import co.jp.wever.graphql.domain.service.user.FindUserService;
+import co.jp.wever.graphql.domain.service.user.UpdateUserService;
 import graphql.schema.DataFetcher;
 
 @Component

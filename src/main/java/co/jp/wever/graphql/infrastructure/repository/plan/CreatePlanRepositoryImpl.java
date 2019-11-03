@@ -88,13 +88,13 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
             if (i == planElementEntities.size()) {
                 g.V(planId)
                  .addE(PlanToPlanElementEdge.INCLUDE.getString())
-                 .to(g.V(planElementEntities.get(i).getTargetId()))
+                 .to(g.V(planElementEntities.get(i).getId()))
                  .property(PlanToPlanElementProperty.NUMBER, planElementEntities.get(i).getNumber())
                  .next();
             } else {
                 g.V(planId)
                  .addE(PlanToPlanElementEdge.INCLUDE.getString())
-                 .to(g.V(planElementEntities.get(i).getTargetId()))
+                 .to(g.V(planElementEntities.get(i).getId()))
                  .property(PlanToPlanElementProperty.NUMBER, planElementEntities.get(i).getNumber());
             }
         });

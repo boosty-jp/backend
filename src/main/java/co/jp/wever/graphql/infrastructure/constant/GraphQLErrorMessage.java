@@ -9,6 +9,8 @@ public enum GraphQLErrorMessage {
     DESCRIPTION_OVER("説明文は500文字以内で入力してください"),
     PLAN_ELEMENT_EMPTY("プランの要素は1つ以上入力してください"),
     PLAN_ELEMENT_OVER("プランの要素は30までです"),
+    PLAN_ELEMENT_NUMBER_DUPLICATED("プランの番号が重複しています"),
+    PLAN_ELEMENT_SHORTAGE("プランの要素は1つ以上指定してください"),
     PLAN_ELEMENT_ID_EMPTY("プランの要素を指定してください"),
     USER_ID_EMPTY("ユーザIDを指定してください"),
     PLAN_ID_EMPTY("プランIDを指定してください"),
@@ -24,6 +26,8 @@ public enum GraphQLErrorMessage {
     INVALID_USER_URL("URLが長すぎます"),
     INVALID_TAG_COUNT("設定できるタグは5つまでです"),
     INTERNAL_SERVER_ERROR("INTERNAL SERVER ERROR"),
+    INVALID_TOKEN("無効なトークン形式です"),
+    EXPIRED_TOKEN("期限切れのトークンです"),
     FOLLOW_OWN("自分自身はフォローできません");
 
     private String value;

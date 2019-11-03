@@ -18,6 +18,8 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.out;
+
 @Component
 public class FindArticleRepositoryImpl implements FindArticleRepository {
 
@@ -86,7 +88,8 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                                       .valueMap()
                                                       .with(WithOptions.tokens)
                                                       .fold())
-                                                .by(__.in(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DRAFTED.getString())
+                                                .by(__.in(UserToArticleEdge.PUBLISHED.getString(),
+                                                          UserToArticleEdge.DRAFTED.getString())
                                                       .hasLabel(VertexLabel.USER.getString())
                                                       .project("base", "tags")
                                                       .by(__.valueMap().with(WithOptions.tokens))
@@ -279,6 +282,18 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
         return allResults.stream()
                          .map(r -> ArticleDetailEntityConverter.toArticleDetailEntity(r))
                          .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public String findAuthorId(String articleId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        return (String) g.V(articleId)
+                         .hasLabel(VertexLabel.ARTICLE.getString())
+                         .in(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DRAFTED.getString())
+                         .where(out().hasLabel(VertexLabel.USER.getString()))
+                         .id()
+                         .next();
     }
 
     @Override

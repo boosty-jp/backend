@@ -1,5 +1,6 @@
 package co.jp.wever.graphql.application.converter.plan;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class PlanDetailResponseConverter {
         List<PlanElementResponse> elements = planDetail.getElements()
                                                        .stream()
                                                        .map(e -> PlanElementResponseConverter.toPlanElementResponse(e))
+                                                       .sorted(Comparator.comparing(PlanElementResponse::getNumber)) //番号順にする
                                                        .collect(Collectors.toList());
         PlanStatisticsResponse statistics =
             PlanStatisticsResponseConverter.toPlanStatisticsResponse(planDetail.getStatistics());

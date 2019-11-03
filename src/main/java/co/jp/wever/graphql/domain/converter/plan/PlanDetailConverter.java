@@ -8,7 +8,7 @@ import co.jp.wever.graphql.domain.converter.user.UserConverter;
 import co.jp.wever.graphql.domain.domainmodel.plan.PlanDetail;
 import co.jp.wever.graphql.domain.domainmodel.plan.action.PlanUserAction;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
-import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
+import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElements;
 import co.jp.wever.graphql.domain.domainmodel.plan.statistics.PlanStatistics;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
@@ -20,10 +20,12 @@ public class PlanDetailConverter {
         List<Tag> tags =
             planDetailEntity.getTags().stream().map(t -> TagConverter.toTag(t)).collect(Collectors.toList());
         User author = UserConverter.toUser(planDetailEntity.getAuthor());
-        List<PlanElement> elements = planDetailEntity.getElementEntities()
-                                                     .stream()
-                                                     .map(e -> PlanElementConverter.toPlanElement(e))
-                                                     .collect(Collectors.toList());
+        FindPlanElements elements = FindPlanElements.of(planDetailEntity.getElementEntities()
+                                                                        .stream()
+                                                                        .map(e -> FindPlanElementConverter.toFindPlanElement(
+                                                                            e))
+                                                                        .collect(Collectors.toList()));
+
         PlanStatistics statistics = PlanStatisticsConverter.toPlanStatistics(planDetailEntity.getStatistics());
         PlanUserAction action = PlanUserActionConverter.toPlanUserAction(planDetailEntity.getActions());
         return PlanDetail.of(base, tags, author, elements, statistics, action);

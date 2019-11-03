@@ -27,8 +27,9 @@ public class FindArticleService {
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
 
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
+        UserId readerId = UserId.of(userId);
 
-        if (!articleDetail.canRead(UserId.of(userId))) {
+        if (!articleDetail.canRead(readerId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }

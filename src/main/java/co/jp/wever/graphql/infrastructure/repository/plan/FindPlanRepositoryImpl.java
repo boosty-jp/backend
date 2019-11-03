@@ -14,7 +14,6 @@ import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.PlanToPlanElementProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanListItemEntityConverter;
@@ -23,6 +22,9 @@ import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
+
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal.Symbols.outV;
 
 @Component
 public class FindPlanRepositoryImpl implements FindPlanRepository {
@@ -35,51 +37,6 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
     @Override
     public PlanDetailEntity findOne(String planId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
-        //        Map<String, Object> result = g.V(planId)
-        //                                      .project("base",
-        //                                               "tags",
-        //                                               "author",
-        //                                               "action",
-        //                                               "status",
-        //                                               "elements",
-        //                                               "like",
-        //                                               "learned",
-        //                                               "learning")
-        //                                      .by(__.valueMap().with(WithOptions.tokens))
-        //                                      .by(__.out(PlanToTagEdge.RELATED.getString())
-        //                                            .hasLabel(VertexLabel.TAG.getString())
-        //                                            .valueMap()
-        //                                            .with(WithOptions.tokens)
-        //                                            .fold())
-        //                                      .by(__.in(UserToPlanEdge.DRAFTED.getString(),
-        //                                                UserToPlanEdge.PUBLISHED.getString())
-        //                                            .hasLabel(VertexLabel.USER.getString())
-        //                                            .valueMap()
-        //                                            .with(WithOptions.tokens))
-        //                                      .by(__.inE(UserToPlanEdge.LIKED.getString(),
-        //                                                 UserToPlanEdge.LEARNED.getString(),
-        //                                                 UserToPlanEdge.LEARNING.getString()).label().fold())
-        //                                      .by(__.inE(UserToPlanEdge.DRAFTED.getString(),
-        //                                                 UserToPlanEdge.PUBLISHED.getString()).label())
-        //                                      .by(__.out(PlanToPlanElementEdge.INCLUDE.getString())
-        //                                            .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.PLAN.getString())
-        //                                            .project("element", "number")
-        //                                            .by(__.label()
-        //                                                  .values(ArticleVertexProperty.IMAGE_URL.getString(),
-        //                                                          ArticleVertexProperty.TITLE.getString())
-        //                                                  .with(WithOptions.tokens)
-        //                                                  .fold())
-        //                                            .by(__.outE()
-        //                                                  .hasLabel(PlanToPlanElementEdge.INCLUDE.getString())
-        //                                                  .values(PlanToPlanElementProperty.NUMBER.getString())
-        //                                                  .fold()))
-        //                                      .by(__.in(UserToPlanEdge.LIKED.getString()).count())
-        //                                      .by(__.in(UserToPlanEdge.LEARNED.getString()).count())
-        //                                      .by(__.in(UserToPlanEdge.LEARNING.getString()).count())
-        //                                      .next();
-
-
         Map<String, Object> result = g.V(planId)
                                       .project("base",
                                                "tags",
@@ -108,10 +65,11 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                                  UserToPlanEdge.PUBLISHED.getString()).label())
                                       .by(__.out(PlanToPlanElementEdge.INCLUDE.getString())
                                             .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.PLAN.getString())
-                                            .project("element", "number")
+                                            .project("element", "edge")
                                             .by(__.valueMap().with(WithOptions.tokens))
                                             .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
-                                                  .values(PlanToPlanElementProperty.NUMBER.getString()))
+                                                  .where(outV().hasId(planId))
+                                                  .valueMap())
                                             .fold())
                                       .by(__.in(UserToPlanEdge.LIKED.getString()).count())
                                       .by(__.in(UserToPlanEdge.LEARNED.getString()).count())
@@ -273,7 +231,6 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         //                                .label()
         //                                .toList();
 
-        //        System.out.println(results);
         // IDだけ取得する
         //TODO: 型がどうなってるか要検証
         //        return PlanEntityConverter.toPlan(result);

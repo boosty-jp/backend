@@ -27,7 +27,6 @@ public class CreateTagRepositoryImpl {
 
         long now = System.currentTimeMillis();
 
-        System.out.println(g.V().hasLabel(VertexLabel.TAG.getString()).valueMap().toList());
         String tagId = g.V()
                         .hasLabel(VertexLabel.TAG.getString())
                         .has(TagVertexProperty.NAME.getString(), name)

@@ -64,4 +64,8 @@ public class EdgeIdCreator {
     public static String userDeletePlan(String userId, String planId) {
         return userId + "-" + UserToPlanEdge.DELETED.getString() + "-" + planId;
     }
+
+    public static String userPublishPlan(String userId, String planId) {
+        return userId + "-" + UserToPlanEdge.PUBLISHED.getString() + "-" + planId;
+    }
 }

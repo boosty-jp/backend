@@ -140,17 +140,15 @@ input ArticleInput {
 }
 
 input PlanBaseInput {
+    id: ID!
     title: String!
     description: String!
     tags: [String]!
-    imageUrl: String
+    imageUrl: String!
 }
 
 input PlanElementInput{
     id: ID!
-    title: String,
-    imageUrl: String,
-    type: String!
     number: Int!
 }
 
@@ -187,14 +185,9 @@ type Mutation {
     updatePlanImageUrl(planId: ID!, url: String!): UpdateImageResponse
     updatePlanTags(planId: ID!, tags: [String]!): UpdateResponse
     updatePlanDescription(planId: ID!, description: String!): UpdateResponse
-    createPlanBase(planBase: PlanBaseInput): CreateResponse
-    updatePlanBase(planId: ID!, planBase: PlanBaseInput!): UpdateResponse
-    createPlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
-    updatePlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
 
     deletePlan(planId: ID!): UpdateResponse
-    publishPlan(planId: ID!): UpdateResponse
-    savePlan(planId: ID!, elements: [PlanElementInput], description: String, tags: [String]): UpdateResponse
+    publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
     draftPlan(planId: ID!): UpdateResponse
     startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse

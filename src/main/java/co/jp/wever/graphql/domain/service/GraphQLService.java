@@ -135,8 +135,6 @@ public class GraphQLService {
                                                                        articleDataFetcher.deleteFinishArticleDataFetcher())
                                                           .dataFetcher("initPlan",
                                                                        planDataFetchers.initPlanDataFetcher())
-                                                          .dataFetcher("createPlanBase",
-                                                                       planDataFetchers.createPlanBaseDataFetcher())
                                                           .dataFetcher("updatePlanTitle",
                                                                        planDataFetchers.updatePlanTitleDataFetcher())
                                                           .dataFetcher("updatePlanTags",
@@ -145,20 +143,12 @@ public class GraphQLService {
                                                                        planDataFetchers.updatePlanDescriptionDataFetcher())
                                                           .dataFetcher("updatePlanImageUrl",
                                                                        planDataFetchers.updatePlanImageUrlDataFetcher())
-                                                          .dataFetcher("updatePlanBase",
-                                                                       planDataFetchers.updatePlanBaseDataFetcher())
-                                                          .dataFetcher("createPlanElements",
-                                                                       planDataFetchers.createPlanElementsDataFetcher())
-                                                          .dataFetcher("updatePlanElements",
-                                                                       planDataFetchers.updatePlanElementsDataFetcher())
                                                           .dataFetcher("deletePlan",
                                                                        planDataFetchers.deletePlanDataFetcher())
                                                           .dataFetcher("publishPlan",
                                                                        planDataFetchers.publishPlanDataFetcher())
                                                           .dataFetcher("draftPlan",
                                                                        planDataFetchers.draftPlanDataFetcher())
-                                                          .dataFetcher("savePlan",
-                                                                       planDataFetchers.savePlanDataFetcher())
                                                           .dataFetcher("startPlan",
                                                                        planDataFetchers.startPlanDataFetcher())
                                                           .dataFetcher("stopPlan",

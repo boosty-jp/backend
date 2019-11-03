@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.application.user;
+package co.jp.wever.graphql.domain.service.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,9 @@ package co.jp.wever.graphql.domain.domainmodel.plan;
 
 import java.util.List;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
+import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanStatus;
 import co.jp.wever.graphql.domain.domainmodel.plan.statistics.PlanStatistics;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 
@@ -29,4 +31,5 @@ public class PlanListItem {
     public PlanStatistics getStatistics() {
         return statistics;
     }
+
 }

@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.property;
 
 public enum PlanToPlanElementProperty {
-    NUMBER("number");
+    NUMBER("number"), INCLUDE_TIME("includeTime");
 
     private String value;
 

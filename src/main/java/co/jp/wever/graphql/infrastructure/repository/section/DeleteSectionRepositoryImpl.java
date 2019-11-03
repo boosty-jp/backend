@@ -31,7 +31,6 @@ public class DeleteSectionRepositoryImpl implements DeleteSectionRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
 
-        System.out.println(g.V(sectionId).inE().valueMap().with(WithOptions.tokens).toList());
         g.E(EdgeIdCreator.userCreateSection(userId, sectionId)).drop().iterate();
 
         g.E(EdgeIdCreator.userDeleteSection(userId, sectionId))
@@ -54,6 +53,5 @@ public class DeleteSectionRepositoryImpl implements DeleteSectionRepository {
 
         // TODO: セクションが作者以外からのリファレンスをうけるようになるときは、修正する
         g.E(EdgeIdCreator.articleIncludeSection(articleId, sectionId)).drop().iterate();
-        System.out.println(g.V(sectionId).inE().valueMap().with(WithOptions.tokens).toList());
     }
 }
