@@ -36,6 +36,12 @@ public class PublishPlanElements {
                                              GraphQLErrorMessage.PLAN_ELEMENT_NUMBER_DUPLICATED.getString());
         }
 
+        List<String> ids = elements.stream().map(e -> e.getId()).collect(Collectors.toList());
+        if (ids.stream().filter(i -> Collections.frequency(ids, i) > 1).collect(Collectors.toSet()).size() > 0) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.PLAN_ELEMENT_ID_DUPLICATED.getString());
+        }
+
         return new PublishPlanElements(elements);
     }
 

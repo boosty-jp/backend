@@ -9,6 +9,7 @@ public class PlanSearchEntityConverter {
                                .objectID(publishPlan.getId())
                                .imageUrl(publishPlan.getImageUrl())
                                .title(publishPlan.getTitle())
+                               .description(publishPlan.getDescription())
                                .updateDate(updateDate)
                                .authorId(authorId)
                                .tags(publishPlan.getTagIds())

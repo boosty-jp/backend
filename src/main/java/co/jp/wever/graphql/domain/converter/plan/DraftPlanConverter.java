@@ -13,7 +13,6 @@ public class DraftPlanConverter {
         DraftPlanBase base = DraftPlanBaseConverter.toDraftPlanBase(baseInput);
         PlanElements elements = PlanElementsConverter.toPlanElements(elementInputs);
 
-        return new DraftPlan(base, elements);
-
+        return DraftPlan.of(base, elements);
     }
 }

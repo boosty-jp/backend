@@ -10,6 +10,8 @@ public enum GraphQLErrorMessage {
     PLAN_ELEMENT_EMPTY("プランの要素は1つ以上入力してください"),
     PLAN_ELEMENT_OVER("プランの要素は30までです"),
     PLAN_ELEMENT_NUMBER_DUPLICATED("プランの番号が重複しています"),
+    PLAN_ELEMENT_ID_DUPLICATED("重複するプランの要素は指定できません"),
+    PLAN_ELEMENT_SELF_ID("自分自身のIDはプランの要素に指定できません"),
     PLAN_ELEMENT_SHORTAGE("プランの要素は1つ以上指定してください"),
     PLAN_ELEMENT_ID_EMPTY("プランの要素を指定してください"),
     USER_ID_EMPTY("ユーザIDを指定してください"),

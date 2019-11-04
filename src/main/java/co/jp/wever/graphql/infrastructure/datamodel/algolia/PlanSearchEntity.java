@@ -11,10 +11,11 @@ import lombok.Data;
 public class PlanSearchEntity {
     private String objectID;
     private String title;
-    private long like;
-    private long learned;
+    private String description;
     private String imageUrl;
     private String authorId;
     private List<String> tags;
+    private long like;
+    private long learned;
     private long updateDate;
 }

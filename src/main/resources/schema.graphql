@@ -188,8 +188,7 @@ type Mutation {
 
     deletePlan(planId: ID!): UpdateResponse
     publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
-    draftPlan(planId: ID!): UpdateResponse
-    startPlan(planId: ID!): UpdateResponse
+    draftPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse
     finishPlan(planId: ID!): UpdateResponse
 

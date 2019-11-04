@@ -13,6 +13,6 @@ public class PublishPlanConverter {
         PublishPlanBase publishPlanBase = PublishPlanBaseConverter.toPublishPlanBase(baseInput);
         PublishPlanElements publishPlanElements = WritePlanElementsConverter.toWritePlanElements(elementInputs);
 
-        return new PublishPlan(publishPlanBase, publishPlanElements);
+        return PublishPlan.of(publishPlanBase, publishPlanElements);
     }
 }
