@@ -4,6 +4,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
+import co.jp.wever.graphql.domain.domainmodel.section.UpdateSection;
 import co.jp.wever.graphql.domain.repository.section.UpdateSectionRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
@@ -26,12 +27,12 @@ public class UpdateSectionRepositoryImpl implements UpdateSectionRepository {
     }
 
     @Override
-    public void updateOne(SectionEntity sectionEntity) {
+    public void updateOne(UpdateSection updateSection) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
-        g.V(sectionEntity.getId())
-         .property(single, SectionVertexProperty.TITLE.getString(), sectionEntity.getTitle())
-         .property(single, SectionVertexProperty.TEXT.getString(), sectionEntity.getText())
+        g.V(updateSection.getId())
+         .property(single, SectionVertexProperty.TITLE.getString(), updateSection.getTitle())
+         .property(single, SectionVertexProperty.TEXT.getString(), updateSection.getText())
          .property(single, SectionVertexProperty.UPDATE_TIME.getString(), now)
          .next();
 

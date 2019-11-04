@@ -6,11 +6,15 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.converter.section.SectionInputConverter;
+import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
+import co.jp.wever.graphql.application.converter.section.CreateSectionInputConverter;
 import co.jp.wever.graphql.application.converter.section.SectionResponseConverter;
+import co.jp.wever.graphql.application.converter.section.UpdateSectionInputConverter;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.domain.service.section.CreateSectionService;
 import co.jp.wever.graphql.domain.service.section.DeleteSectionService;
 import co.jp.wever.graphql.domain.service.section.FindSectionService;
@@ -26,18 +30,20 @@ public class SectionDataFetcher {
     private final CreateSectionService createSectionService;
     private final UpdateSectionService updateSectionService;
     private final DeleteSectionService deleteSectionService;
+    private final RequesterConverter requesterConverter;
 
     public SectionDataFetcher(
         TokenVerifier tokenVerifier,
         FindSectionService findSectionService,
         CreateSectionService createSectionService,
         UpdateSectionService updateSectionService,
-        DeleteSectionService deleteSectionService) {
+        DeleteSectionService deleteSectionService, RequesterConverter requesterConverter) {
         this.tokenVerifier = tokenVerifier;
         this.findSectionService = findSectionService;
         this.createSectionService = createSectionService;
         this.updateSectionService = updateSectionService;
         this.deleteSectionService = deleteSectionService;
+        this.requesterConverter = requesterConverter;
     }
 
     ///////////////////////////////
@@ -51,7 +57,7 @@ public class SectionDataFetcher {
 
             return findSectionService.findAllSectionsOnArticle(articleId, userId)
                                      .stream()
-                                     .sorted(Comparator.comparing(Section::getNumber)) //番号順にする
+                                     .sorted(Comparator.comparing(FindSection::getNumber)) //番号順にする
                                      .map(s -> SectionResponseConverter.toSectionResponse(s))
                                      .collect(Collectors.toList());
         };
@@ -98,22 +104,21 @@ public class SectionDataFetcher {
 
             String createId = createSectionService.createSection(userId,
                                                                  articleId,
-                                                                 SectionInputConverter.toSectionInput(sectionInputMap));
+                                                                 CreateSectionInputConverter.toCreateSectionInput(sectionInputMap));
             return CreateResponse.builder().id(createId).build();
         };
     }
 
     public DataFetcher updateSectionElementDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            String sectionId = dataFetchingEnvironment.getArgument("sectionId");
 
-            Map<String, Object> sectionInputMap = (Map) dataFetchingEnvironment.getArgument("section");
+            String sectionId = dataFetchingEnvironment.getArgument("sectionId");
+            UpdateSectionInput updateSectionInput = UpdateSectionInputConverter.toUpdateSectionInput(dataFetchingEnvironment);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
             updateSectionService.updateSection(sectionId,
-                                               SectionInputConverter.toSectionInput(sectionInputMap),
-                                               userId);
+                                               updateSectionInput,
+                                               requester);
 
             return UpdateResponse.builder().build();
         };

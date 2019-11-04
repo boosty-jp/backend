@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.domain.domainmodel.article.PublishArticle;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.algolia.ArticleSearchEntity;
@@ -30,6 +31,20 @@ public class ArticleSearchEntityConverter {
                                   .updateDate(VertexConverter.toLong(ArticleVertexProperty.UPDATED_TIME.getString(),
                                                                      baseResult))
                                   .title(VertexConverter.toString(ArticleVertexProperty.TITLE.getString(), baseResult))
+                                  .build();
+    }
+
+    public static ArticleSearchEntity toArticleSearchEntity(PublishArticle article, long updateTime, String authorId) {
+        return ArticleSearchEntity.builder()
+                                  .objectID(article.getId())
+                                  .title(article.getTitle())
+                                  .tags(article.getTagIds())
+                                  .imageUrl(article.getImageUrl())
+                                  .like(0)
+                                  .learned(0)
+                                  .authorId(authorId)
+                                  .updateDate(updateTime)
+                                  .publishDate(updateTime)
                                   .build();
     }
 }

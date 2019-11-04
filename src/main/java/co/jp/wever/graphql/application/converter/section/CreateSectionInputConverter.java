@@ -4,14 +4,14 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
-import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.application.datamodel.request.CreateSectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
-public class SectionInputConverter {
-    public static SectionInput toSectionInput(Map<String, Object> input) {
+public class CreateSectionInputConverter {
+    public static CreateSectionInput toCreateSectionInput(Map<String, Object> input) {
         try {
-            return SectionInput.builder()
+            return CreateSectionInput.builder()
                                .title(input.get("title").toString())
                                .text(input.get("text").toString())
                                .number((int) input.get("number"))

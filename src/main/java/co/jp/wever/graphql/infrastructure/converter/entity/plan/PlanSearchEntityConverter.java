@@ -13,6 +13,8 @@ public class PlanSearchEntityConverter {
                                .updateDate(updateDate)
                                .authorId(authorId)
                                .tags(publishPlan.getTagIds())
+                               .like(0)
+                               .learned(0)
                                .build();
     }
 }

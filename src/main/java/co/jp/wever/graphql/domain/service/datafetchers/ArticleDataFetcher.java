@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.article.ArticleDetailResponseConverter;
+import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
+import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
+import co.jp.wever.graphql.application.converter.section.UpdateSectionInputsConverter;
+import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
@@ -24,18 +30,21 @@ public class ArticleDataFetcher {
     private final CreateArticleService createArticleService;
     private final UpdateArticleService updateArticleService;
     private final DeleteArticleService deleteArticleService;
+    private final RequesterConverter requesterConverter;
 
     public ArticleDataFetcher(
         TokenVerifier tokenVerifier,
         FindArticleService findArticleService,
         CreateArticleService createArticleService,
         UpdateArticleService updateArticleService,
-        DeleteArticleService deleteArticleService) {
+        DeleteArticleService deleteArticleService,
+        RequesterConverter requesterConverter) {
         this.tokenVerifier = tokenVerifier;
         this.findArticleService = findArticleService;
         this.createArticleService = createArticleService;
         this.updateArticleService = updateArticleService;
         this.deleteArticleService = deleteArticleService;
+        this.requesterConverter = requesterConverter;
     }
 
     ///////////////////////////////
@@ -197,10 +206,11 @@ public class ArticleDataFetcher {
 
     public DataFetcher publishArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            String articleId = dataFetchingEnvironment.getArgument("articleId");
-            updateArticleService.publishArticle(articleId, userId);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            ArticleInput articleInput = ArticleInputConverter.toArticleInput(dataFetchingEnvironment);
+            List<UpdateSectionInput> sectionInputs =
+                UpdateSectionInputsConverter.toUpdateSectionInputs(dataFetchingEnvironment);
+            updateArticleService.publishArticle(articleInput, sectionInputs, requester);
 
             return UpdateResponse.builder().build();
         };
@@ -208,11 +218,12 @@ public class ArticleDataFetcher {
 
     public DataFetcher draftArticleDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            String articleId = dataFetchingEnvironment.getArgument("articleId");
-            updateArticleService.draftArticle(articleId, userId);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            ArticleInput articleInput = ArticleInputConverter.toArticleInput(dataFetchingEnvironment);
+            List<UpdateSectionInput> sectionInputs =
+                UpdateSectionInputsConverter.toUpdateSectionInputs(dataFetchingEnvironment);
 
+            updateArticleService.draftArticle(articleInput, sectionInputs, requester);
             return UpdateResponse.builder().build();
         };
     }

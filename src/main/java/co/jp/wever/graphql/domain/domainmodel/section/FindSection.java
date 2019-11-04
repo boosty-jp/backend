@@ -3,7 +3,7 @@ package co.jp.wever.graphql.domain.domainmodel.section;
 import co.jp.wever.graphql.domain.domainmodel.section.statistic.SectionStatistic;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 
-public class Section {
+public class FindSection {
 
     private SectionId id;
     private SectionTitle title;
@@ -14,7 +14,7 @@ public class Section {
     private SectionStatistic statistic;
     private boolean liked; //TODO: あとでドメインに直す
 
-    public Section(
+    public FindSection(
         SectionId id,
         SectionTitle title,
         SectionText text,

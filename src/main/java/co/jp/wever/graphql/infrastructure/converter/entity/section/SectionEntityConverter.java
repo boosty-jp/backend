@@ -2,25 +2,25 @@ package co.jp.wever.graphql.infrastructure.converter.entity.section;
 
 import java.util.Map;
 
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 
 public class SectionEntityConverter {
-    public static SectionEntity toSectionEntity(Section section, String sectionId) {
+    public static SectionEntity toSectionEntity(FindSection findSection, String sectionId) {
         return SectionEntity.builder()
                             .id(sectionId)
-                            .title(section.getTitle())
-                            .text(section.getText())
-                            .number(section.getNumber())
+                            .title(findSection.getTitle())
+                            .text(findSection.getText())
+                            .number(findSection.getNumber())
                             .build();
     }
 
-    public static SectionEntity toSectionEntity(Section section) {
+    public static SectionEntity toSectionEntity(FindSection findSection) {
         return SectionEntity.builder()
-                            .title(section.getTitle())
-                            .text(section.getText())
-                            .number(section.getNumber())
+                            .title(findSection.getTitle())
+                            .text(findSection.getText())
+                            .number(findSection.getNumber())
                             .build();
     }
 

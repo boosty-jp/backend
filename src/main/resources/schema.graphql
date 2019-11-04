@@ -127,13 +127,21 @@ type Tag{
     name: String!
 }
 
-input SectionInput{
+input CreateSectionInput{
+    title: String!
+    text: String!
+    number: Int!
+}
+
+input UpdateSectionInput{
+    idi: ID!
     title: String!
     text: String!
     number: Int!
 }
 
 input ArticleInput {
+    id: ID!
     title: String!
     imageUrl: String
     tags: [String]!
@@ -161,8 +169,8 @@ input UserInput{
 
 
 type Mutation {
-    createSection(articleId: ID!, section: SectionInput!): CreateResponse
-    updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
+    createSection(articleId: ID!, findSection: CreateSectionInput!): CreateResponse
+    updateFindSection(sectionId: ID!, findSection: UpdateSectionInput!): UpdateResponse
     deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
     deleteLikeSection(sectionId: ID!): UpdateResponse
@@ -173,8 +181,11 @@ type Mutation {
     updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
     updateArticleTags(articleId: ID!, tags: [String]!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
-    publishArticle(articleId: ID!): UpdateResponse
-    draftArticle(articleId: ID!): UpdateResponse
+#    publishArticle(articleId: ID!): UpdateResponse
+#    draftArticle(articleId: ID!): UpdateResponse
+    publishArticle(base: ArticleInput!, findSections: [UpdateSectionInput]!): UpdateResponse
+    draftArticle(base: ArticleInput!, findSections: [UpdateSectionInput]!): UpdateResponse
+
     likeArticle(articleId: ID!): UpdateResponse
     deleteLikeArticle(articleId: ID!): UpdateResponse
     finishArticle(articleId: ID!): UpdateResponse

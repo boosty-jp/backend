@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.application.datamodel.request.CreateSectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.section.SectionConverter;
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
+import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
@@ -28,8 +28,8 @@ public class CreateSectionService {
         this.createSectionRepository = createSectionRepository;
     }
 
-    public String createSection(String userId, String articleId, SectionInput sectionInput) {
-        Section section = SectionConverter.toSection(sectionInput, userId);
+    public String createSection(String userId, String articleId, CreateSectionInput sectionInput) {
+        FindSection findSection = FindSectionConverter.toSection(sectionInput, userId);
         List<SectionNumberEntity> sectionNumbers = findSectionRepository.findAllNumberOnArticle(articleId);
         List<SectionNumberEntity> incrementNumbers = sectionNumbers.stream()
                                                                    .filter(s -> s.getNumber()
@@ -66,7 +66,7 @@ public class CreateSectionService {
 
         return createSectionRepository.addOne(userId,
                                               articleId,
-                                              SectionEntityConverter.toSectionEntity(section),
+                                              SectionEntityConverter.toSectionEntity(findSection),
                                               incrementNumbers);
     }
 }

@@ -10,18 +10,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.domain.domainmodel.article.DraftArticle;
+import co.jp.wever.graphql.domain.domainmodel.article.PublishArticle;
 import co.jp.wever.graphql.domain.repository.article.UpdateArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToSectionProperty;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToTagProperty;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.PlanToPlanElementProperty;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToArticleProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleSearchEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionSearchEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.Article;
 import co.jp.wever.graphql.infrastructure.datamodel.algolia.ArticleSearchEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
@@ -113,7 +121,7 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
          .drop()
          .iterate();
 
-        if(!tags.isEmpty()){
+        if (!tags.isEmpty()) {
             g.V(tags)
              .hasLabel(VertexLabel.TAG.getString())
              .addE(ArticleToTagEdge.RELATED.getString())
@@ -123,105 +131,154 @@ public class UpdateArticleRepositoryImpl implements UpdateArticleRepository {
     }
 
     @Override
-    public void publishOne(String articleId, String userId) {
+    public void publishOne(PublishArticle publishArticle, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
+        long now = System.currentTimeMillis();
 
-        g.V(articleId)
+        g.V(publishArticle.getId())
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .outE(ArticleToTagEdge.RELATED.getString())
+         .where(inV().hasLabel(VertexLabel.TAG.getString()))
+         .drop()
+         .iterate();
+
+        if (!publishArticle.getTagIds().isEmpty()) {
+            g.V(publishArticle.getTagIds())
+             .hasLabel(VertexLabel.TAG.getString())
+             .addE(ArticleToTagEdge.RELATED.getString())
+             .property(ArticleToTagProperty.RELATED_TIME.getString(), now)
+             .from(g.V(publishArticle.getId()))
+             .iterate();
+        }
+
+        g.V(publishArticle.getId())
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .property(single, ArticleVertexProperty.TITLE.getString(), publishArticle.getTitle())
+         .property(single, ArticleVertexProperty.IMAGE_URL.getString(), publishArticle.getImageUrl())
+         .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
+         .next();
+
+        // TODO:クエリのパフォーマンス次第では消したほうがいい
+        g.V(publishArticle.getId())
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .outE(ArticleToSectionEdge.INCLUDE.getString())
+         .where(inV().hasLabel(VertexLabel.SECTION.getString()))
+         .drop()
+         .iterate();
+
+        publishArticle.getUpdateSection().stream().forEach(e -> {
+            g.V(publishArticle.getId())
+             .hasLabel(VertexLabel.ARTICLE.getString())
+             .addE(ArticleToSectionEdge.INCLUDE.getString())
+             .property(ArticleToSectionProperty.NUMBER.getString(), e.getNumber())
+             .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
+             .to(g.V(e.getId()))
+             .iterate();
+        });
+
+        g.E(EdgeIdCreator.userPublishArticle(userId, publishArticle.getId()))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .hasLabel(VertexLabel.USER.getString())
+                    .addE(UserToArticleEdge.PUBLISHED.getString())
+                    .property(T.id, EdgeIdCreator.userPublishArticle(userId, publishArticle.getId()))
+                    .to(g.V(publishArticle.getId()).hasLabel(VertexLabel.ARTICLE.getString()))
+                    .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now))
+         .next();
+
+        g.V(publishArticle.getId())
          .hasLabel(VertexLabel.ARTICLE.getString())
          .inE(UserToArticleEdge.DRAFTED.getString(), UserToArticleEdge.DELETED.getString())
          .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
          .drop()
          .iterate();
 
-        long now = System.currentTimeMillis();
-
-        g.E(EdgeIdCreator.userPublishArticle(userId, articleId))
-         .fold()
-         .coalesce(unfold(),
-                   g.V(userId)
-                    .addE(UserToArticleEdge.PUBLISHED.getString())
-                    .property(T.id, EdgeIdCreator.userPublishArticle(userId, articleId))
-                    .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
-                    .property(UserToArticleProperty.PUBLISHED_TIME.getString(), now))
-         .iterate();
-
-        // Algoliaに追加
-        Map<String, Object> result = g.V(articleId)
-                                      .project("base", "tags", "liked", "learned")
-                                      .by(__.valueMap().with(WithOptions.tokens))
-                                      .by(__.out(ArticleToTagEdge.RELATED.getString())
-                                            .hasLabel(VertexLabel.TAG.getString())
-                                            .valueMap()
-                                            .with(WithOptions.tokens)
-                                            .fold())
-                                      .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                                      .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
-                                      .by(coalesce(__.inE(UserToSectionEdge.LIKED.getString())
-                                                     .where(outV().hasId(userId)
-                                                                  .hasLabel(VertexLabel.USER.getString()))
-                                                     .limit(1)
-                                                     .constant(true), constant(false)))
-                                      .next();
-
         algoliaClient.getArticleIndex()
-                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(result,
-                                                                                         userId,
-                                                                                         articleId,
-                                                                                         now));
-
-        List<Map<String, Object>> results = g.V(articleId)
-                                             .out(ArticleToSectionEdge.INCLUDE.getString())
-                                             .hasLabel(VertexLabel.SECTION.getString())
-                                             .project("base", "liked")
-                                             .by(__.valueMap().with(WithOptions.tokens))
-                                             .by(__.in(UserToSectionEdge.LIKED.getString()).count())
-                                             .toList();
+                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(publishArticle, now, userId));
 
         algoliaClient.getSectionIndex()
-                     .saveObjectsAsync(results.stream()
-                                              .map(r -> SectionSearchEntityConverter.toSectionSearchEntity(r,
-                                                                                                           userId,
-                                                                                                           now))
-                                              .collect(Collectors.toList()));
+                     .saveObjectsAsync(publishArticle.getUpdateSection()
+                                                     .stream()
+                                                     .map(r -> SectionSearchEntityConverter.toSectionSearchEntity(r,
+                                                                                                                  now,
+                                                                                                                  userId))
+                                                     .collect(Collectors.toList()));
     }
 
     @Override
-    public void draftOne(String articleId, String userId) {
+    public void draftOne(DraftArticle draftArticle, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
+        long now = System.currentTimeMillis();
 
-        g.V(articleId)
+        g.V(draftArticle.getId())
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .outE(ArticleToTagEdge.RELATED.getString())
+         .where(inV().hasLabel(VertexLabel.TAG.getString()))
+         .drop()
+         .iterate();
+
+        if (!draftArticle.getTagIds().isEmpty()) {
+            g.V(draftArticle.getTagIds())
+             .hasLabel(VertexLabel.TAG.getString())
+             .addE(ArticleToTagEdge.RELATED.getString())
+             .property(ArticleToTagProperty.RELATED_TIME.getString(), now)
+             .from(g.V(draftArticle.getId()))
+             .iterate();
+        }
+
+        g.V(draftArticle.getId())
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .property(single, ArticleVertexProperty.TITLE.getString(), draftArticle.getTitle())
+         .property(single, ArticleVertexProperty.IMAGE_URL.getString(), draftArticle.getImageUrl())
+         .property(single, ArticleVertexProperty.UPDATED_TIME.getString(), now)
+         .next();
+
+        // TODO:クエリのパフォーマンス次第では消したほうがいい
+        g.V(draftArticle.getId())
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .outE(ArticleToSectionEdge.INCLUDE.getString())
+         .where(inV().hasLabel(VertexLabel.SECTION.getString()))
+         .drop()
+         .iterate();
+
+        draftArticle.getUpdateSection().stream().forEach(e -> {
+            g.V(draftArticle.getId())
+             .hasLabel(VertexLabel.ARTICLE.getString())
+             .addE(ArticleToSectionEdge.INCLUDE.getString())
+             .property(ArticleToSectionProperty.NUMBER.getString(), e.getNumber())
+             .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
+             .to(g.V(e.getId()))
+             .iterate();
+        });
+
+        g.E(EdgeIdCreator.userDraftArticle(userId, draftArticle.getId()))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .hasLabel(VertexLabel.USER.getString())
+                    .addE(UserToArticleEdge.DRAFTED.getString())
+                    .property(T.id, EdgeIdCreator.userDraftArticle(userId, draftArticle.getId()))
+                    .to(g.V(draftArticle.getId()).hasLabel(VertexLabel.ARTICLE.getString()))
+                    .property(UserToArticleProperty.DRAFTED_TIME.getString(), now))
+         .next();
+
+        g.V(draftArticle.getId())
          .hasLabel(VertexLabel.ARTICLE.getString())
          .inE(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DELETED.getString())
          .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
          .drop()
          .iterate();
 
-        long now = System.currentTimeMillis();
 
-        g.E(EdgeIdCreator.userDraftArticle(userId, articleId))
-         .fold()
-         .coalesce(unfold(),
-                   g.V(userId)
-                    .hasLabel(VertexLabel.USER.getString())
-                    .addE(UserToArticleEdge.DRAFTED.getString())
-                    .property(T.id, EdgeIdCreator.userDraftArticle(userId, articleId))
-                    .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
-                    .property(UserToArticleProperty.DRAFTED_TIME.getString(), now))
-         .next();
-
-        // Algoliaから削除
         // TODO: バッチにして更新頻度下げる
-        algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
+        algoliaClient.getArticleIndex().deleteObjectAsync(draftArticle.getId());
 
-        List<Object> draftSectionIds = g.V(articleId)
-                                        .out(ArticleToSectionEdge.INCLUDE.getString())
-                                        .hasLabel(VertexLabel.SECTION.getString())
-                                        .id()
-                                        .toList();
+        List<String> draftSectionIds =
+            draftArticle.getUpdateSection().stream().map(s -> s.getId()).collect(Collectors.toList());
 
-        if(!draftSectionIds.isEmpty()){
-            algoliaClient.getSectionIndex()
-                         .deleteObjectsAsync(draftSectionIds.stream().map(r -> (String) r).collect(Collectors.toList()));
+        if (!draftSectionIds.isEmpty()) {
+            algoliaClient.getSectionIndex().deleteObjectsAsync(draftSectionIds);
         }
     }
 

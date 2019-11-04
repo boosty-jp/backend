@@ -8,13 +8,13 @@ import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleDate;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleId;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleImageUrl;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
-import co.jp.wever.graphql.domain.domainmodel.article.base.Articletitle;
+import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleTitle;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 public class ArticleBaseConverter {
     public static ArticleBase toArticleBase(ArticleBaseEntity articleBaseEntity) {
         return new ArticleBase(ArticleId.of(articleBaseEntity.getId()),
-                               Articletitle.of(articleBaseEntity.getTitle()),
+                               ArticleTitle.of(articleBaseEntity.getTitle()),
                                ArticleImageUrl.of(articleBaseEntity.getImageUrl()),
                                ArticleStatus.fromString(articleBaseEntity.getStatus()),
                                ArticleDate.of(new Date(articleBaseEntity.getCreatedDate()),
@@ -24,7 +24,7 @@ public class ArticleBaseConverter {
     public static ArticleBase toArticleBase(ArticleInput articleInput) {
         Date now = new Date();
         return new ArticleBase(ArticleId.of(""),
-                               Articletitle.of(articleInput.getTitle()),
+                               ArticleTitle.of(articleInput.getTitle()),
                                ArticleImageUrl.of(articleInput.getImageUrl()),
                                ArticleStatus.DRAFTED,
                                ArticleDate.of(now, now));

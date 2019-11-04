@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.section.SectionConverter;
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
+import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
@@ -27,16 +27,16 @@ public class DeleteSectionService {
     }
 
     public void deleteSection(String articleId, String sectionId, String userId) {
-        Section section = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
+        FindSection findSection = FindSectionConverter.toSection(findSectionRepository.findOne(sectionId));
 
-        if (!section.canDelete(UserId.of(userId))) {
+        if (!findSection.canDelete(UserId.of(userId))) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         List<SectionNumberEntity> sectionNumbers = findSectionRepository.findAllNumberOnArticle(articleId);
         List<SectionNumberEntity> decrementNumbers = sectionNumbers.stream()
-                                                                   .filter(s -> s.getNumber() > section.getNumber())
+                                                                   .filter(s -> s.getNumber() > findSection.getNumber())
                                                                    .map(s -> SectionNumberEntity.builder()
                                                                                                 .id(s.getId())
                                                                                                 .number(

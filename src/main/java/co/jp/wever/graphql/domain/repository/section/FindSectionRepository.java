@@ -22,4 +22,5 @@ public interface FindSectionRepository {
 
     List<SectionEntity> findRelated(String userId);
 
+    String findAuthorId(String sectionId);
 }

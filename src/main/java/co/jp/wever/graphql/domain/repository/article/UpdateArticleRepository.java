@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import co.jp.wever.graphql.domain.domainmodel.article.DraftArticle;
+import co.jp.wever.graphql.domain.domainmodel.article.PublishArticle;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
 
 @Repository
@@ -16,9 +18,9 @@ public interface UpdateArticleRepository {
 
     void updateTags(String articleId, List<String> tagIds);
 
-    void publishOne(String articleId, String userId);
+    void publishOne(PublishArticle publishArticle, String userId);
 
-    void draftOne(String articleId, String userId);
+    void draftOne(DraftArticle draftArticle, String userId);
 
     void likeOne(String articleId, String userId);
 

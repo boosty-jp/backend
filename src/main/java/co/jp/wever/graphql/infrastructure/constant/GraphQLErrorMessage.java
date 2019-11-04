@@ -20,6 +20,8 @@ public enum GraphQLErrorMessage {
     TAG_NAME_EMPTY("タグ名を指定してください"),
     USER_DESCRIPTION_OVER("説明文は200文字以内にしてください"),
     SECTION_NUMBER_INVALID("正しいセクション番号を指定してください"),
+    SECTION_SIZE_OVER("指定できるセクションの数は30までです"),
+    SECTION_EMPTY("セクションを入力してください"),
     USER_NAME_OVER("ユーザー名は30文字以内にしてください"),
     FORBIDDEN_REQUEST("権限のないリクエストです"),
     INVALID_PLAN_ELEMENT_ID("下書きまたは削除済みの要素が含まれています"),

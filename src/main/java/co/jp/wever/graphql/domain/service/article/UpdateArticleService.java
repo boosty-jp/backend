@@ -5,11 +5,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
+import co.jp.wever.graphql.domain.converter.article.DraftArticleConverter;
+import co.jp.wever.graphql.domain.converter.article.PublishArticleConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
+import co.jp.wever.graphql.domain.domainmodel.article.DraftArticle;
+import co.jp.wever.graphql.domain.domainmodel.article.PublishArticle;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleImageUrl;
-import co.jp.wever.graphql.domain.domainmodel.article.base.Articletitle;
+import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleTitle;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
@@ -36,7 +43,7 @@ public class UpdateArticleService {
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        Articletitle articleTitle = Articletitle.of(title);
+        ArticleTitle articleTitle = ArticleTitle.of(title);
 
         updateArticleRepository.updateTitle(articleId, articleTitle.getValue());
     }
@@ -62,7 +69,7 @@ public class UpdateArticleService {
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
 
         // TODO: ドメインに移動させる
-        if(tags.size() > 5 ){
+        if (tags.size() > 5) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.INVALID_TAG_COUNT.getString());
         }
@@ -75,31 +82,32 @@ public class UpdateArticleService {
         updateArticleRepository.updateTags(articleId, tags);
     }
 
-    public void publishArticle(String articleId, String userId) {
-        // TODO: ユーザー情報だけ取得したい
-        // このクエリは重いので負荷がかかってしまうと思われる
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
+    public void publishArticle(ArticleInput articleInput, List<UpdateSectionInput> sectionInputs, Requester requester) {
+        UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleInput.getId()));
+        UserId requesterId = UserId.of(requester.getUserId());
 
-        //        ArticleBase articleBase = ArticleBaseConverter.toArticleBase(articleInput);
-        if (!articleDetail.canPublish(UserId.of(userId))) {
+        if (!authorId.same(requesterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        updateArticleRepository.publishOne(articleId, userId);
+        PublishArticle publishArticle = PublishArticleConverter.toPublishArticle(articleInput, sectionInputs);
+
+        updateArticleRepository.publishOne(publishArticle, authorId.getValue());
     }
 
-    public void draftArticle(String articleId, String userId) {
-        // TODO: ユーザー情報だけ取得したい
-        // このクエリは重いので負荷がかかってしまうと思われる
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
+    public void draftArticle(ArticleInput articleInput, List<UpdateSectionInput> sectionInputs, Requester requester) {
+        UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleInput.getId()));
+        UserId requesterId = UserId.of(requester.getUserId());
 
-        if (!articleDetail.canDraft(UserId.of(userId))) {
+        if (!authorId.same(requesterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        updateArticleRepository.draftOne(articleId, userId);
+        DraftArticle draftArticle = DraftArticleConverter.toDraftArticle(articleInput, sectionInputs);
+
+        updateArticleRepository.draftOne(draftArticle, authorId.getValue());
     }
 
     public void likeArticle(String articleId, String userId) {

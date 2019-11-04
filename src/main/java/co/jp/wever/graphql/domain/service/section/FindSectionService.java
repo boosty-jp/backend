@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
-import co.jp.wever.graphql.domain.converter.section.SectionConverter;
+import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -29,7 +29,7 @@ public class FindSectionService {
         this.findSectionRepository = findSectionRepository;
     }
 
-    public List<Section> findAllSectionsOnArticle(String articleId, String userId) {
+    public List<FindSection> findAllSectionsOnArticle(String articleId, String userId) {
         // TODO: ステータスだけ見たいので別の軽いクエリにしたい
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
@@ -41,35 +41,35 @@ public class FindSectionService {
 
         return findSectionRepository.findAllDetailOnArticle(articleId, userId)
                                     .stream()
-                                    .map(s -> SectionConverter.toSection(s))
+                                    .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());
     }
 
-    public List<Section> findAllLikedSections(String userId) {
+    public List<FindSection> findAllLikedSections(String userId) {
         return findSectionRepository.findAllLiked(userId)
                                     .stream()
-                                    .map(s -> SectionConverter.toSection(s))
+                                    .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());
     }
 
-    public List<Section> findAllBookmarkedSections(String userId) {
+    public List<FindSection> findAllBookmarkedSections(String userId) {
         return findSectionRepository.findAllBookmarked(userId)
                                     .stream()
-                                    .map(s -> SectionConverter.toSection(s))
+                                    .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());
     }
 
-    public List<Section> findFamousSections() {
+    public List<FindSection> findFamousSections() {
         return findSectionRepository.findFamous()
                                     .stream()
-                                    .map(s -> SectionConverter.toSection(s))
+                                    .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());
     }
 
-    public List<Section> findRelatedSections(String userId) {
+    public List<FindSection> findRelatedSections(String userId) {
         return findSectionRepository.findRelated(userId)
                                     .stream()
-                                    .map(s -> SectionConverter.toSection(s))
+                                    .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());
     }
 }
