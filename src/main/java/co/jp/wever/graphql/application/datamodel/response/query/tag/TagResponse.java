@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.application.datamodel.response.query;
+package co.jp.wever.graphql.application.datamodel.response.query.tag;
 
 import lombok.Builder;
 import lombok.Data;

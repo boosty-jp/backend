@@ -81,6 +81,8 @@ public class GraphQLService {
                                                           .dataFetcher("relatedArticles",
                                                                        articleDataFetcher.relatedArticlesDataFetcher())
                                                           .dataFetcher("plan", planDataFetchers.planDataFetcher())
+                                                          .dataFetcher("planDetail",
+                                                                       planDataFetchers.planDetailDataFetcher())
                                                           .dataFetcher("allPlans",
                                                                        planDataFetchers.allPlanDataFetcher())
                                                           .dataFetcher("allPublishedPlans",
@@ -97,7 +99,11 @@ public class GraphQLService {
                                                                        planDataFetchers.famousPlansDataFetcher())
                                                           .dataFetcher("relatedPlans",
                                                                        planDataFetchers.relatedPlansDataFetcher())
-                                                          .dataFetcher("user", userDataFetcher.userDataFetcher()))
+                                                          .dataFetcher("allPlanElementDetails",
+                                                                       planDataFetchers.allPlanElementDetailsDataFetcher())
+                                                          .dataFetcher("user", userDataFetcher.userDataFetcher())
+                                                          .dataFetcher("famousTags",
+                                                                       tagDataFetcher.famousTagDataFetcher()))
                             .type("Mutation",
                                   typeWiring -> typeWiring.dataFetcher("createSection",
                                                                        sectionDataFetcher.createSectionDataFetcher())
@@ -153,12 +159,16 @@ public class GraphQLService {
                                                                        planDataFetchers.startPlanDataFetcher())
                                                           .dataFetcher("stopPlan",
                                                                        planDataFetchers.stopPlanDataFetcher())
+                                                          .dataFetcher("finishPlan",
+                                                                       planDataFetchers.finishPlanDataFetcher())
                                                           .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",
                                                                        userDataFetcher.updateUserDataFetcher())
-                                                          .dataFetcher("updateUserImage",
+                                                          .dataFetcher("updateUserImageUrl",
                                                                        userDataFetcher.updateUserImageDataFetcher())
+                                                          .dataFetcher("updateUserTags",
+                                                                       userDataFetcher.updateUserTagsDataFetcher())
                                                           .dataFetcher("deleteUser",
                                                                        userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("followUser",

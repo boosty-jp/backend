@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
-import co.jp.wever.graphql.application.datamodel.response.query.TagResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.tag.TagResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanListItemResponse;
 import co.jp.wever.graphql.domain.domainmodel.plan.PlanListItem;
 
@@ -18,6 +18,7 @@ public class PlanListItemResponseConverter {
 
         return PlanListItemResponse.builder()
                                    .base(PlanBaseResponseConverter.toPlanBaseResponse(planListItem.getBase()))
+                                   .action(PlanActionResponseConverter.toPlanActionResponse(planListItem.getAction()))
                                    .statistics(PlanStatisticsResponseConverter.toPlanStatisticsResponse(planListItem.getStatistics()))
                                    .tags(tags)
                                    .build();

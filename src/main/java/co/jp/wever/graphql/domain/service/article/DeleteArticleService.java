@@ -25,7 +25,7 @@ public class DeleteArticleService {
         UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleId));
         UserId deleterId = UserId.of(userId);
 
-        if (authorId.same(deleterId)) {
+        if (!authorId.same(deleterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }

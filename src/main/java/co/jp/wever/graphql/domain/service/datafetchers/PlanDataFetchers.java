@@ -5,7 +5,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.converter.plan.FamousPlanResponseConverter;
+import co.jp.wever.graphql.application.converter.plan.LearningPlanItemResponseConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanBaseInputConverter;
+import co.jp.wever.graphql.application.converter.plan.PlanElementDetailResponseConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanElementInputsConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanDetailResponseConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanListItemResponseConverter;
@@ -16,6 +19,7 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
+import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElementDetail;
 import co.jp.wever.graphql.domain.service.plan.CreatePlanService;
 import co.jp.wever.graphql.domain.service.plan.DeletePlanService;
 import co.jp.wever.graphql.domain.service.plan.FindPlanService;
@@ -49,7 +53,17 @@ public class PlanDataFetchers {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String planId = dataFetchingEnvironment.getArgument("planId");
 
-            return PlanDetailResponseConverter.toPlanResponse(this.findPlanService.findPlan(planId, requester));
+            return PlanListItemResponseConverter.toPlanListItemResponse(this.findPlanService.findOne(planId,
+                                                                                                     requester));
+        };
+    }
+
+    public DataFetcher planDetailDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            return PlanDetailResponseConverter.toPlanResponse(this.findPlanService.findDetail(planId, requester));
         };
     }
 
@@ -66,7 +80,12 @@ public class PlanDataFetchers {
 
     public DataFetcher allPublishedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            return null;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            return this.findPlanService.findAllPublishedPlan(userId)
+                                       .stream()
+                                       .map(p -> PlanListItemResponseConverter.toPlanListItemResponse(p))
+                                       .collect(Collectors.toList());
         };
     }
 
@@ -84,7 +103,12 @@ public class PlanDataFetchers {
 
     public DataFetcher allLearningPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            return null;
+            String userId = dataFetchingEnvironment.getArgument("userId");
+
+            return this.findPlanService.findAllLearningPlan(userId)
+                                       .stream()
+                                       .map(r -> LearningPlanItemResponseConverter.toLearningPlanItemResponse(r))
+                                       .collect(Collectors.toList());
         };
     }
 
@@ -95,14 +119,27 @@ public class PlanDataFetchers {
     }
 
     public DataFetcher famousPlansDataFetcher() {
-        return dataFetchingEnvironment -> {
-            return null;
-        };
+        return dataFetchingEnvironment -> findPlanService.findFamous()
+                                                         .stream()
+                                                         .map(p -> FamousPlanResponseConverter.toFamousPlanResponse(p))
+                                                         .collect(Collectors.toList());
     }
 
     public DataFetcher relatedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             return null;
+        };
+    }
+
+    public DataFetcher allPlanElementDetailsDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+            List<FindPlanElementDetail> findPlanElementDetails =
+                findPlanService.findAllPlanElementDetails(planId, requester);
+            return findPlanElementDetails.stream()
+                                         .map(p -> PlanElementDetailResponseConverter.toPlanElementDetailResponse(p))
+                                         .collect(Collectors.toList());
         };
     }
 
@@ -211,10 +248,20 @@ public class PlanDataFetchers {
         return dataFetchingEnvironment -> {
 
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             updatePlanService.startPlan(planId, requester);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher finishPlanDataFetcher() {
+        return dataFetchingEnvironment -> {
+
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            updatePlanService.finishPlan(planId, requester);
             return UpdateResponse.builder().build();
         };
     }

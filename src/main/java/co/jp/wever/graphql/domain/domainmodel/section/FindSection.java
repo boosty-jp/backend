@@ -51,7 +51,7 @@ public class FindSection {
         return authorId.getValue();
     }
 
-    public int getNumber() {
+    public long getNumber() {
         return number.getValue();
     }
 

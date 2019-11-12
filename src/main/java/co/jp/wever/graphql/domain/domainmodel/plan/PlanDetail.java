@@ -62,7 +62,8 @@ public class PlanDetail {
     }
 
     public boolean canRead(Requester requester) {
-        if (base.getStatus().equals(PlanStatus.PUBLISHED.getString())) {
+
+        if (base.getStatus().getString().equals(PlanStatus.PUBLISHED.getString())) {
             return true;
         }
 

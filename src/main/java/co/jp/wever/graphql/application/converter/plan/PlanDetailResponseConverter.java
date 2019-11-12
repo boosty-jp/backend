@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
-import co.jp.wever.graphql.application.datamodel.response.query.TagResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.tag.TagResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.UserResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanActionResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanBaseResponse;

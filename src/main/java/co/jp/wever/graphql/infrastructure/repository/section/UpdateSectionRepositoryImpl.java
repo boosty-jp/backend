@@ -11,7 +11,6 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToSectionProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.SectionVertexProperty;
-import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
@@ -33,7 +32,7 @@ public class UpdateSectionRepositoryImpl implements UpdateSectionRepository {
         g.V(updateSection.getId())
          .property(single, SectionVertexProperty.TITLE.getString(), updateSection.getTitle())
          .property(single, SectionVertexProperty.TEXT.getString(), updateSection.getText())
-         .property(single, SectionVertexProperty.UPDATE_TIME.getString(), now)
+         .property(single, SectionVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
         //TODO: Algoliaのデータ更新する

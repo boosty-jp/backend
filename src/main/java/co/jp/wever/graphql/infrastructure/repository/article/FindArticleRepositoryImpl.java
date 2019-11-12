@@ -18,8 +18,6 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
-import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.out;
-
 @Component
 public class FindArticleRepositoryImpl implements FindArticleRepository {
 
@@ -68,7 +66,6 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
     @Override
     public List<ArticleDetailEntity> findAll(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
 
         //TODO: 不要なフィールドあるので消す。
         List<Map<String, Object>> allResults = g.V(userId)
@@ -291,14 +288,53 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
         return (String) g.V(articleId)
                          .hasLabel(VertexLabel.ARTICLE.getString())
                          .in(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DRAFTED.getString())
-                         .where(out().hasLabel(VertexLabel.USER.getString()))
                          .id()
                          .next();
     }
 
     @Override
     public List<ArticleDetailEntity> findFamous() {
-        return null;
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        //TODO: 不要なフィールドあるので消す。
+        List<Map<String, Object>> allResults = g.V()
+                                                .hasLabel(VertexLabel.ARTICLE.getString())
+                                                .project("base",
+                                                         "tags",
+                                                         "author",
+                                                         "status",
+                                                         "action",
+                                                         "liked",
+                                                         "learned")
+                                                .by(__.valueMap().with(WithOptions.tokens))
+                                                .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                                      .hasLabel(VertexLabel.TAG.getString())
+                                                      .valueMap()
+                                                      .with(WithOptions.tokens)
+                                                      .fold())
+                                                .by(__.in(UserToArticleEdge.PUBLISHED.getString(),
+                                                          UserToArticleEdge.DELETED.getString(),
+                                                          UserToArticleEdge.DRAFTED.getString())
+                                                      .hasLabel(VertexLabel.USER.getString())
+                                                      .project("base", "tags")
+                                                      .by(__.valueMap().with(WithOptions.tokens))
+                                                      .by(__.out(UserToTagEdge.RELATED.getString())
+                                                            .hasLabel(VertexLabel.TAG.getString())
+                                                            .valueMap()
+                                                            .with(WithOptions.tokens)
+                                                            .fold()))
+                                                .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
+                                                           UserToArticleEdge.DELETED.getString(),
+                                                           UserToArticleEdge.PUBLISHED.getString())
+                                                      .label()) // TODO: .fold()つけて複数の状態管理になっていないかチェックしたい
+                                                .by(__.inE(UserToArticleEdge.LEARNED.getString(),
+                                                           UserToArticleEdge.LIKED.getString()).label().fold())
+                                                .by(__.in(UserToArticleEdge.LIKED.getString()).count())
+                                                .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                                .toList();
+
+        return allResults.stream()
+                         .map(r -> ArticleDetailEntityConverter.toArticleDetailEntity(r))
+                         .collect(Collectors.toList());
     }
 
     public List<ArticleDetailEntity> findRelated(String userId) {

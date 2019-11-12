@@ -19,9 +19,11 @@ import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.PlanToPlanElementProperty;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.PlanToTagProperty;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToSectionProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanSearchEntityConverter;
@@ -114,7 +116,8 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         g.V(planId)
          .out(PlanToTagEdge.RELATED.getString())
          .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.PLAN.getString())
-         .drop();
+         .drop()
+         .iterate();
 
         List<String> elementIds = planElementEntities.stream().map(e -> e.getId()).collect(Collectors.toList());
         g.V(elementIds).addE(PlanToTagEdge.RELATED.getString()).from(g.V(planId)).next();
@@ -252,39 +255,47 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
     @Override
     public void startOne(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         long now = System.currentTimeMillis();
-        g.V(userId)
-         .addE(UserToPlanEdge.LEARNING.getString())
-         .to(g.V(planId))
-         .property(UserToPlanProperty.LEARN_STARTED_TIME.getString(), now)
-         .next();
+        g.V(planId)
+         .hasLabel(VertexLabel.PLAN.getString())
+         .inE(UserToPlanEdge.LEARNED.getString())
+         .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+         .drop()
+         .iterate();
+
+        g.E(EdgeIdCreator.userLearningPlan(userId, planId))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .addE(UserToPlanEdge.LEARNING.getString())
+                    .property(T.id, EdgeIdCreator.userLearningPlan(userId, planId))
+                    .property(UserToPlanProperty.LEARN_STARTED_TIME.getString(), now)
+                    .to(g.V(planId)))
+         .iterate();
     }
 
     @Override
     public void finishOne(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
-        long learnStartTime;
-        try {
-            // 学習開始時刻を取得する
-            Map<String, Object> edgeResult =
-                g.V(planId).inE(UserToPlanEdge.LEARNING.getString()).from(g.V(userId)).propertyMap().next();
-            learnStartTime = (long) edgeResult.get(UserToPlanProperty.LEARN_STARTED_TIME.getString());
-            g.V(planId).inE(UserToPlanEdge.LEARNING.getString()).from(g.V(userId)).drop();
-        } catch (Exception e) {
-            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
-        }
-
         long now = System.currentTimeMillis();
-        g.V(userId)
-         .addE(UserToPlanEdge.LEARNED.getString())
-         .to(g.V(planId))
-         .property(UserToPlanProperty.LEARN_FINISHED_TIME.getString(), now)
-         .property(UserToPlanProperty.LEARN_STARTED_TIME.getString(), learnStartTime)
-         .next();
+        g.V(planId)
+         .hasLabel(VertexLabel.PLAN.getString())
+         .inE(UserToPlanEdge.LEARNING.getString())
+         .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+         .drop()
+         .iterate();
+
+        g.E(EdgeIdCreator.userLearnedPlan(userId, planId))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .addE(UserToPlanEdge.LEARNED.getString())
+                    .property(T.id, EdgeIdCreator.userLearnedPlan(userId, planId))
+                    .property(UserToPlanProperty.LEARN_FINISHED_TIME.getString(), now)
+                    .to(g.V(planId)))
+         .iterate();
     }
+
 
     @Override
     public void stopOne(String planId, String userId) {
@@ -292,6 +303,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         g.V(planId)
          .inE(UserToPlanEdge.LEARNING.getString(), UserToPlanEdge.LEARNED.getString())
          .from(g.V(userId))
-         .drop();
+         .drop()
+         .iterate();
     }
 }

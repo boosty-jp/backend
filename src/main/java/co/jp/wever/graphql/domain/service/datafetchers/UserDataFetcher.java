@@ -2,10 +2,13 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
+import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.converter.user.UserInputConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
@@ -24,18 +27,21 @@ public class UserDataFetcher {
     private final CreateUserService createUserService;
     private final UpdateUserService updateUserService;
     private final DeleteUserService deleteUserService;
+    private final RequesterConverter requesterConverter;
 
     public UserDataFetcher(
         TokenVerifier tokenVerifier,
         FindUserService findUserService,
         CreateUserService createUserService,
         UpdateUserService updateUserService,
-        DeleteUserService deleteUserService) {
+        DeleteUserService deleteUserService,
+        RequesterConverter requesterConverter) {
         this.tokenVerifier = tokenVerifier;
         this.findUserService = findUserService;
         this.createUserService = createUserService;
         this.updateUserService = updateUserService;
         this.deleteUserService = deleteUserService;
+        this.requesterConverter = requesterConverter;
     }
 
 
@@ -65,11 +71,10 @@ public class UserDataFetcher {
 
     public DataFetcher updateUserDataFetcher() {
         return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("user");
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
 
-            updateUserService.updateUser(UserInputConverter.toUserInput(userInputMap), userId);
+            updateUserService.updateUser(UserInputConverter.toUserInput(userInputMap), requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -78,10 +83,20 @@ public class UserDataFetcher {
         return dataFetchingEnvironment -> {
             String token = (String) dataFetchingEnvironment.getContext();
             String userId = tokenVerifier.getUserId(token);
-            String imageUrl = dataFetchingEnvironment.getArgument("imageUrl");
+            String imageUrl = dataFetchingEnvironment.getArgument("url");
 
             updateUserService.updateUserImage(imageUrl, userId);
             return UpdateImageResponse.builder().url(imageUrl).build();
+        };
+    }
+
+    public DataFetcher updateUserTagsDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            List<String> tags = dataFetchingEnvironment.getArgument("tags");
+
+            updateUserService.updateUserTags(tags, requester);
+            return UpdateResponse.builder().build();
         };
     }
 

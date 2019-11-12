@@ -68,4 +68,12 @@ public class EdgeIdCreator {
     public static String userPublishPlan(String userId, String planId) {
         return userId + "-" + UserToPlanEdge.PUBLISHED.getString() + "-" + planId;
     }
+
+    public static String userLearningPlan(String userId, String planId) {
+        return userId + "-" + UserToPlanEdge.LEARNING.getString() + "-" + planId;
+    }
+
+    public static String userLearnedPlan(String userId, String planId) {
+        return userId + "-" + UserToPlanEdge.LEARNED.getString() + "-" + planId;
+    }
 }

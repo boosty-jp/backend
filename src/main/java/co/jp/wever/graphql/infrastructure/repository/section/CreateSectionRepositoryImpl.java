@@ -1,7 +1,6 @@
 package co.jp.wever.graphql.infrastructure.repository.section;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
@@ -40,8 +39,8 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
         String sectionId = g.addV(VertexLabel.SECTION.getString())
                             .property(single, SectionVertexProperty.TITLE.getString(), sectionEntity.getTitle())
                             .property(single, SectionVertexProperty.TEXT.getString(), sectionEntity.getText())
-                            .property(single, SectionVertexProperty.CREATE_TIME.getString(), now)
-                            .property(single, SectionVertexProperty.UPDATE_TIME.getString(), now)
+                            .property(single, SectionVertexProperty.CREATED_TIME.getString(), now)
+                            .property(single, SectionVertexProperty.UPDATED_TIME.getString(), now)
                             .next()
                             .id()
                             .toString();

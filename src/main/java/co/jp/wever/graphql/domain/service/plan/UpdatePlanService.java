@@ -119,8 +119,19 @@ public class UpdatePlanService {
     }
 
     public void startPlan(String planId, Requester requester) {
-        //TODO:すでに終わっていないかプランじゃないかチェックする
-        //        this.updatePlanRepository.startOne(planId, userId);
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        this.updatePlanRepository.startOne(planId, requester.getUserId());
+    }
+
+    public void finishPlan(String planId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        this.updatePlanRepository.finishOne(planId, requester.getUserId());
     }
 
     public void stopPlan(String planId, Requester requester) {

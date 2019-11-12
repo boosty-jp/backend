@@ -9,7 +9,7 @@ public class SectionResponse {
     private String id;
     private String title;
     private String text;
-    private int number;
+    private long number;
     private String authorId;
     private SectionStatisticsResponse statistics;
     private boolean liked;

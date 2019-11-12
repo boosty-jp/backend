@@ -23,6 +23,7 @@ public enum GraphQLErrorMessage {
     SECTION_SIZE_OVER("指定できるセクションの数は30までです"),
     SECTION_EMPTY("セクションを入力してください"),
     USER_NAME_OVER("ユーザー名は30文字以内にしてください"),
+    USER_NAME_EMPTY("ユーザー名を入力してください"),
     FORBIDDEN_REQUEST("権限のないリクエストです"),
     INVALID_PLAN_ELEMENT_ID("下書きまたは削除済みの要素が含まれています"),
     TAG_DUPLICATED("タグが重複しています"),
@@ -30,6 +31,7 @@ public enum GraphQLErrorMessage {
     INVALID_USER_URL("URLが長すぎます"),
     INVALID_TAG_COUNT("設定できるタグは5つまでです"),
     INTERNAL_SERVER_ERROR("INTERNAL SERVER ERROR"),
+    NEED_LOGIN("ログインして、ご利用ください"),
     INVALID_TOKEN("無効なトークン形式です"),
     EXPIRED_TOKEN("期限切れのトークンです"),
     FOLLOW_OWN("自分自身はフォローできません");

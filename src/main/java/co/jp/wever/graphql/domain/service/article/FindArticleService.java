@@ -11,6 +11,7 @@ import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 
@@ -66,7 +67,18 @@ public class FindArticleService {
 
     public List<ArticleDetail> findFamousArticle() {
         List<ArticleDetailEntity> results = findArticleRepository.findFamous();
-        return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
+        List<ArticleDetailEntity> filtered = results.stream()
+                                                    .filter(r -> r.getBase()
+                                                                  .getStatus()
+                                                                  .equals(UserToArticleEdge.PUBLISHED.getString()))
+                                                    .sorted((r1, r2) -> Long.compare(
+                                                        r2.getStatistics().getLearnedCount() + r2.getStatistics()
+                                                                                                 .getLikeCount(),
+                                                        r1.getStatistics().getLearnedCount() + r1.getStatistics()
+                                                                                                 .getLikeCount()))
+                                                    .limit(10)
+                                                    .collect(Collectors.toList());
+        return filtered.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
     public List<ArticleDetail> findRelatedArticle(String userId) {

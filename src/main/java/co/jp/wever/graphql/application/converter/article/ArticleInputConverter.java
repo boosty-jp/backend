@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
-import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import graphql.schema.DataFetchingEnvironment;

@@ -117,7 +117,11 @@ public class ArticleDataFetcher {
     }
 
     public DataFetcher famousArticlesDataFetcher() {
-        return dataFetchingEnvironment -> findArticleService.findFamousArticle();
+        return dataFetchingEnvironment -> findArticleService.findFamousArticle()
+                                                            .stream()
+                                                            .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(
+                                                                a))
+                                                            .collect(Collectors.toList());
     }
 
     public DataFetcher relatedArticlesDataFetcher() {

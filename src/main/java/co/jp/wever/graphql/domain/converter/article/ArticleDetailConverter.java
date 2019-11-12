@@ -29,7 +29,7 @@ public class ArticleDetailConverter {
         return new ArticleDetail(ArticleBaseConverter.toArticleBase(articleDetailEntity.getBase()),
                                  articleDetailEntity.getTags()
                                                     .stream()
-                                                    .map(t -> Tag.of(t.getTagId(), t.getName()))
+                                                    .map(t -> Tag.of(t.getId(), t.getName()))
                                                     .collect(Collectors.toList()),
                                  author,
                                  ArticleStatisticsConverter.toArticleStatistics(articleDetailEntity.getStatistics()),

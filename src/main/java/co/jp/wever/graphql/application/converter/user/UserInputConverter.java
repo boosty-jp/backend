@@ -16,6 +16,7 @@ public class UserInputConverter {
                             .displayName(input.get("displayName").toString())
                             .description(input.get("description").toString())
                             .url(input.get("url").toString())
+                            .imageUrl(input.get("imageUrl").toString())
                             .tags((List<String>) input.get("tags"))
                             .build();
         } catch (Exception e) {

@@ -32,7 +32,7 @@ public class SectionEntityConverter {
         return SectionEntity.builder()
                             .id(VertexConverter.toId(base))
                             .authorId((String) resultMap.get("author"))
-                            .number((int) resultMap.get("number"))
+                            .number((long) resultMap.get("number"))
                             .status((String) resultMap.get("status"))
                             .title(VertexConverter.toString("title", base))
                             .text(VertexConverter.toString("text", base))

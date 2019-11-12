@@ -6,15 +6,15 @@ import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
 public class SectionNumber {
-    private final static int MIN_NUMBER = 1;
-    private final static int MAX_NUMBER = 30;
-    private int value;
+    private final static long MIN_NUMBER = 1;
+    private final static long MAX_NUMBER = 30;
+    private long value;
 
-    private SectionNumber(int value) {
+    private SectionNumber(long value) {
         this.value = value;
     }
 
-    public static SectionNumber of(int value) {
+    public static SectionNumber of(long value) {
         if (value < MIN_NUMBER) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.SECTION_NUMBER_INVALID.getString());
@@ -28,7 +28,7 @@ public class SectionNumber {
         return new SectionNumber(value);
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 

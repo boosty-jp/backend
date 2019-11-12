@@ -6,7 +6,7 @@ import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 
 public class TagConverter {
     public static Tag toTag(TagEntity tagEntity) {
-        return Tag.of(tagEntity.getTagId(), tagEntity.getName());
+        return Tag.of(tagEntity.getId(), tagEntity.getName());
     }
 
     public static Tag toTag(TagInput tagInput) {

@@ -58,4 +58,8 @@ public class User {
         List<String> tagIds = tags.stream().map(t -> t.getId().getValue()).collect(Collectors.toList());
         return tagIds.stream().filter(t -> Collections.frequency(tagIds, t) > 1).count() > 0 ? true : false;
     }
+
+    public boolean hasDisplayName(){
+        return displayName.getValue().length() > 0;
+    }
 }

@@ -36,7 +36,7 @@ public class UpdateSection {
         return text.getValue();
     }
 
-    public int getNumber() {
+    public long getNumber() {
         return number.getValue();
     }
 

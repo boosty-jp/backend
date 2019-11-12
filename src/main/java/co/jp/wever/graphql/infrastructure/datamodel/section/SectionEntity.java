@@ -8,7 +8,7 @@ import lombok.Data;
 public class SectionEntity {
     private String id;
     private String title;
-    private int number;
+    private long number;
     private String text;
     private String authorId;
     private String status;

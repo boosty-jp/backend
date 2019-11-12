@@ -2,7 +2,6 @@ type Query {
     allSectionOnArticle(articleId: ID!): [Section]!
     allLikedSections(userId: ID!): [Section]!
     allBookmarkedSections(userId: ID!): [Section]!
-    famousSections: [Section]!
     relatedSections: [Section]!
 
     article(articleId: ID!): ArticleDetail!
@@ -14,22 +13,39 @@ type Query {
     famousArticles: [ArticleDetail]!
     relatedArticles: [ArticleDetail]!
 
-    plan(planId: ID!): PlanDetail!
+    plan(planId: ID!): PlanListItem!
+    planDetail(planId: ID!): PlanDetail!
     allPlans: [PlanListItem]!
     allPublishedPlans(userId: ID!): [PlanDetail]!
     allDraftedPlans: [PlanDetail]!
     allLikedPlans(userId: ID!): [PlanDetail]!
-    allLearningPlans(userId: ID!): [PlanDetail]!
+    allLearningPlans(userId: ID!): [LearningPlanItem]!
     allLearnedPlans(userId: ID!): [PlanDetail]!
-    famousPlans: [PlanDetail]!
     relatedPlans: [PlanDetail]!
+    famousPlans: [FamousPlan]!
+    allPlanElementDetails(planId: ID!): [ElementDetail]!
 
     user(userId: ID!): User
+    famousTags: [TagStatistic]!
 }
 
 type PlanListItem{
-    base:PlanBase
+    base: PlanBase
     tags: [Tag]
+    action: PlanAction
+    statistics: PlanStatistics
+}
+
+type FamousPlan{
+    base: PlanBase
+    tags: [Tag]
+    author: User
+    statistics: PlanStatistics
+}
+
+type LearningPlanItem{
+    base: PlanBase
+    action: PlanAction
     statistics: PlanStatistics
 }
 
@@ -62,6 +78,8 @@ type PlanAction {
     liked: Boolean!
     learning: Boolean!
     learned: Boolean!
+    learnedElementCount: Int!
+    allElementCount: Int!
 }
 
 type Element {
@@ -70,6 +88,26 @@ type Element {
     imageUrl: String
     type: String!
     number: Int!
+}
+
+type ElementDetail {
+    id: ID!
+    title: String
+    imageUrl: String
+    type: String!
+    number: Int!
+    action: PlanElementAction!
+    statistics: PlanElementStatistics!
+}
+
+type PlanElementAction {
+    liked: Boolean!
+    learned: Boolean!
+}
+
+type PlanElementStatistics{
+    like: Int!
+    learned: Int!
 }
 
 type ArticleDetail {
@@ -127,6 +165,12 @@ type Tag{
     name: String!
 }
 
+type TagStatistic{
+    id: ID!
+    name: String!
+    related: Int!
+}
+
 input CreateSectionInput{
     title: String!
     text: String!
@@ -134,7 +178,7 @@ input CreateSectionInput{
 }
 
 input UpdateSectionInput{
-    idi: ID!
+    id: ID!
     title: String!
     text: String!
     number: Int!
@@ -164,27 +208,28 @@ input UserInput{
     displayName: String!
     description: String
     url: String
+    imageUrl: String
     tags: [String]
 }
 
 
 type Mutation {
-    createSection(articleId: ID!, findSection: CreateSectionInput!): CreateResponse
-    updateFindSection(sectionId: ID!, findSection: UpdateSectionInput!): UpdateResponse
+    createSection(articleId: ID!, section: CreateSectionInput!): CreateResponse
+    updateSection(sectionId: ID!, section: UpdateSectionInput!): UpdateResponse
     deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
     deleteLikeSection(sectionId: ID!): UpdateResponse
 
     initArticle: CreateResponse
-   # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
     updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
     updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
     updateArticleTags(articleId: ID!, tags: [String]!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
-#    publishArticle(articleId: ID!): UpdateResponse
-#    draftArticle(articleId: ID!): UpdateResponse
-    publishArticle(base: ArticleInput!, findSections: [UpdateSectionInput]!): UpdateResponse
-    draftArticle(base: ArticleInput!, findSections: [UpdateSectionInput]!): UpdateResponse
+    #    publishArticle(articleId: ID!): UpdateResponse
+    #    draftArticle(articleId: ID!): UpdateResponse
+    publishArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
+    draftArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
 
     likeArticle(articleId: ID!): UpdateResponse
     deleteLikeArticle(articleId: ID!): UpdateResponse
@@ -200,12 +245,14 @@ type Mutation {
     deletePlan(planId: ID!): UpdateResponse
     publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
     draftPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
+    startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse
     finishPlan(planId: ID!): UpdateResponse
 
     createUser(user: UserInput!): UpdateResponse
     updateUser(user: UserInput!): UpdateResponse
-    updateUserImage(imageUrl: String!):UpdateImageResponse
+    updateUserTags(tags: [String]!): UpdateResponse
+    updateUserImageUrl(url: String!):UpdateImageResponse
     deleteUser: UpdateResponse
     followUser(userId: ID!): UpdateResponse
     unFollowUser(userId: ID!): UpdateResponse
