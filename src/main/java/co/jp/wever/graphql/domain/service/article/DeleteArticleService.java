@@ -3,6 +3,7 @@ package co.jp.wever.graphql.domain.service.article;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -21,15 +22,19 @@ public class DeleteArticleService {
         this.deleteArticleRepository = deleteArticleRepository;
     }
 
-    public void deleteArticle(String articleId, String userId) {
+    public void deleteArticle(String articleId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleId));
-        UserId deleterId = UserId.of(userId);
+        UserId deleterId = UserId.of(requester.getUserId());
 
         if (!authorId.same(deleterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        deleteArticleRepository.deleteOne(articleId, userId);
+        deleteArticleRepository.deleteOne(articleId, requester.getUserId());
     }
 }

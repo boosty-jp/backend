@@ -1,5 +1,6 @@
 package co.jp.wever.graphql.infrastructure.repository.article;
 
+import org.apache.tinkerpop.gremlin.process.traversal.Order;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
@@ -15,8 +16,12 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
+
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
 
 @Component
 public class FindArticleRepositoryImpl implements FindArticleRepository {
@@ -52,8 +57,7 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                                      .fold()))
                                          .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
                                                     UserToArticleEdge.DELETED.getString(),
-                                                    UserToArticleEdge.PUBLISHED.getString())
-                                               .label()) // TODO: .fold()つけて複数の状態管理になっていないかチェックしたい
+                                                    UserToArticleEdge.PUBLISHED.getString()).label())
                                          .by(__.inE(UserToArticleEdge.LEARNED.getString(),
                                                     UserToArticleEdge.LIKED.getString()).label().fold())
                                          .by(__.in(UserToArticleEdge.LIKED.getString()).count())
@@ -67,7 +71,6 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
     public List<ArticleDetailEntity> findAll(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        //TODO: 不要なフィールドあるので消す。
         List<Map<String, Object>> allResults = g.V(userId)
                                                 .out(UserToArticleEdge.PUBLISHED.getString(),
                                                      UserToArticleEdge.DRAFTED.getString())
@@ -96,8 +99,7 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                                             .with(WithOptions.tokens)
                                                             .fold()))
                                                 .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
-                                                           UserToArticleEdge.PUBLISHED.getString())
-                                                      .label()) // TODO: .fold()つけて複数の状態管理になっていないかチェックしたい
+                                                           UserToArticleEdge.PUBLISHED.getString()).label())
                                                 .by(__.inE(UserToArticleEdge.LEARNED.getString(),
                                                            UserToArticleEdge.LIKED.getString()).label().fold())
                                                 .by(__.in(UserToArticleEdge.LIKED.getString()).count())
@@ -295,9 +297,13 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
     @Override
     public List<ArticleDetailEntity> findFamous() {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        //TODO: 不要なフィールドあるので消す。
         List<Map<String, Object>> allResults = g.V()
                                                 .hasLabel(VertexLabel.ARTICLE.getString())
+                                                .filter(inE().hasLabel(UserToArticleEdge.PUBLISHED.getString()))
+                                                .order()
+                                                .by(values(ArticleVertexProperty.LIKED.getString(),
+                                                           ArticleVertexProperty.LEARNED.getString()).sum(), Order.desc)
+                                                .limit(10)
                                                 .project("base",
                                                          "tags",
                                                          "author",
@@ -324,8 +330,7 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                                             .fold()))
                                                 .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
                                                            UserToArticleEdge.DELETED.getString(),
-                                                           UserToArticleEdge.PUBLISHED.getString())
-                                                      .label()) // TODO: .fold()つけて複数の状態管理になっていないかチェックしたい
+                                                           UserToArticleEdge.PUBLISHED.getString()).label())
                                                 .by(__.inE(UserToArticleEdge.LEARNED.getString(),
                                                            UserToArticleEdge.LIKED.getString()).label().fold())
                                                 .by(__.in(UserToArticleEdge.LIKED.getString()).count())

@@ -1,5 +1,6 @@
 package co.jp.wever.graphql.infrastructure.repository.plan;
 
+import org.apache.tinkerpop.gremlin.process.traversal.Order;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
@@ -15,23 +16,24 @@ import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementE
 import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.FamousPlanEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanElementDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanLearningItemEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanListItemEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlansEntityConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.FamousPlanEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
-import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.repeat;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
 
 @Component
@@ -46,8 +48,6 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
     public PlanListItemEntity findOne(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        //TODO: このクエリがどうなるか確認
-        // OKなら下の個別のクエリは不要
         Map<String, Object> result = g.V(planId)
                                       .hasLabel(VertexLabel.PLAN.getString())
                                       .project("base",
@@ -67,15 +67,15 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                             .fold())
                                       .by(__.inE(UserToPlanEdge.DRAFTED.getString(),
                                                  UserToPlanEdge.PUBLISHED.getString()).label())
-                                      .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString()) //PLANとARTICLEで共通のエッジにする
+                                      .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString())
                                                      .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
                                                      .limit(1)
                                                      .constant(true), constant(false)))
-                                      .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString()) //PLANとARTICLEで共通のエッジにする
+                                      .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString())
                                                      .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
                                                      .limit(1)
                                                      .constant(true), constant(false)))
-                                      .by(coalesce(__.inE(UserToPlanEdge.LEARNING.getString()) //PLANとARTICLEで共通のエッジにする
+                                      .by(coalesce(__.inE(UserToPlanEdge.LEARNING.getString())
                                                      .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
                                                      .limit(1)
                                                      .constant(true), constant(false)))
@@ -156,17 +156,17 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                                      .fold())
                                                .by(__.inE(UserToPlanEdge.DRAFTED.getString(),
                                                           UserToPlanEdge.PUBLISHED.getString()).label())
-                                               .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString()) //PLANとARTICLEで共通のエッジにする
+                                               .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString())
                                                               .where(outV().hasId(userId)
                                                                            .hasLabel(VertexLabel.USER.getString()))
                                                               .limit(1)
                                                               .constant(true), constant(false)))
-                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString()) //PLANとARTICLEで共通のエッジにする
+                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString())
                                                               .where(outV().hasId(userId)
                                                                            .hasLabel(VertexLabel.USER.getString()))
                                                               .limit(1)
                                                               .constant(true), constant(false)))
-                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNING.getString()) //PLANとARTICLEで共通のエッジにする
+                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNING.getString())
                                                               .where(outV().hasId(userId)
                                                                            .hasLabel(VertexLabel.USER.getString()))
                                                               .limit(1)
@@ -203,17 +203,17 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                                      .with(WithOptions.tokens)
                                                      .fold())
                                                .by(__.inE(UserToPlanEdge.PUBLISHED.getString()).label())
-                                               .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString()) //PLANとARTICLEで共通のエッジにする
+                                               .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString())
                                                               .where(outV().hasId(userId)
                                                                            .hasLabel(VertexLabel.USER.getString()))
                                                               .limit(1)
                                                               .constant(true), constant(false)))
-                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString()) //PLANとARTICLEで共通のエッジにする
+                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString())
                                                               .where(outV().hasId(userId)
                                                                            .hasLabel(VertexLabel.USER.getString()))
                                                               .limit(1)
                                                               .constant(true), constant(false)))
-                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNING.getString()) //PLANとARTICLEで共通のエッジにする
+                                               .by(coalesce(__.inE(UserToPlanEdge.LEARNING.getString())
                                                               .where(outV().hasId(userId)
                                                                            .hasLabel(VertexLabel.USER.getString()))
                                                               .limit(1)
@@ -317,40 +317,6 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
     }
 
     @Override
-    public PlanBaseEntity findBase(String planId) {
-        //        GraphTraversalSource g = neptuneClient.newTraversal();
-        //
-        //        Map<Object, Object> planResult = g.V(planId).valueMap().with(WithOptions.tokens).next();
-        //
-        //        Map<Object, Object> tagResult =
-        //            g.V(planId).out(PlanToTagEdge.RELATED.getString()).valueMap().with(WithOptions.tokens).next();
-        //
-        //        Map<Object, Object> userResult = g.V(planId).in().valueMap().with(WithOptions.tokens).next();
-        //
-        //        Map<Object, Object> statusResult =
-        //            g.V(planId).out(PlanToTagEdge.RELATED.getString()).valueMap().with(WithOptions.tokens).next();
-
-        return PlanBaseEntity.builder().build();
-    }
-
-    @Override
-    public List<String> findPublishedPlanElementIds(List<String> planElementIds) {
-        GraphTraversalSource g = neptuneClient.newTraversal();
-        //
-        //        List<String> results = g.V(planElementIds)
-        //                                .hasLabel(VertexLabel.PLAN.getString(), VertexLabel.ARTICLE.getString())
-        //                                .outE()
-        //                                .label()
-        //                                .toList();
-
-        // IDだけ取得する
-        //TODO: 型がどうなってるか要検証
-        //        return PlanEntityConverter.toPlan(result);
-
-        return null;
-    }
-
-    @Override
     public List<PlanElementDetailEntity> findAllPlanElementDetails(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> results = g.V(planId)
@@ -361,12 +327,12 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                              .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
                                                    .where(outV().hasId(planId))
                                                    .valueMap())
-                                             .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString()) //PLANとARTICLEで共通のエッジにする
+                                             .by(coalesce(__.inE(UserToPlanEdge.LIKED.getString())
                                                             .where(outV().hasId(userId)
                                                                          .hasLabel(VertexLabel.USER.getString()))
                                                             .limit(1)
                                                             .constant(true), constant(false)))
-                                             .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString()) //PLANとARTICLEで共通のエッジにする
+                                             .by(coalesce(__.inE(UserToPlanEdge.LEARNED.getString())
                                                             .where(outV().hasId(userId)
                                                                          .hasLabel(VertexLabel.USER.getString()))
                                                             .limit(1)
@@ -392,11 +358,15 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
 
     public List<FamousPlanEntity> findFamous() {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        // TODO: 全件取得しないようにする
 
-//        g.V().limit(1000).drop();
         List<Map<String, Object>> results = g.V()
                                              .hasLabel(VertexLabel.PLAN.getString())
+                                             .filter(inE().hasLabel(UserToPlanEdge.PUBLISHED.getString()))
+                                             .order()
+                                             .by(values(PlanVertexProperty.LEARNING.getString(),
+                                                        PlanVertexProperty.LIKED.getString(),
+                                                        PlanVertexProperty.LEARNING.getString()).sum(), Order.desc)
+                                             .limit(10)
                                              .project("base", "tags", "author", "status", "like", "learned", "learning")
                                              .by(__.valueMap().with(WithOptions.tokens))
                                              .by(__.out(PlanToTagEdge.RELATED.getString())

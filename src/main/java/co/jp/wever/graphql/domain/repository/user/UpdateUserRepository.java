@@ -11,6 +11,4 @@ public interface UpdateUserRepository {
     void updateOne(UserEntity userEntity);
     void updateImageUrl(String imageUrl, String userId);
     void updateTags(List<String> tagIds, String userId);
-    void followUser(String targetUserId, String followerUserId);
-    void unFollowUser(String targetUserId, String followerUserId);
 }

@@ -270,7 +270,6 @@ public class PlanDataFetchers {
         return dataFetchingEnvironment -> {
 
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-
             String planId = dataFetchingEnvironment.getArgument("planId");
 
             updatePlanService.stopPlan(planId, requester);

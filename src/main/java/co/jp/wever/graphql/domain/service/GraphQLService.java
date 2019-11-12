@@ -62,8 +62,6 @@ public class GraphQLService {
                                                                        sectionDataFetcher.allBookmarkedSectionsDataFetcher())
                                                           .dataFetcher("famousSections",
                                                                        sectionDataFetcher.famousSectionsDataFetcher())
-                                                          .dataFetcher("relatedSections",
-                                                                       sectionDataFetcher.relatedSectionsDataFetcher())
                                                           .dataFetcher("article",
                                                                        articleDataFetcher.articleDataFetcher())
                                                           .dataFetcher("allArticles",
@@ -78,8 +76,6 @@ public class GraphQLService {
                                                                        articleDataFetcher.allLearnedArticlesDataFetcher())
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
-                                                          .dataFetcher("relatedArticles",
-                                                                       articleDataFetcher.relatedArticlesDataFetcher())
                                                           .dataFetcher("plan", planDataFetchers.planDataFetcher())
                                                           .dataFetcher("planDetail",
                                                                        planDataFetchers.planDetailDataFetcher())
@@ -97,8 +93,6 @@ public class GraphQLService {
                                                                        planDataFetchers.allLearnedPlansDataFetcher())
                                                           .dataFetcher("famousPlans",
                                                                        planDataFetchers.famousPlansDataFetcher())
-                                                          .dataFetcher("relatedPlans",
-                                                                       planDataFetchers.relatedPlansDataFetcher())
                                                           .dataFetcher("allPlanElementDetails",
                                                                        planDataFetchers.allPlanElementDetailsDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
@@ -117,8 +111,6 @@ public class GraphQLService {
                                                                        sectionDataFetcher.deleteSectionElementDataFetcher())
                                                           .dataFetcher("initArticle",
                                                                        articleDataFetcher.initArticleDataFetcher())
-                                                          //                                                          .dataFetcher("updateArticle",
-                                                          //                                                                       articleDataFetcher.updateArticleDataFetcher())
                                                           .dataFetcher("updateArticleTitle",
                                                                        articleDataFetcher.updateArticleTitleDataFetcher())
                                                           .dataFetcher("updateArticleImageUrl",
@@ -171,10 +163,6 @@ public class GraphQLService {
                                                                        userDataFetcher.updateUserTagsDataFetcher())
                                                           .dataFetcher("deleteUser",
                                                                        userDataFetcher.deleteUserDataFetcher())
-                                                          .dataFetcher("followUser",
-                                                                       userDataFetcher.followUserDataFetcher())
-                                                          .dataFetcher("unFollowUser",
-                                                                       userDataFetcher.unFollowUserDataFetcher())
                                                           .dataFetcher("createTag",
                                                                        tagDataFetcher.createTagDataFetcher()))
                             .build();

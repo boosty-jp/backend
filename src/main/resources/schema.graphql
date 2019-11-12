@@ -2,7 +2,6 @@ type Query {
     allSectionOnArticle(articleId: ID!): [Section]!
     allLikedSections(userId: ID!): [Section]!
     allBookmarkedSections(userId: ID!): [Section]!
-    relatedSections: [Section]!
 
     article(articleId: ID!): ArticleDetail!
     allArticles: [ArticleDetail]!
@@ -11,7 +10,6 @@ type Query {
     allLikedArticles(userId: ID!): [ArticleDetail]!
     allLearnedArticles(userId: ID!): [ArticleDetail]!
     famousArticles: [ArticleDetail]!
-    relatedArticles: [ArticleDetail]!
 
     plan(planId: ID!): PlanListItem!
     planDetail(planId: ID!): PlanDetail!
@@ -21,7 +19,6 @@ type Query {
     allLikedPlans(userId: ID!): [PlanDetail]!
     allLearningPlans(userId: ID!): [LearningPlanItem]!
     allLearnedPlans(userId: ID!): [PlanDetail]!
-    relatedPlans: [PlanDetail]!
     famousPlans: [FamousPlan]!
     allPlanElementDetails(planId: ID!): [ElementDetail]!
 
@@ -254,8 +251,6 @@ type Mutation {
     updateUserTags(tags: [String]!): UpdateResponse
     updateUserImageUrl(url: String!):UpdateImageResponse
     deleteUser: UpdateResponse
-    followUser(userId: ID!): UpdateResponse
-    unFollowUser(userId: ID!): UpdateResponse
 
     createTag(name: String!): CreateTagResponse
 }

@@ -4,10 +4,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.FamousPlanEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
@@ -33,10 +32,6 @@ public interface FindPlanRepository {
     List<FamousPlanEntity> findFamous();
 
     List<PlanEntity> findRelated(String id);
-
-    PlanBaseEntity findBase(String planId);
-
-    List<String> findPublishedPlanElementIds(List<String> ids);
 
     List<PlanElementDetailEntity> findAllPlanElementDetails(String planId, String userId);
 

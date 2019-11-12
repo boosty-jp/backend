@@ -26,6 +26,10 @@ public class UpdateSectionService {
     }
 
     public void updateSection(String sectionId, UpdateSectionInput sectionInput, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         UserId authorId = UserId.of(findSectionRepository.findAuthorId(sectionId));
         UserId updaterId = UserId.of(requester.getUserId());
 
@@ -39,12 +43,20 @@ public class UpdateSectionService {
         updateSectionRepository.updateOne(section);
     }
 
-    public void likeSection(String sectionId, String userId) {
-        updateSectionRepository.likeOne(sectionId, userId);
+    public void likeSection(String sectionId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        updateSectionRepository.likeOne(sectionId, requester.getUserId());
     }
 
-    public void deleteLikeSection(String sectionId, String userId) {
-        updateSectionRepository.deleteLikeOne(sectionId, userId);
+    public void deleteLikeSection(String sectionId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        updateSectionRepository.deleteLikeOne(sectionId, requester.getUserId());
     }
 }
 

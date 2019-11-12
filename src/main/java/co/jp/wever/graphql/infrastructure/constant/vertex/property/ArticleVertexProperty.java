@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.vertex.property;
 
 public enum ArticleVertexProperty {
-    TITLE("title"), IMAGE_URL("imageUrl"), CREATED_TIME("created_time"), UPDATED_TIME(
+    TITLE("title"), IMAGE_URL("imageUrl"), LIKED("liked"), LEARNED("learned"), CREATED_TIME("created_time"), UPDATED_TIME(
         "updatedTime");
 
     private String value;

@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.vertex.property;
 
 public enum SectionVertexProperty {
-    TITLE("title"), TEXT("text"), CREATED_TIME("createdTime"), UPDATED_TIME("updatedTime");
+    TITLE("title"), TEXT("text"), LIKED("liked"), CREATED_TIME("createdTime"), UPDATED_TIME("updatedTime");
 
     private String value;
 

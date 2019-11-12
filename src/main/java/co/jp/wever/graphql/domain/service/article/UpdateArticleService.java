@@ -9,10 +9,8 @@ import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.converter.article.DraftArticleConverter;
 import co.jp.wever.graphql.domain.converter.article.PublishArticleConverter;
-import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.article.DraftArticle;
 import co.jp.wever.graphql.domain.domainmodel.article.PublishArticle;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleImageUrl;
@@ -33,12 +31,15 @@ public class UpdateArticleService {
         this.updateArticleRepository = updateArticleRepository;
     }
 
-    public void updateArticleTitle(String articleId, String userId, String title) {
-        // TODO: ユーザー情報だけ取得したい
-        // このクエリは重いので負荷がかかってしまうと思われる
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
-        //        ArticleBase articleBase = ArticleBaseConverter.toArticleBase(articleInput);
-        if (!articleDetail.canUpdate(UserId.of(userId))) {
+    public void updateArticleTitle(String articleId, Requester requester, String title) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleId));
+        UserId requesterId = UserId.of(requester.getUserId());
+
+        if (!authorId.same(requesterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
@@ -48,25 +49,27 @@ public class UpdateArticleService {
         updateArticleRepository.updateTitle(articleId, articleTitle.getValue());
     }
 
-    public void updateArticleImageUrl(String articleId, String userId, String imageUrl) {
-        // TODO: ユーザー情報だけ取得したい
-        // このクエリは重いので負荷がかかってしまうと思われる
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
+    public void updateArticleImageUrl(String articleId, Requester requester, String imageUrl) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
 
-        if (!articleDetail.canUpdate(UserId.of(userId))) {
+        UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleId));
+        UserId requesterId = UserId.of(requester.getUserId());
+
+        if (!authorId.same(requesterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
         ArticleImageUrl articleImageUrl = ArticleImageUrl.of(imageUrl);
-
         updateArticleRepository.updateImageUrl(articleId, articleImageUrl.getValue());
     }
 
-    public void updateArticleTags(String articleId, String userId, List<String> tags) {
-        // TODO: ユーザー情報だけ取得したい
-        // このクエリは重いので負荷がかかってしまうと思われる
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
+    public void updateArticleTags(String articleId, Requester requester, List<String> tags) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
 
         // TODO: ドメインに移動させる
         if (tags.size() > 5) {
@@ -74,7 +77,10 @@ public class UpdateArticleService {
                                              GraphQLErrorMessage.INVALID_TAG_COUNT.getString());
         }
 
-        if (!articleDetail.canUpdate(UserId.of(userId))) {
+        UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleId));
+        UserId requesterId = UserId.of(requester.getUserId());
+
+        if (!authorId.same(requesterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
@@ -83,6 +89,9 @@ public class UpdateArticleService {
     }
 
     public void publishArticle(ArticleInput articleInput, List<UpdateSectionInput> sectionInputs, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
         UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleInput.getId()));
         UserId requesterId = UserId.of(requester.getUserId());
 
@@ -97,6 +106,9 @@ public class UpdateArticleService {
     }
 
     public void draftArticle(ArticleInput articleInput, List<UpdateSectionInput> sectionInputs, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
         UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleInput.getId()));
         UserId requesterId = UserId.of(requester.getUserId());
 
@@ -110,19 +122,31 @@ public class UpdateArticleService {
         updateArticleRepository.draftOne(draftArticle, authorId.getValue());
     }
 
-    public void likeArticle(String articleId, String userId) {
-        updateArticleRepository.likeOne(articleId, userId);
+    public void likeArticle(String articleId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        updateArticleRepository.likeOne(articleId, requester.getUserId());
     }
 
-    public void deleteLikeArticle(String articleId, String userId) {
-        updateArticleRepository.deleteLikeOne(articleId, userId);
+    public void deleteLikeArticle(String articleId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        updateArticleRepository.deleteLikeOne(articleId, requester.getUserId());
     }
 
-    public void finishArticle(String articleId, String userId) {
-        updateArticleRepository.finishOne(articleId, userId);
+    public void finishArticle(String articleId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        updateArticleRepository.finishOne(articleId, requester.getUserId());
     }
 
-    public void deleteFinishArticle(String articleId, String userId) {
-        updateArticleRepository.deleteFinishOne(articleId, userId);
+    public void deleteFinishArticle(String articleId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        updateArticleRepository.deleteFinishOne(articleId, requester.getUserId());
     }
 }

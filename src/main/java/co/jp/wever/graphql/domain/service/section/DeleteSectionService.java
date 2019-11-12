@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
@@ -26,10 +27,14 @@ public class DeleteSectionService {
         this.deleteSectionRepository = deleteSectionRepository;
     }
 
-    public void deleteSection(String articleId, String sectionId, String userId) {
+    public void deleteSection(String articleId, String sectionId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         FindSection findSection = FindSectionConverter.toSection(findSectionRepository.findOne(sectionId));
 
-        if (!findSection.canDelete(UserId.of(userId))) {
+        if (!findSection.canDelete(UserId.of(requester.getUserId()))) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
@@ -44,6 +49,6 @@ public class DeleteSectionService {
                                                                                                 .build())
                                                                    .collect(Collectors.toList());
 
-        deleteSectionRepository.deleteOne(articleId, sectionId, userId, decrementNumbers);
+        deleteSectionRepository.deleteOne(articleId, sectionId, requester.getUserId(), decrementNumbers);
     }
 }

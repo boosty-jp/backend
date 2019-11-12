@@ -33,7 +33,6 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
     public String addOne(
         String authorId, String articleId, SectionEntity sectionEntity, List<SectionNumberEntity> incrementNumbers) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         long now = System.currentTimeMillis();
 
         String sectionId = g.addV(VertexLabel.SECTION.getString())
@@ -47,17 +46,15 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
 
         g.V(sectionId)
          .addE(ArticleToSectionEdge.INCLUDE.getString())
-         .property(T.id, EdgeIdCreator.articleIncludeSection(articleId, sectionId))
+         .property(T.id, EdgeIdCreator.createId(articleId, sectionId, ArticleToSectionEdge.INCLUDE.getString()))
          .property(ArticleToSectionProperty.NUMBER.getString(), sectionEntity.getNumber())
          .property(ArticleToSectionProperty.CREATED_TIME.getString(), now)
          .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
          .from(g.V(articleId))
          .iterate();
 
-
-        // TODO: クエリがおもすぎるので改善する
         incrementNumbers.stream().forEach(s -> {
-            g.E(EdgeIdCreator.articleIncludeSection(articleId, s.getId()))
+            g.E(EdgeIdCreator.createId(articleId, s.getId(), ArticleToSectionEdge.INCLUDE.getString()))
              .property(ArticleToSectionProperty.NUMBER.getString(), s.getNumber())
              .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
              .iterate();
@@ -65,8 +62,9 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
 
         g.V(authorId)
          .addE(UserToSectionEdge.CREATED.getString())
-         .property(T.id, EdgeIdCreator.userCreateSection(authorId, sectionId))
+         .property(T.id, EdgeIdCreator.createId(authorId, sectionId,UserToSectionEdge.CREATED.getString()))
          .property(UserToSectionProperty.CREATED_TIME.getString(), now)
+         .property(UserToSectionProperty.UPDATED_TIME.getString(), now)
          .to(g.V(sectionId))
          .next();
 

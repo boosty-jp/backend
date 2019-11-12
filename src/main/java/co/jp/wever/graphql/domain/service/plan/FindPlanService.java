@@ -16,9 +16,8 @@ import co.jp.wever.graphql.domain.domainmodel.plan.PlanDetail;
 import co.jp.wever.graphql.domain.domainmodel.plan.PlanListItem;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElementDetail;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.FamousPlanEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
@@ -101,13 +100,6 @@ public class FindPlanService {
     }
 
     public List<FamousPlanEntity> findFamous() {
-        List<FamousPlanEntity> results = findPlanRepository.findFamous();
-        return results.stream()
-                      .filter(r -> r.getBase().getStatus().equals(UserToPlanEdge.PUBLISHED.getString()))
-                      .sorted((r1, r2) -> Long.compare(
-                          r2.getStatistics().getLearnedCount() + r2.getStatistics().getLikeCount(),
-                          r1.getStatistics().getLearnedCount() + r1.getStatistics().getLikeCount()))
-                      .limit(10)
-                      .collect(Collectors.toList());
+        return findPlanRepository.findFamous();
     }
 }

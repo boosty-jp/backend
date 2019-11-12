@@ -7,12 +7,11 @@ import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagStatisticEntity;
 
 public class TagStatisticEntityConverter {
-    public static TagStatisticEntity toTagStatisticEntity(Map<String, Object> result) {
-        Map<Object, Object> tagVertex = (Map<Object, Object>) result.get("tag");
+    public static TagStatisticEntity toTagStatisticEntity(Map<Object, Object> result) {
         return TagStatisticEntity.builder()
-                                 .id(VertexConverter.toId(tagVertex))
-                                 .name(VertexConverter.toString(TagVertexProperty.NAME.getString(), tagVertex))
-                                 .relatedCount((long) result.get("count"))
+                                 .id(VertexConverter.toId(result))
+                                 .name(VertexConverter.toString(TagVertexProperty.NAME.getString(), result))
+                                 .relatedCount(VertexConverter.toLong(TagVertexProperty.RELATED.getString(), result))
                                  .build();
     }
 }

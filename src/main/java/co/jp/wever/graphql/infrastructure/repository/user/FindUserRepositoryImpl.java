@@ -32,9 +32,6 @@ public class FindUserRepositoryImpl implements FindUserRepository {
                                          .hasLabel(VertexLabel.USER.getString())
                                          .project("user", "tags")
                                          .by(__.valueMap().with(WithOptions.tokens))
-                                         //                                         .by(__.out(UserToTagEdge.RELATED.getString())
-                                         //                                               .values(TagVertexProperty.NAME.getString())
-                                         //                                               .fold())
                                          .by(__.out(UserToTagEdge.RELATED.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
@@ -42,7 +39,6 @@ public class FindUserRepositoryImpl implements FindUserRepository {
                                                .fold())
                                          .next();
 
-        UserEntity res = UserEntityConverter.toUserEntityByVertex(allResult);
-        return res;
+        return UserEntityConverter.toUserEntityByVertex(allResult);
     }
 }

@@ -21,7 +21,6 @@ public class CreateArticleRepositoryImpl implements CreateArticleRepository {
         this.neptuneClient = neptuneClient;
     }
 
-
     @Override
     public String initOne(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
@@ -29,6 +28,10 @@ public class CreateArticleRepositoryImpl implements CreateArticleRepository {
         long now = System.currentTimeMillis();
 
         String articleId = g.addV(VertexLabel.ARTICLE.getString())
+                            .property(ArticleVertexProperty.TITLE.getString(), "")
+                            .property(ArticleVertexProperty.IMAGE_URL.getString(), "")
+                            .property(ArticleVertexProperty.LIKED.getString(), 0)
+                            .property(ArticleVertexProperty.LEARNED.getString(), 0)
                             .property(ArticleVertexProperty.CREATED_TIME.getString(), now)
                             .property(ArticleVertexProperty.UPDATED_TIME.getString(), now)
                             .next()
@@ -37,9 +40,10 @@ public class CreateArticleRepositoryImpl implements CreateArticleRepository {
 
         g.V(articleId)
          .addE(UserToArticleEdge.DRAFTED.getString())
-         .property(T.id, EdgeIdCreator.userDraftArticle(userId, articleId))
+         .property(T.id, EdgeIdCreator.createId(userId, articleId, UserToArticleEdge.DRAFTED.getString()))
          .from(g.V(userId))
-         .property(UserToArticleProperty.DRAFTED_TIME.getString(), now)
+         .property(UserToArticleProperty.CREATED_TIME.getString(), now)
+         .property(UserToArticleProperty.UPDATED_TIME.getString(), now)
          .next();
         return articleId;
     }

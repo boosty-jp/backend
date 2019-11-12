@@ -11,9 +11,7 @@ import co.jp.wever.graphql.domain.repository.user.UpdateUserRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToTagEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToUserEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToTagProperty;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToUserProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.UserVertexProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.algolia.UserSearchEntity;
@@ -21,7 +19,6 @@ import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.inV;
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.outV;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
@@ -73,7 +70,10 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
             tagIds.stream()
                   .forEach(t -> g.V(t)
                                  .addE(UserToTagEdge.RELATED.getString())
-                                 .property(T.id, EdgeIdCreator.userRelatedTag(userEntity.getUserId(), t))
+                                 .property(T.id,
+                                           EdgeIdCreator.createId(userEntity.getUserId(),
+                                                                  t,
+                                                                  UserToTagEdge.RELATED.getString()))
                                  .from(g.V(userEntity.getUserId()))
                                  .iterate());
         }
@@ -95,7 +95,6 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
 
     public void updateImageUrl(String imageUrl, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         long now = System.currentTimeMillis();
 
         g.V(userId)
@@ -125,36 +124,10 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
             g.V(tagIds)
              .hasLabel(VertexLabel.TAG.getString())
              .addE(UserToTagEdge.RELATED.getString())
-             .property(UserToTagProperty.RELATED_TIME.getString(), now)
+             .property(UserToTagProperty.CREATED_TIME.getString(), now)
+             .property(UserToTagProperty.UPDATED_TIME.getString(), now)
              .from(g.V(userId))
              .iterate();
         }
-    }
-
-    public void followUser(String targetUserId, String followerUserId) {
-        GraphTraversalSource g = neptuneClient.newTraversal();
-
-        long now = System.currentTimeMillis();
-
-        g.V(followerUserId)
-         .as("follower")
-         .V(targetUserId)
-         .coalesce(g.V(targetUserId).inE(UserToUserEdge.FOLLOWED.getString()).where(outV().as("follower")),
-                   g.V(targetUserId)
-                    .addE(UserToUserEdge.FOLLOWED.getString())
-                    .property(UserToUserProperty.FOLLOWED_TIME.getString(), now)
-                    .from(g.V(followerUserId)))
-         .next();
-    }
-
-    public void unFollowUser(String targetUserId, String followerUserId) {
-        GraphTraversalSource g = neptuneClient.newTraversal();
-        g.V(followerUserId)
-         .as("follower")
-         .V(targetUserId)
-         .inE(UserToUserEdge.FOLLOWED.getString())
-         .where(outV().as("follower"))
-         .drop()
-         .iterate();
     }
 }

@@ -17,5 +17,6 @@ public class PlanSearchEntity {
     private List<String> tags;
     private long like;
     private long learned;
+    private long learning;
     private long updateDate;
 }

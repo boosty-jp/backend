@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
@@ -29,17 +30,17 @@ public class FindSectionService {
         this.findSectionRepository = findSectionRepository;
     }
 
-    public List<FindSection> findAllSectionsOnArticle(String articleId, String userId) {
+    public List<FindSection> findAllSectionsOnArticle(String articleId, Requester requester) {
         // TODO: ステータスだけ見たいので別の軽いクエリにしたい
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
-        if (!articleDetail.canRead(UserId.of(userId))) {
+        if (!articleDetail.canRead(UserId.of(requester.getUserId()))) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        return findSectionRepository.findAllDetailOnArticle(articleId, userId)
+        return findSectionRepository.findAllDetailOnArticle(articleId, requester.getUserId())
                                     .stream()
                                     .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());
@@ -66,8 +67,8 @@ public class FindSectionService {
                                     .collect(Collectors.toList());
     }
 
-    public List<FindSection> findRelatedSections(String userId) {
-        return findSectionRepository.findRelated(userId)
+    public List<FindSection> findRelatedSections(Requester requester) {
+        return findSectionRepository.findRelated(requester.getUserId())
                                     .stream()
                                     .map(s -> FindSectionConverter.toSection(s))
                                     .collect(Collectors.toList());

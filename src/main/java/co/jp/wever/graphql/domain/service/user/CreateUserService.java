@@ -1,10 +1,14 @@
 package co.jp.wever.graphql.domain.service.user;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.request.UserInput;
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.user.UserConverter;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.user.CreateUserRepositoryImpl;
 
@@ -17,8 +21,12 @@ public class CreateUserService {
         this.createUserRepository = createUserRepository;
     }
 
-    public String createUser(UserInput userInput, String userId) {
-        User user = UserConverter.toUser(userInput, userId);
+    public String createUser(UserInput userInput, Requester requester) {
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        User user = UserConverter.toUser(userInput, requester.getUserId());
         return createUserRepository.createOne(UserEntityConverter.toUserEntity(user));
     }
 }

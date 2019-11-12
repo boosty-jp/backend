@@ -32,6 +32,10 @@ public class UpdatePlanService {
     }
 
     public void updatePlanTitle(String planId, String title, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
 
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(planId));
         UserId updaterId = UserId.of(requester.getUserId());
@@ -45,6 +49,11 @@ public class UpdatePlanService {
     }
 
     public void updatePlanTags(String planId, List<String> tags, Requester requester) {
+
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
 
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(planId));
         UserId updaterId = UserId.of(requester.getUserId());
@@ -63,6 +72,11 @@ public class UpdatePlanService {
     }
 
     public void updatePlanImageUrl(String planId, String imageUrl, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(planId));
         UserId updaterId = UserId.of(requester.getUserId());
 
@@ -77,6 +91,11 @@ public class UpdatePlanService {
     }
 
     public void updatePlanDescription(String planId, String description, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(planId));
         UserId updaterId = UserId.of(requester.getUserId());
 
@@ -91,6 +110,12 @@ public class UpdatePlanService {
     }
 
     public void publishPlan(PlanBaseInput baseInput, List<PlanElementInput> elementInputs, Requester requester) {
+
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(baseInput.getId()));
         UserId updaterId = UserId.of(requester.getUserId());
 
@@ -105,8 +130,15 @@ public class UpdatePlanService {
     }
 
     public void draftPlan(PlanBaseInput baseInput, List<PlanElementInput> elementInputs, Requester requester) {
+
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(baseInput.getId()));
         UserId updaterId = UserId.of(requester.getUserId());
+
 
         if (!authorId.same(updaterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
@@ -135,6 +167,10 @@ public class UpdatePlanService {
     }
 
     public void stopPlan(String planId, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
         //        this.updatePlanRepository.stopOne(planId, userId);
     }
 }
