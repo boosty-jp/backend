@@ -7,7 +7,7 @@ import java.util.List;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.FamousPlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
 
@@ -23,13 +23,15 @@ public interface FindPlanRepository {
 
     List<PlanEntity> findAllDrafted(String id);
 
-    List<PlanEntity> findAllLiked(String id);
+    List<PlanItemEntity> findAllLiked(String id);
 
     List<LearningPlanItemEntity> findAllLearning(String id);
 
     List<PlanEntity> findAllLearned(String id);
 
-    List<FamousPlanEntity> findFamous();
+    List<String> findAllPlanElementIds(String id);
+
+    List<PlanItemEntity> findFamous();
 
     List<PlanEntity> findRelated(String id);
 

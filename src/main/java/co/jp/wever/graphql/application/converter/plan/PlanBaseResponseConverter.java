@@ -1,5 +1,7 @@
 package co.jp.wever.graphql.application.converter.plan;
 
+import java.util.Date;
+
 import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanBaseResponse;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
@@ -24,6 +26,8 @@ public class PlanBaseResponseConverter {
                                .description(planBaseEntity.getDescription())
                                .imageUrl(planBaseEntity.getImageUrl())
                                .status(planBaseEntity.getStatus())
+                               .createDate(DateToStringConverter.toDateString(new Date(planBaseEntity.getUpdatedDate() )))
+                               .updateDate(DateToStringConverter.toDateString(new Date(planBaseEntity.getUpdatedDate() )))
                                .build();
     }
 }

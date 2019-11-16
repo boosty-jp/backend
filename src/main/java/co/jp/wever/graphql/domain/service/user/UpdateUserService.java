@@ -13,7 +13,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.user.UpdateUserRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UpdateUserService {
 
@@ -24,6 +26,12 @@ public class UpdateUserService {
     }
 
     public void updateUser(UserInput userInput, Requester requester) {
+        log.info("update user name: {}", userInput.getDisplayName());
+        log.info("update user imageUrl: {}", userInput.getImageUrl());
+        log.info("update user tags: {}", userInput.getTags());
+        log.info("update user url: {}", userInput.getUrl());
+        log.info("update user description size: {}", userInput.getDescription().length());
+
         User user = UserConverter.toUser(userInput, requester.getUserId());
 
         if (requester.isGuest()) {
@@ -51,6 +59,7 @@ public class UpdateUserService {
     }
 
     public void updateUserImage(String imageUrl, Requester requester) {
+        log.info("update userImage: {}", imageUrl);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -60,6 +69,7 @@ public class UpdateUserService {
     }
 
     public void updateUserTags(List<String> tags, Requester requester) {
+        log.info("update user tags: {}", tags);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());

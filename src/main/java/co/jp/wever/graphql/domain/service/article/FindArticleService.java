@@ -10,7 +10,6 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
-import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
@@ -29,9 +28,8 @@ public class FindArticleService {
         ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
 
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
-        UserId readerId = UserId.of(requester.getUserId());
 
-        if (!articleDetail.canRead(readerId)) {
+        if (!articleDetail.canRead(requester)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }

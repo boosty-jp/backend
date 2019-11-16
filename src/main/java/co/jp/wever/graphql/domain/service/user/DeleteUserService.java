@@ -7,7 +7,9 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.user.DeleteUserRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DeleteUserService {
 
@@ -18,6 +20,7 @@ public class DeleteUserService {
     }
 
     public void deleteUser(Requester requester) {
+        log.info("delete user: {}", requester.getUserId());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());

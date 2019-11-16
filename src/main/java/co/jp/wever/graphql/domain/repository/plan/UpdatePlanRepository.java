@@ -26,5 +26,9 @@ public interface UpdatePlanRepository {
 
     void stopOne(String planId, String userId);
 
-    void finishOne(String planId, String userId);
+    void finishOne(String planId, String userId, List<String> elementIds);
+
+    void likeOne(String planId, String userId);
+
+    void deleteLikeOne(String planId, String userId);
 }

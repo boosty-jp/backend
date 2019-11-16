@@ -9,7 +9,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.plan.DeletePlanRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DeletePlanService {
 
@@ -22,6 +24,7 @@ public class DeletePlanService {
     }
 
     public void deletePlan(String planId, Requester requester) {
+        log.info("delete planId: {}", planId);
 
         UserId authorId = UserId.of(findPlanRepository.findAuthorId(planId));
         UserId deleterId = UserId.of(requester.getUserId());

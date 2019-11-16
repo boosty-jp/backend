@@ -19,7 +19,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.article.UpdateArticleRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UpdateArticleService {
     private final FindArticleRepositoryImpl findArticleRepository;
@@ -32,6 +34,9 @@ public class UpdateArticleService {
     }
 
     public void updateArticleTitle(String articleId, Requester requester, String title) {
+        log.info("update articleId: {}", articleId);
+        log.info("update article title: {}", title);
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -50,6 +55,9 @@ public class UpdateArticleService {
     }
 
     public void updateArticleImageUrl(String articleId, Requester requester, String imageUrl) {
+        log.info("update articleId: {}", articleId);
+        log.info("update article imageUrl: {}", imageUrl);
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -67,6 +75,9 @@ public class UpdateArticleService {
     }
 
     public void updateArticleTags(String articleId, Requester requester, List<String> tags) {
+        log.info("update articleId: {}", articleId);
+        log.info("update article tags: {}", tags);
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -89,6 +100,9 @@ public class UpdateArticleService {
     }
 
     public void publishArticle(ArticleInput articleInput, List<UpdateSectionInput> sectionInputs, Requester requester) {
+        log.info("publish article: {}", articleInput);
+        log.info("publish section size: {}", sectionInputs.size());
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -106,6 +120,9 @@ public class UpdateArticleService {
     }
 
     public void draftArticle(ArticleInput articleInput, List<UpdateSectionInput> sectionInputs, Requester requester) {
+        log.info("draft article: {}", articleInput);
+        log.info("publish section size: {}", sectionInputs.size());
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -123,6 +140,7 @@ public class UpdateArticleService {
     }
 
     public void likeArticle(String articleId, Requester requester) {
+        log.info("like articleId: {}", articleId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -130,6 +148,7 @@ public class UpdateArticleService {
     }
 
     public void deleteLikeArticle(String articleId, Requester requester) {
+        log.info("delete articleId: {}", articleId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -137,6 +156,8 @@ public class UpdateArticleService {
     }
 
     public void finishArticle(String articleId, Requester requester) {
+        log.info("finish articleId: {}", articleId);
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -144,6 +165,7 @@ public class UpdateArticleService {
     }
 
     public void deleteFinishArticle(String articleId, Requester requester) {
+        log.info("delete finish articleId: {}", articleId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }

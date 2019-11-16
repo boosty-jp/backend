@@ -238,6 +238,40 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
     }
 
     @Override
+    public void likeOne(String planId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        long now = System.currentTimeMillis();
+
+        g.E(EdgeIdCreator.createId(userId, planId, UserToPlanEdge.LIKED.getString()))
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .addE(UserToPlanEdge.LIKED.getString())
+                    .property(T.id, EdgeIdCreator.createId(userId, planId, UserToPlanEdge.LIKED.getString()))
+                    .property(UserToPlanProperty.CREATED_TIME.getString(), now)
+                    .property(UserToPlanProperty.UPDATED_TIME.getString(), now)
+                    .to(g.V(planId)))
+         .iterate();
+
+        long liked = g.V(planId).inE(UserToPlanEdge.LIKED.getString()).count().next();
+        g.V(planId).property(single, PlanVertexProperty.LIKED.getString(), liked).next();
+        algoliaClient.getPlanIndex()
+                     .partialUpdateObjectAsync(PlanSearchEntity.builder().objectID(planId).like(liked).build());
+    }
+
+    @Override
+    public void deleteLikeOne(String planId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        g.E(EdgeIdCreator.createId(userId, planId, UserToPlanEdge.LIKED.getString())).drop().iterate();
+
+        long liked = g.V(planId).inE(UserToPlanEdge.LIKED.getString()).count().next();
+        g.V(planId).property(single, PlanVertexProperty.LIKED.getString(), liked).next();
+        algoliaClient.getPlanIndex()
+                     .partialUpdateObjectAsync(PlanSearchEntity.builder().objectID(planId).like(liked).build());
+    }
+
+    @Override
     public void startOne(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
@@ -267,7 +301,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
     }
 
     @Override
-    public void finishOne(String planId, String userId) {
+    public void finishOne(String planId, String userId, List<String> elementIds) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
         g.V(planId)
@@ -276,6 +310,21 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
          .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
          .drop()
          .iterate();
+
+        elementIds.forEach(e -> {
+            // TODO: 対象のVertexのLEARNEDを更新するようにしたい
+            // 実際に学習した数とズレが生じてしまうが、クエリが重いため許容している
+            g.E(EdgeIdCreator.createId(userId, e, UserToPlanEdge.LEARNED.getString()))
+             .fold()
+             .coalesce(unfold(),
+                       g.V(userId)
+                        .addE(UserToPlanEdge.LEARNED.getString())
+                        .property(T.id, EdgeIdCreator.createId(userId, e, UserToPlanEdge.LEARNED.getString()))
+                        .property(UserToPlanProperty.CREATED_TIME.getString(), now)
+                        .property(UserToPlanProperty.UPDATED_TIME.getString(), now)
+                        .to(g.V(e)))
+             .iterate();
+        });
 
         g.E(EdgeIdCreator.createId(userId, planId, UserToPlanEdge.LEARNED.getString()))
          .fold()
@@ -307,8 +356,8 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
     public void stopOne(String planId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         g.V(planId)
-         .inE(UserToPlanEdge.LEARNING.getString(), UserToPlanEdge.LEARNED.getString())
-         .from(g.V(userId))
+         .inE(UserToPlanEdge.LEARNED.getString())
+         .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
          .drop()
          .iterate();
 

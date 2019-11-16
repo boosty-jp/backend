@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanStatisticsEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.FamousPlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanItemEntity;
 
-public class FamousPlanEntityConverter {
-    public static FamousPlanEntity toFamousPlanEntity(Map<String, Object> result) {
+public class PlanItemEntityConverter {
+    public static PlanItemEntity toPlanItemEntity(Map<String, Object> result) {
         Map<Object, Object> baseResult = (Map<Object, Object>) result.get("base");
         List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) result.get("tags");
         Map<Object, Object> authorResult = (Map<Object, Object>) result.get("author");
@@ -19,18 +19,20 @@ public class FamousPlanEntityConverter {
         long like = (long) result.get("like");
         long learned = (long) result.get("learned");
         long learning = (long) result.get("learning");
+        long elementCount = (long) result.get("elementCount");
 
-        return FamousPlanEntity.builder()
-                               .base(PlanBaseEntityConverter.toPlanBaseEntity(baseResult, statusResult))
-                               .tags(tagResult.stream()
+        return PlanItemEntity.builder()
+                             .base(PlanBaseEntityConverter.toPlanBaseEntity(baseResult, statusResult))
+                             .tags(tagResult.stream()
                                               .map(t -> TagEntityConverter.toTagEntity(t))
                                               .collect(Collectors.toList()))
-                               .author(UserEntityConverter.toUserEntityNoTag(authorResult))
-                               .statistics(PlanStatisticsEntity.builder()
+                             .author(UserEntityConverter.toUserEntityNoTag(authorResult))
+                             .statistics(PlanStatisticsEntity.builder()
                                                                .likeCount(like)
                                                                .learnedCount(learned)
                                                                .learningCount(learning)
                                                                .build())
-                               .build();
+                             .elementCount(elementCount)
+                             .build();
     }
 }

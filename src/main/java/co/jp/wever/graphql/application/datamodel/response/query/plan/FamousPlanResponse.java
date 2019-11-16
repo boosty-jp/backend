@@ -13,5 +13,6 @@ public class FamousPlanResponse {
     private PlanBaseResponse base;
     private List<TagResponse> tags;
     private UserResponse author;
+    private long elementCount;
     private PlanStatisticsResponse statistics;
 }

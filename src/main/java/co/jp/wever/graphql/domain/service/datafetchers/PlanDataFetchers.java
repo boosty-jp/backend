@@ -97,15 +97,20 @@ public class PlanDataFetchers {
 
     public DataFetcher allLikedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            return null;
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+
+            return this.findPlanService.findAllLikedPlan(requester)
+                                       .stream()
+                                       .map(p -> FamousPlanResponseConverter.toFamousPlanResponse(p))
+                                       .collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLearningPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
-            return this.findPlanService.findAllLearningPlan(userId)
+            return this.findPlanService.findAllLearningPlan(requester)
                                        .stream()
                                        .map(r -> LearningPlanItemResponseConverter.toLearningPlanItemResponse(r))
                                        .collect(Collectors.toList());
@@ -240,6 +245,28 @@ public class PlanDataFetchers {
                 PlanElementInputsConverter.toPlanElementsInput(dataFetchingEnvironment);
 
             updatePlanService.draftPlan(baseInput, elementsInput, requester);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher likePlanDataFetcher() {
+        return dataFetchingEnvironment -> {
+
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            updatePlanService.likePlan(planId, requester);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher deleteLikePlanDataFetcher() {
+        return dataFetchingEnvironment -> {
+
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            updatePlanService.deleteLikePlan(planId, requester);
             return UpdateResponse.builder().build();
         };
     }

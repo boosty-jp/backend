@@ -11,7 +11,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.user.CreateUserRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class CreateUserService {
 
@@ -22,6 +24,7 @@ public class CreateUserService {
     }
 
     public String createUser(UserInput userInput, Requester requester) {
+        log.info("create user: {}", userInput);
         if(requester.isGuest()){
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }

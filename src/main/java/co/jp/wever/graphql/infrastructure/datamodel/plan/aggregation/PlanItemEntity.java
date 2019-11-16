@@ -11,9 +11,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FamousPlanEntity {
+public class PlanItemEntity {
     private PlanBaseEntity base;
     private List<TagEntity> tags;
     private UserEntity author;
+    private long elementCount;
     private PlanStatisticsEntity statistics;
 }

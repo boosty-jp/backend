@@ -19,7 +19,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.plan.UpdatePlanRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UpdatePlanService {
 
@@ -32,6 +34,8 @@ public class UpdatePlanService {
     }
 
     public void updatePlanTitle(String planId, String title, Requester requester) {
+        log.info("update planId: {}", planId);
+        log.info("update plan title: {}", title);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -49,6 +53,8 @@ public class UpdatePlanService {
     }
 
     public void updatePlanTags(String planId, List<String> tags, Requester requester) {
+        log.info("update planId: {}", planId);
+        log.info("update plan tags: {}", tags);
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
@@ -72,6 +78,8 @@ public class UpdatePlanService {
     }
 
     public void updatePlanImageUrl(String planId, String imageUrl, Requester requester) {
+        log.info("update planId: {}", planId);
+        log.info("update plan imageUrl: {}", imageUrl);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -91,6 +99,9 @@ public class UpdatePlanService {
     }
 
     public void updatePlanDescription(String planId, String description, Requester requester) {
+        log.info("update planId: {}", planId);
+        log.info("update plan description size: {}", description.length());
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -110,6 +121,8 @@ public class UpdatePlanService {
     }
 
     public void publishPlan(PlanBaseInput baseInput, List<PlanElementInput> elementInputs, Requester requester) {
+        log.info("publish plan: {}", baseInput);
+        log.info("publish element size: {}", elementInputs.size());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
@@ -130,6 +143,8 @@ public class UpdatePlanService {
     }
 
     public void draftPlan(PlanBaseInput baseInput, List<PlanElementInput> elementInputs, Requester requester) {
+        log.info("draft plan: {}", baseInput);
+        log.info("draft element size: {}", elementInputs.size());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
@@ -150,7 +165,27 @@ public class UpdatePlanService {
         updatePlanRepository.draftOne(draftPlan, requester.getUserId());
     }
 
+    public void likePlan(String planId, Requester requester) {
+        log.info("like planId: {}", planId);
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        this.updatePlanRepository.likeOne(planId, requester.getUserId());
+    }
+
+    public void deleteLikePlan(String planId, Requester requester) {
+        log.info("delete like planId: {}", planId);
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        this.updatePlanRepository.deleteLikeOne(planId, requester.getUserId());
+    }
+
     public void startPlan(String planId, Requester requester) {
+        log.info("start planId: {}", planId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -159,18 +194,21 @@ public class UpdatePlanService {
     }
 
     public void finishPlan(String planId, Requester requester) {
+        log.info("finish planId: {}", planId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
-        this.updatePlanRepository.finishOne(planId, requester.getUserId());
+        List<String> elementIds = findPlanRepository.findAllPlanElementIds(planId);
+        this.updatePlanRepository.finishOne(planId, requester.getUserId(), elementIds);
     }
 
     public void stopPlan(String planId, Requester requester) {
+        log.info("stop planId: {}", planId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
-        //        this.updatePlanRepository.stopOne(planId, userId);
+        this.updatePlanRepository.stopOne(planId, requester.getUserId());
     }
 }

@@ -17,6 +17,7 @@ import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToSectio
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionNumberEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.section.LikedSectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 
@@ -110,8 +111,35 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
     }
 
     @Override
-    public List<SectionEntity> findAllLiked(String userId) {
-        return null;
+    public List<LikedSectionEntity> findAllLiked(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        List<Map<String, Object>> results = g.V(userId)
+                                             .out(UserToSectionEdge.LIKED.getString())
+                                             .hasLabel(VertexLabel.SECTION.getString())
+                                             .project("articleId", "base", "author", "status", "like", "number")
+                                             .by(__.in(ArticleToSectionEdge.INCLUDE.getString())
+                                                   .hasLabel(VertexLabel.ARTICLE.getString())
+                                                   .id())
+                                             .by(__.valueMap().with(WithOptions.tokens))
+                                             .by(__.in(UserToSectionEdge.CREATED.getString(),
+                                                       UserToSectionEdge.DELETED.getString())
+                                                   .hasLabel(VertexLabel.USER.getString())
+                                                   .id())
+                                             .by(__.inE(UserToSectionEdge.CREATED.getString(),
+                                                        UserToSectionEdge.DELETED.getString()).label())
+                                             .by(__.in(UserToSectionEdge.LIKED.getString()).count())
+                                             .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
+                                                   .values(ArticleToSectionProperty.NUMBER.getString()))
+                                             .toList();
+
+        // TODO: Converter作る
+        return results.stream()
+                      .map(r -> LikedSectionEntity.builder()
+                                                  .articleId((String) r.get("articleId"))
+                                                  .sectionEntity(SectionEntityConverter.toSectionEntity(r, true))
+                                                  .build())
+                      .collect(Collectors.toList());
     }
 
     @Override

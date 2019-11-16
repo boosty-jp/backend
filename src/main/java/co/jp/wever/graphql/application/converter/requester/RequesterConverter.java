@@ -6,7 +6,9 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
 import graphql.schema.DataFetchingEnvironment;
 import io.netty.util.internal.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class RequesterConverter {
     private final TokenVerifier tokenVerifier;
@@ -26,6 +28,7 @@ public class RequesterConverter {
             userId = tokenVerifier.getUserId(token);
         }
 
+        log.info("userId: {}, guest: {}", userId, guest);
         return Requester.builder().userId(userId).guest(guest).build();
     }
 }

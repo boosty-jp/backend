@@ -16,7 +16,9 @@ import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntity
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 import co.jp.wever.graphql.infrastructure.repository.section.CreateSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class CreateSectionService {
 
@@ -30,6 +32,9 @@ public class CreateSectionService {
     }
 
     public String createSection(Requester requester, String articleId, CreateSectionInput sectionInput) {
+        log.info("create section to articleId: {}", articleId);
+        log.info("create section number: {}", sectionInput.getNumber());
+        log.info("create section text size: {}", sectionInput.getText().length());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }

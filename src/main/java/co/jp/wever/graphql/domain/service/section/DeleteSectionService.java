@@ -15,7 +15,9 @@ import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 import co.jp.wever.graphql.infrastructure.repository.section.DeleteSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DeleteSectionService {
     private final FindSectionRepositoryImpl findSectionRepository;
@@ -28,6 +30,8 @@ public class DeleteSectionService {
     }
 
     public void deleteSection(String articleId, String sectionId, Requester requester) {
+        log.info("delete section from planId: {}", sectionId);
+        log.info("delete sectionId: {}", sectionId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }

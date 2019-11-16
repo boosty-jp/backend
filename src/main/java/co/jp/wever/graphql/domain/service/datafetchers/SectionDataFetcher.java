@@ -14,6 +14,7 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.section.LikedSectionResponse;
 import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.domain.service.section.CreateSectionService;
 import co.jp.wever.graphql.domain.service.section.DeleteSectionService;
@@ -34,7 +35,8 @@ public class SectionDataFetcher {
         FindSectionService findSectionService,
         CreateSectionService createSectionService,
         UpdateSectionService updateSectionService,
-        DeleteSectionService deleteSectionService, RequesterConverter requesterConverter) {
+        DeleteSectionService deleteSectionService,
+        RequesterConverter requesterConverter) {
         this.findSectionService = findSectionService;
         this.createSectionService = createSectionService;
         this.updateSectionService = updateSectionService;
@@ -60,8 +62,13 @@ public class SectionDataFetcher {
 
     public DataFetcher allLikedSectionsDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            return findSectionService.findAllLikedSections(userId);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            return findSectionService.findAllLikedSections(requester)
+                                     .stream()
+                                     .map(s -> LikedSectionResponse.builder()
+                                                                   .articleId(s.getArticleId())
+                                                                   .section(SectionResponseConverter.toSectionResponse(s.getSectionEntity())))
+                                     .collect(Collectors.toList());
         };
     }
 
@@ -97,7 +104,8 @@ public class SectionDataFetcher {
 
             String createId = createSectionService.createSection(requester,
                                                                  articleId,
-                                                                 CreateSectionInputConverter.toCreateSectionInput(sectionInputMap));
+                                                                 CreateSectionInputConverter.toCreateSectionInput(
+                                                                     sectionInputMap));
             return CreateResponse.builder().id(createId).build();
         };
     }
@@ -106,12 +114,11 @@ public class SectionDataFetcher {
         return dataFetchingEnvironment -> {
 
             String sectionId = dataFetchingEnvironment.getArgument("sectionId");
-            UpdateSectionInput updateSectionInput = UpdateSectionInputConverter.toUpdateSectionInput(dataFetchingEnvironment);
+            UpdateSectionInput updateSectionInput =
+                UpdateSectionInputConverter.toUpdateSectionInput(dataFetchingEnvironment);
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
-            updateSectionService.updateSection(sectionId,
-                                               updateSectionInput,
-                                               requester);
+            updateSectionService.updateSection(sectionId, updateSectionInput, requester);
 
             return UpdateResponse.builder().build();
         };

@@ -1,6 +1,6 @@
 type Query {
     allSectionOnArticle(articleId: ID!): [Section]!
-    allLikedSections(userId: ID!): [Section]!
+    allLikedSections(userId: ID!): [LikedSection]!
     allBookmarkedSections(userId: ID!): [Section]!
 
     article(articleId: ID!): ArticleDetail!
@@ -16,10 +16,10 @@ type Query {
     allPlans: [PlanListItem]!
     allPublishedPlans(userId: ID!): [PlanDetail]!
     allDraftedPlans: [PlanDetail]!
-    allLikedPlans(userId: ID!): [PlanDetail]!
+    allLikedPlans: [PlanItem]!
     allLearningPlans(userId: ID!): [LearningPlanItem]!
     allLearnedPlans(userId: ID!): [PlanDetail]!
-    famousPlans: [FamousPlan]!
+    famousPlans: [PlanItem]!
     allPlanElementDetails(planId: ID!): [ElementDetail]!
 
     user(userId: ID!): User
@@ -33,10 +33,11 @@ type PlanListItem{
     statistics: PlanStatistics
 }
 
-type FamousPlan{
+type PlanItem {
     base: PlanBase
     tags: [Tag]
     author: User
+    elementCount: Int
     statistics: PlanStatistics
 }
 
@@ -132,6 +133,11 @@ type ArticleStatistics {
 type ArticleAction {
     liked: Boolean!
     learned: Boolean!
+}
+
+type LikedSection {
+    articleId: String!
+    section: Section
 }
 
 type Section {
@@ -242,6 +248,8 @@ type Mutation {
     deletePlan(planId: ID!): UpdateResponse
     publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
     draftPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
+    likePlan(planId: ID!): UpdateResponse
+    deleteLikePlan(planId: ID!): UpdateResponse
     startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse
     finishPlan(planId: ID!): UpdateResponse

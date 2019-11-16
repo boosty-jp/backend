@@ -147,6 +147,10 @@ public class GraphQLService {
                                                                        planDataFetchers.publishPlanDataFetcher())
                                                           .dataFetcher("draftPlan",
                                                                        planDataFetchers.draftPlanDataFetcher())
+                                                          .dataFetcher("likePlan",
+                                                                       planDataFetchers.likePlanDataFetcher())
+                                                          .dataFetcher("deleteLikePlan",
+                                                                       planDataFetchers.deleteLikePlanDataFetcher())
                                                           .dataFetcher("startPlan",
                                                                        planDataFetchers.startPlanDataFetcher())
                                                           .dataFetcher("stopPlan",

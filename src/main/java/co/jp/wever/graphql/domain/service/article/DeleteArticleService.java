@@ -9,7 +9,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.article.DeleteArticleRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DeleteArticleService {
 
@@ -23,6 +25,8 @@ public class DeleteArticleService {
     }
 
     public void deleteArticle(String articleId, Requester requester) {
+        log.info("delete articleId: {}", articleId);
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }

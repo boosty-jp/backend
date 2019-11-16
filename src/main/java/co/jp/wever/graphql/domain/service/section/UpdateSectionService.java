@@ -12,7 +12,9 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.UpdateSectionRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UpdateSectionService {
 
@@ -26,6 +28,10 @@ public class UpdateSectionService {
     }
 
     public void updateSection(String sectionId, UpdateSectionInput sectionInput, Requester requester) {
+        log.info("update section id: {}", sectionInput.getId());
+        log.info("update section number: {}", sectionInput.getNumber());
+        log.info("update section text size: {}", sectionInput.getText().length());
+
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -44,6 +50,7 @@ public class UpdateSectionService {
     }
 
     public void likeSection(String sectionId, Requester requester) {
+        log.info("like sectionId: {}", sectionId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -52,6 +59,7 @@ public class UpdateSectionService {
     }
 
     public void deleteLikeSection(String sectionId, Requester requester) {
+        log.info("delete sectionId: {}", sectionId);
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
