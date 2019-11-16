@@ -16,6 +16,7 @@ public class NeptuneClient implements AutoCloseable {
 
     public NeptuneClient(
         @Value("${aws.neptune.endpoint}") String endpoint,
+        @Value("${aws.neptune.certificateFilePath}") String certificateFilePath,
         @Value("${aws.neptune.port}") int port,
         @Value("${aws.neptune.maxInProcessPerConnection}") int maxInProcessPerConnection,
         @Value("${aws.neptune.minInProcessPerConnection}") int minInProcessPerConnection,
@@ -24,6 +25,7 @@ public class NeptuneClient implements AutoCloseable {
         @Value("${aws.neptune.maxSimultaneousUsagePerConnection}") int maxSimultaneousUsagePerConnection,
         @Value("${aws.neptune.minSimultaneousUsagePerConnection}") int minSimultaneousUsagePerConnection) {
         init(endpoint,
+             certificateFilePath,
              port,
              maxInProcessPerConnection,
              minInProcessPerConnection,
@@ -35,6 +37,7 @@ public class NeptuneClient implements AutoCloseable {
 
     private void init(
         String endpoint,
+        String certificateFilePath,
         int port,
         int maxInProcessPerConnection,
         int minInProcessPerConnection,
@@ -54,6 +57,7 @@ public class NeptuneClient implements AutoCloseable {
                              .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection)
                              .keepAliveInterval(6000000)
                              .reconnectInterval(3000)
+                             .keyStore(certificateFilePath)
                              .create();
 
 
