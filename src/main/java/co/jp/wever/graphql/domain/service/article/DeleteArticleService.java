@@ -3,14 +3,15 @@ package co.jp.wever.graphql.domain.service.article;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
-import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.article.DeleteArticleRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DeleteArticleService {
 
@@ -23,15 +24,21 @@ public class DeleteArticleService {
         this.deleteArticleRepository = deleteArticleRepository;
     }
 
-    public void deleteArticle(String articleId, String userId) {
-        //TODO: 詳細とらずにステータスと著者だけ取るようにしてもいいかも
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(findArticleRepository.findOne(articleId));
+    public void deleteArticle(String articleId, Requester requester) {
+        log.info("delete articleId: {}", articleId);
 
-        if (!articleDetail.canDelete(UserId.of(userId))) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        UserId authorId = UserId.of(findArticleRepository.findAuthorId(articleId));
+        UserId deleterId = UserId.of(requester.getUserId());
+
+        if (!authorId.same(deleterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        deleteArticleRepository.deleteOne(articleId, userId);
+        deleteArticleRepository.deleteOne(articleId, requester.getUserId());
     }
 }

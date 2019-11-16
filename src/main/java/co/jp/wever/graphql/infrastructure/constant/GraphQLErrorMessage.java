@@ -9,6 +9,10 @@ public enum GraphQLErrorMessage {
     DESCRIPTION_OVER("説明文は500文字以内で入力してください"),
     PLAN_ELEMENT_EMPTY("プランの要素は1つ以上入力してください"),
     PLAN_ELEMENT_OVER("プランの要素は30までです"),
+    PLAN_ELEMENT_NUMBER_DUPLICATED("プランの番号が重複しています"),
+    PLAN_ELEMENT_ID_DUPLICATED("重複するプランの要素は指定できません"),
+    PLAN_ELEMENT_SELF_ID("自分自身のIDはプランの要素に指定できません"),
+    PLAN_ELEMENT_SHORTAGE("プランの要素は1つ以上指定してください"),
     PLAN_ELEMENT_ID_EMPTY("プランの要素を指定してください"),
     USER_ID_EMPTY("ユーザIDを指定してください"),
     PLAN_ID_EMPTY("プランIDを指定してください"),
@@ -16,7 +20,10 @@ public enum GraphQLErrorMessage {
     TAG_NAME_EMPTY("タグ名を指定してください"),
     USER_DESCRIPTION_OVER("説明文は200文字以内にしてください"),
     SECTION_NUMBER_INVALID("正しいセクション番号を指定してください"),
+    SECTION_SIZE_OVER("指定できるセクションの数は30までです"),
+    SECTION_EMPTY("セクションを入力してください"),
     USER_NAME_OVER("ユーザー名は30文字以内にしてください"),
+    USER_NAME_EMPTY("ユーザー名を入力してください"),
     FORBIDDEN_REQUEST("権限のないリクエストです"),
     INVALID_PLAN_ELEMENT_ID("下書きまたは削除済みの要素が含まれています"),
     TAG_DUPLICATED("タグが重複しています"),
@@ -24,6 +31,9 @@ public enum GraphQLErrorMessage {
     INVALID_USER_URL("URLが長すぎます"),
     INVALID_TAG_COUNT("設定できるタグは5つまでです"),
     INTERNAL_SERVER_ERROR("INTERNAL SERVER ERROR"),
+    NEED_LOGIN("ログインして、ご利用ください"),
+    INVALID_TOKEN("無効なトークン形式です"),
+    EXPIRED_TOKEN("期限切れのトークンです"),
     FOLLOW_OWN("自分自身はフォローできません");
 
     private String value;

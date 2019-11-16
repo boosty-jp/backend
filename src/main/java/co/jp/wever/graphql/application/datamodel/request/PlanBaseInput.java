@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PlanBaseInput {
+    private String id;
     private String title;
     private String description;
     private List<String> tags;

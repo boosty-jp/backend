@@ -15,7 +15,9 @@ import java.util.Map;
 import co.jp.wever.graphql.domain.service.GraphQLService;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequestMapping("/")
 @RestController
 public class ApplicationController {
@@ -24,7 +26,7 @@ public class ApplicationController {
     GraphQLService graphQLService;
 
     @PostMapping
-    public ResponseEntity<Object> getPlans(
+    public ResponseEntity<Object> execute(
         @RequestHeader(value = "AuthorizationToken", required = false) String token, @RequestBody Map body) {
         String queryString = (String) body.get("query");
         Map<String, Object> variables = (Map<String, Object>) body.get("variables");

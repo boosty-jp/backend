@@ -12,13 +12,13 @@ import lombok.Data;
 @Builder
 public class TagEntityConverter {
     public static TagEntity toTagEntity(Tag tag) {
-        return TagEntity.builder().tagId(tag.getId().getValue()).name(tag.getName().getValue()).build();
+        return TagEntity.builder().id(tag.getId().getValue()).name(tag.getName().getValue()).build();
     }
 
     public static TagEntity toTagEntity(Map<Object, Object> tagVertex) {
         return TagEntity.builder()
                         .name(VertexConverter.toString("name", tagVertex))
-                        .tagId(VertexConverter.toId(tagVertex))
+                        .id(VertexConverter.toId(tagVertex))
                         .build();
     }
 }

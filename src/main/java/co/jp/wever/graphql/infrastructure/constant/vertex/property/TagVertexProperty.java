@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.vertex.property;
 
 public enum TagVertexProperty {
-    NAME("name"), CREATED_TIME("createdTime");
+    NAME("name"), RELATED("related"), CREATED_TIME("createdTime");
 
     private String value;
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import co.jp.wever.graphql.infrastructure.datamodel.section.LikedSectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 
 
@@ -14,7 +15,7 @@ public interface FindSectionRepository {
 
     List<SectionEntity> findAllDetailOnArticle(String articleId, String userId);
 
-    List<SectionEntity> findAllLiked(String userId);
+    List<LikedSectionEntity> findAllLiked(String userId);
 
     List<SectionEntity> findAllBookmarked(String userId);
 
@@ -22,4 +23,5 @@ public interface FindSectionRepository {
 
     List<SectionEntity> findRelated(String userId);
 
+    String findAuthorId(String sectionId);
 }

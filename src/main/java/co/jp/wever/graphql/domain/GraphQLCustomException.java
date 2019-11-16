@@ -7,13 +7,14 @@ import java.util.Map;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GraphQLCustomException extends RuntimeException implements GraphQLError {
     private final int errorCode;
 
     public GraphQLCustomException(int errorCode, String errorMessage) {
         super(errorMessage);
-
         this.errorCode = errorCode;
     }
 

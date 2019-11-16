@@ -3,20 +3,23 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.converter.plan.FamousPlanResponseConverter;
+import co.jp.wever.graphql.application.converter.plan.LearningPlanItemResponseConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanBaseInputConverter;
-import co.jp.wever.graphql.application.converter.plan.PlanElementInputConverter;
+import co.jp.wever.graphql.application.converter.plan.PlanElementDetailResponseConverter;
+import co.jp.wever.graphql.application.converter.plan.PlanElementInputsConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanDetailResponseConverter;
 import co.jp.wever.graphql.application.converter.plan.PlanListItemResponseConverter;
+import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
+import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
-import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanDetailResponse;
-import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
-import co.jp.wever.graphql.domain.domainmodel.plan.PlanListItem;
+import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElementDetail;
 import co.jp.wever.graphql.domain.service.plan.CreatePlanService;
 import co.jp.wever.graphql.domain.service.plan.DeletePlanService;
 import co.jp.wever.graphql.domain.service.plan.FindPlanService;
@@ -26,42 +29,49 @@ import graphql.schema.DataFetcher;
 @Component
 public class PlanDataFetchers {
 
-    private final TokenVerifier tokenVerifier;
     private final FindPlanService findPlanService;
     private final UpdatePlanService updatePlanService;
     private final DeletePlanService deletePlanService;
     private final CreatePlanService createPlanService;
+    private final RequesterConverter requesterConverter;
 
     PlanDataFetchers(
-        TokenVerifier tokenVerifier,
         FindPlanService findPlanService,
         UpdatePlanService updatePlanService,
         DeletePlanService deletePlanService,
-        CreatePlanService createPlanService) {
-        this.tokenVerifier = tokenVerifier;
+        CreatePlanService createPlanService,
+        RequesterConverter requesterConverter) {
         this.findPlanService = findPlanService;
         this.updatePlanService = updatePlanService;
         this.deletePlanService = deletePlanService;
         this.createPlanService = createPlanService;
+        this.requesterConverter = requesterConverter;
     }
 
     public DataFetcher planDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String planId = dataFetchingEnvironment.getArgument("planId");
-            PlanDetailResponse p =
-                PlanDetailResponseConverter.toPlanResponse(this.findPlanService.findPlan(planId, userId));
-            return PlanDetailResponseConverter.toPlanResponse(this.findPlanService.findPlan(planId, userId));
+
+            return PlanListItemResponseConverter.toPlanListItemResponse(this.findPlanService.findOne(planId,
+                                                                                                     requester));
+        };
+    }
+
+    public DataFetcher planDetailDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            return PlanDetailResponseConverter.toPlanResponse(this.findPlanService.findDetail(planId, requester));
         };
     }
 
     public DataFetcher allPlanDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            return this.findPlanService.findAllPlan(userId)
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+
+            return this.findPlanService.findAllPlan(requester)
                                        .stream()
                                        .map(p -> PlanListItemResponseConverter.toPlanListItemResponse(p))
                                        .collect(Collectors.toList());
@@ -71,82 +81,70 @@ public class PlanDataFetchers {
     public DataFetcher allPublishedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            //            return this.findPlanService.findAllPublishedPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
-            return null;
+
+            return this.findPlanService.findAllPublishedPlan(userId)
+                                       .stream()
+                                       .map(p -> PlanListItemResponseConverter.toPlanListItemResponse(p))
+                                       .collect(Collectors.toList());
         };
     }
 
     public DataFetcher allDraftedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            //            return this.findPlanService.findAllDraftedPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
             return null;
         };
     }
 
     public DataFetcher allLikedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            //            return this.findPlanService.findAllLikedPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
-            //
-            return null;
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+
+            return this.findPlanService.findAllLikedPlan(requester)
+                                       .stream()
+                                       .map(p -> FamousPlanResponseConverter.toFamousPlanResponse(p))
+                                       .collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLearningPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            //            return this.findPlanService.findAllLearningPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
-            return null;
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+
+            return this.findPlanService.findAllLearningPlan(requester)
+                                       .stream()
+                                       .map(r -> LearningPlanItemResponseConverter.toLearningPlanItemResponse(r))
+                                       .collect(Collectors.toList());
         };
     }
 
     public DataFetcher allLearnedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            //            return this.findPlanService.findAllLearnedPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
             return null;
         };
     }
 
     public DataFetcher famousPlansDataFetcher() {
-        return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            //TODO: 未実装
-            //            return this.findPlanService.findAllLearnedPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
-            return null;
-        };
+        return dataFetchingEnvironment -> findPlanService.findFamous()
+                                                         .stream()
+                                                         .map(p -> FamousPlanResponseConverter.toFamousPlanResponse(p))
+                                                         .collect(Collectors.toList());
     }
 
     public DataFetcher relatedPlansDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            //TODO: 未実装
-            //            return this.findPlanService.findAllLearnedPlan(userId)
-            //                                       .stream()
-            //                                       .map(p -> PlanDetailResponseConverter.toPlanResponse(p))
-            //                                       .collect(Collectors.toList());
-
             return null;
+        };
+    }
+
+    public DataFetcher allPlanElementDetailsDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+            List<FindPlanElementDetail> findPlanElementDetails =
+                findPlanService.findAllPlanElementDetails(planId, requester);
+            return findPlanElementDetails.stream()
+                                         .map(p -> PlanElementDetailResponseConverter.toPlanElementDetailResponse(p))
+                                         .collect(Collectors.toList());
         };
     }
 
@@ -155,37 +153,22 @@ public class PlanDataFetchers {
     ///////////////////////////////
     public DataFetcher initPlanDataFetcher() {
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
 
-            String createId = createPlanService.initPlan(userId);
-            return CreateResponse.builder().id(createId).build();
-        };
-    }
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = createPlanService.initPlan(requester);
 
-    public DataFetcher createPlanBaseDataFetcher() {
-        return dataFetchingEnvironment -> {
-
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            Map<String, Object> planBaseMap = (Map) dataFetchingEnvironment.getArgument("planBase");
-
-            String createId =
-                createPlanService.createPlanBase(userId, PlanBaseInputConverter.toPlanBaseInput(planBaseMap));
-            return CreateResponse.builder().id(createId).build();
+            return CreateResponse.builder().id(planId).build();
         };
     }
 
     public DataFetcher updatePlanTitleDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String title = dataFetchingEnvironment.getArgument("title");
             String planId = dataFetchingEnvironment.getArgument("planId");
 
-            updatePlanService.updatePlanTitle(planId, userId, title);
+            updatePlanService.updatePlanTitle(planId, title, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -193,12 +176,11 @@ public class PlanDataFetchers {
     public DataFetcher updatePlanTagsDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String planId = dataFetchingEnvironment.getArgument("planId");
-            List<String> tags = (List<String>) dataFetchingEnvironment.getArgument("tags");
+            List<String> tags = dataFetchingEnvironment.getArgument("tags");
 
-            updatePlanService.updatePlanTags(planId, userId, tags);
+            updatePlanService.updatePlanTags(planId, tags, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -206,12 +188,12 @@ public class PlanDataFetchers {
     public DataFetcher updatePlanImageUrlDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+
             String planId = dataFetchingEnvironment.getArgument("planId");
             String imageUrl = dataFetchingEnvironment.getArgument("url");
 
-            updatePlanService.updatePlanImageUrl(planId, userId, imageUrl);
+            updatePlanService.updatePlanImageUrl(planId, imageUrl, requester);
             return UpdateImageResponse.builder().url(imageUrl).build();
         };
     }
@@ -219,83 +201,12 @@ public class PlanDataFetchers {
     public DataFetcher updatePlanDescriptionDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-            String planId = dataFetchingEnvironment.getArgument("planId");
-            String description = dataFetchingEnvironment.getArgument("description");
-
-            updatePlanService.updatePlanDescription(planId, userId, description);
-            return UpdateResponse.builder().build();
-        };
-    }
-
-    public DataFetcher updatePlanBaseDataFetcher() {
-        return dataFetchingEnvironment -> {
-
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
-            String planId = dataFetchingEnvironment.getArgument("planId");
-            Map<String, Object> planBaseMap = (Map) dataFetchingEnvironment.getArgument("planBase");
-
-            updatePlanService.updatePlanBase(planId, userId, PlanBaseInputConverter.toPlanBaseInput(planBaseMap));
-            return UpdateResponse.builder().build();
-        };
-    }
-
-    public DataFetcher savePlanDataFetcher() {
-        return dataFetchingEnvironment -> {
-
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
             String planId = dataFetchingEnvironment.getArgument("planId");
             String description = dataFetchingEnvironment.getArgument("description");
-            List<String> tags = (List<String>) dataFetchingEnvironment.getArgument("tags");
-            List<Map<String, Object>> elementMaps =
-                (List<Map<String, Object>>) dataFetchingEnvironment.getArgument("elements");
-            List<PlanElementInput> elementInputs =
-                elementMaps.stream().map(e -> PlanElementInputConverter.toPlanElement(e)).collect(Collectors.toList());
 
-            updatePlanService.savePlan(planId, userId, elementInputs, description, tags);
-            return UpdateResponse.builder().build();
-        };
-    }
-
-    public DataFetcher createPlanElementsDataFetcher() {
-        return dataFetchingEnvironment -> {
-
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
-            String planId = dataFetchingEnvironment.getArgument("planId");
-            List<Map<String, Object>> elementMaps =
-                (List<Map<String, Object>>) dataFetchingEnvironment.getArgument("elements");
-
-            List<PlanElementInput> elementInputs =
-                elementMaps.stream().map(e -> PlanElementInputConverter.toPlanElement(e)).collect(Collectors.toList());
-
-            createPlanService.createPlanElements(planId, userId, elementInputs);
-            return UpdateResponse.builder().build();
-        };
-    }
-
-    // TODO: あとでやる
-    public DataFetcher updatePlanElementsDataFetcher() {
-        return dataFetchingEnvironment -> {
-
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
-            String planId = dataFetchingEnvironment.getArgument("planId");
-
-            List<Map<String, Object>> elementMaps =
-                (List<Map<String, Object>>) dataFetchingEnvironment.getArgument("elements");
-
-            List<PlanElementInput> elementInputs =
-                elementMaps.stream().map(e -> PlanElementInputConverter.toPlanElement(e)).collect(Collectors.toList());
-
-            updatePlanService.updatePlanElements(userId, planId, elementInputs);
+            updatePlanService.updatePlanDescription(planId, description, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -303,12 +214,11 @@ public class PlanDataFetchers {
     public DataFetcher deletePlanDataFetcher() {
 
         return dataFetchingEnvironment -> {
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
             String planId = dataFetchingEnvironment.getArgument("planId");
 
-            deletePlanService.deletePlan(planId, userId);
+            deletePlanService.deletePlan(planId, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -316,12 +226,12 @@ public class PlanDataFetchers {
     public DataFetcher publishPlanDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            PlanBaseInput baseInput = PlanBaseInputConverter.toPlanBaseInput(dataFetchingEnvironment);
+            List<PlanElementInput> elementsInput =
+                PlanElementInputsConverter.toPlanElementsInput(dataFetchingEnvironment);
 
-            String planId = dataFetchingEnvironment.getArgument("planId");
-
-            updatePlanService.publishPlan(planId, userId);
+            updatePlanService.publishPlan(baseInput, elementsInput, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -329,12 +239,34 @@ public class PlanDataFetchers {
     public DataFetcher draftPlanDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            PlanBaseInput baseInput = PlanBaseInputConverter.toPlanBaseInput(dataFetchingEnvironment);
+            List<PlanElementInput> elementsInput =
+                PlanElementInputsConverter.toPlanElementsInput(dataFetchingEnvironment);
 
+            updatePlanService.draftPlan(baseInput, elementsInput, requester);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher likePlanDataFetcher() {
+        return dataFetchingEnvironment -> {
+
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String planId = dataFetchingEnvironment.getArgument("planId");
 
-            updatePlanService.draftPlan(planId, userId);
+            updatePlanService.likePlan(planId, requester);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher deleteLikePlanDataFetcher() {
+        return dataFetchingEnvironment -> {
+
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            updatePlanService.deleteLikePlan(planId, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -342,12 +274,21 @@ public class PlanDataFetchers {
     public DataFetcher startPlanDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String planId = dataFetchingEnvironment.getArgument("planId");
 
-            updatePlanService.startPlan(planId, userId);
+            updatePlanService.startPlan(planId, requester);
+            return UpdateResponse.builder().build();
+        };
+    }
+
+    public DataFetcher finishPlanDataFetcher() {
+        return dataFetchingEnvironment -> {
+
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String planId = dataFetchingEnvironment.getArgument("planId");
+
+            updatePlanService.finishPlan(planId, requester);
             return UpdateResponse.builder().build();
         };
     }
@@ -355,12 +296,10 @@ public class PlanDataFetchers {
     public DataFetcher stopPlanDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            String token = (String) dataFetchingEnvironment.getContext();
-            String userId = tokenVerifier.getUserId(token);
-
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String planId = dataFetchingEnvironment.getArgument("planId");
 
-            updatePlanService.stopPlan(planId, userId);
+            updatePlanService.stopPlan(planId, requester);
             return UpdateResponse.builder().build();
         };
     }

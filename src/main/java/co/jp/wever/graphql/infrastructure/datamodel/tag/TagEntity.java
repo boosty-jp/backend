@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TagEntity {
-    private String tagId;
+    private String id;
     private String name;
     //TODO: 検討する
     //    private String imageUrl;

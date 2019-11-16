@@ -2,14 +2,14 @@ package co.jp.wever.graphql.domain.domainmodel.article.base;
 
 public class ArticleBase {
     private ArticleId id;
-    private Articletitle title;
+    private ArticleTitle title;
     private ArticleImageUrl imageUrl;
     private ArticleStatus status;
     private ArticleDate date;
 
     public ArticleBase(
         ArticleId id,
-        Articletitle title,
+        ArticleTitle title,
         ArticleImageUrl imageUrl,
         ArticleStatus status,
         ArticleDate date) {

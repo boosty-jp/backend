@@ -9,4 +9,6 @@ public class PlanActionResponse {
     private boolean liked;
     private boolean learning;
     private boolean learned;
+    private int learnedElementCount;
+    private int allElementCount;
 }

@@ -24,10 +24,8 @@ public class CreateTagRepositoryImpl {
 
     public String createTag(String name) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         long now = System.currentTimeMillis();
 
-        System.out.println(g.V().hasLabel(VertexLabel.TAG.getString()).valueMap().toList());
         String tagId = g.V()
                         .hasLabel(VertexLabel.TAG.getString())
                         .has(TagVertexProperty.NAME.getString(), name)
@@ -35,12 +33,12 @@ public class CreateTagRepositoryImpl {
                         .coalesce(unfold(),
                                   g.addV(VertexLabel.TAG.getString())
                                    .property(TagVertexProperty.NAME.getString(), name)
+                                   .property(TagVertexProperty.RELATED.getString(), 0)
                                    .property(TagVertexProperty.CREATED_TIME.getString(), now))
                         .next()
                         .id()
                         .toString();
 
-        //TODO: Algoliaにデータ追加する
         algoliaClient.getTagIndex().saveObjectAsync(TagSearchEntity.builder().objectID(tagId).name(name).build());
         return tagId;
     }

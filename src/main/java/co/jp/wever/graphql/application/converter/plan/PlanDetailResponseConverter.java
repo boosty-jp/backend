@@ -1,11 +1,12 @@
 package co.jp.wever.graphql.application.converter.plan;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
-import co.jp.wever.graphql.application.datamodel.response.query.TagResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.tag.TagResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.UserResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanActionResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.plan.PlanBaseResponse;
@@ -23,6 +24,7 @@ public class PlanDetailResponseConverter {
         List<PlanElementResponse> elements = planDetail.getElements()
                                                        .stream()
                                                        .map(e -> PlanElementResponseConverter.toPlanElementResponse(e))
+                                                       .sorted(Comparator.comparing(PlanElementResponse::getNumber)) //番号順にする
                                                        .collect(Collectors.toList());
         PlanStatisticsResponse statistics =
             PlanStatisticsResponseConverter.toPlanStatisticsResponse(planDetail.getStatistics());

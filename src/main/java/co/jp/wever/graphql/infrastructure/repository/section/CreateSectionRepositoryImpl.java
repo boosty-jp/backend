@@ -1,7 +1,6 @@
 package co.jp.wever.graphql.infrastructure.repository.section;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
@@ -34,42 +33,38 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
     public String addOne(
         String authorId, String articleId, SectionEntity sectionEntity, List<SectionNumberEntity> incrementNumbers) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-
         long now = System.currentTimeMillis();
 
         String sectionId = g.addV(VertexLabel.SECTION.getString())
                             .property(single, SectionVertexProperty.TITLE.getString(), sectionEntity.getTitle())
                             .property(single, SectionVertexProperty.TEXT.getString(), sectionEntity.getText())
-                            .property(single, SectionVertexProperty.CREATE_TIME.getString(), now)
-                            .property(single, SectionVertexProperty.UPDATE_TIME.getString(), now)
+                            .property(single, SectionVertexProperty.CREATED_TIME.getString(), now)
+                            .property(single, SectionVertexProperty.UPDATED_TIME.getString(), now)
                             .next()
                             .id()
                             .toString();
 
         g.V(sectionId)
          .addE(ArticleToSectionEdge.INCLUDE.getString())
-         .property(T.id, EdgeIdCreator.articleIncludeSection(articleId, sectionId))
+         .property(T.id, EdgeIdCreator.createId(articleId, sectionId, ArticleToSectionEdge.INCLUDE.getString()))
          .property(ArticleToSectionProperty.NUMBER.getString(), sectionEntity.getNumber())
          .property(ArticleToSectionProperty.CREATED_TIME.getString(), now)
          .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
          .from(g.V(articleId))
          .iterate();
 
-
-        System.out.println(g.V(articleId).outE().valueMap().with(WithOptions.tokens).toList());
-        // TODO: クエリがおもすぎるので改善する
         incrementNumbers.stream().forEach(s -> {
-            g.E(EdgeIdCreator.articleIncludeSection(articleId, s.getId()))
+            g.E(EdgeIdCreator.createId(articleId, s.getId(), ArticleToSectionEdge.INCLUDE.getString()))
              .property(ArticleToSectionProperty.NUMBER.getString(), s.getNumber())
              .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
              .iterate();
         });
-        System.out.println(g.V(articleId).outE().valueMap().with(WithOptions.tokens).toList());
 
         g.V(authorId)
          .addE(UserToSectionEdge.CREATED.getString())
-         .property(T.id, EdgeIdCreator.userCreateSection(authorId, sectionId))
+         .property(T.id, EdgeIdCreator.createId(authorId, sectionId,UserToSectionEdge.CREATED.getString()))
          .property(UserToSectionProperty.CREATED_TIME.getString(), now)
+         .property(UserToSectionProperty.UPDATED_TIME.getString(), now)
          .to(g.V(sectionId))
          .next();
 

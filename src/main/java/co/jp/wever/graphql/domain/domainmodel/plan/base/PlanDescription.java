@@ -6,7 +6,6 @@ import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
 public class PlanDescription {
-    private final static int MIN_WORD_COUNT = 1;
     private final static int MAX_WORD_COUNT = 500;
     private String value;
 
@@ -15,11 +14,6 @@ public class PlanDescription {
     }
 
     public static PlanDescription of(String description) {
-//        if (description.length() < MIN_WORD_COUNT) {
-//            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
-//                                             GraphQLErrorMessage.EMPTY_TEXT.getString());
-//        }
-
         if (description.length() > MAX_WORD_COUNT) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(), GraphQLErrorMessage.TEXT_OVER.getString());
         }

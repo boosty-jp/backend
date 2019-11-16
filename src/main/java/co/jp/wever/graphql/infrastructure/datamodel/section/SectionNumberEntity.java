@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class SectionNumberEntity {
     private String id;
-    private int number;
+    private long number;
 }

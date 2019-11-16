@@ -24,4 +24,5 @@ public interface FindArticleRepository {
 
     List<ArticleDetailEntity> findRelated(String userId);
 
+    String findAuthorId(String articleId);
 }

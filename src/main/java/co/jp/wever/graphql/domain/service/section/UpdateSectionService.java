@@ -3,16 +3,18 @@ package co.jp.wever.graphql.domain.service.section;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.section.SectionConverter;
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.converter.section.UpdateSectionConverter;
+import co.jp.wever.graphql.domain.domainmodel.section.UpdateSection;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.UpdateSectionRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UpdateSectionService {
 
@@ -25,24 +27,44 @@ public class UpdateSectionService {
         this.updateSectionRepository = updateSectionRepository;
     }
 
-    public void updateSection(String sectionId, SectionInput sectionInput, String userId) {
-        Section target = SectionConverter.toSection(findSectionRepository.findOne(sectionId));
-        Section updateSection = SectionConverter.toSection(sectionInput, userId);
+    public void updateSection(String sectionId, UpdateSectionInput sectionInput, Requester requester) {
+        log.info("update section id: {}", sectionInput.getId());
+        log.info("update section number: {}", sectionInput.getNumber());
+        log.info("update section text size: {}", sectionInput.getText().length());
 
-        if (!target.canUpdate(UserId.of(userId), updateSection.getSectionNumber())) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        UserId authorId = UserId.of(findSectionRepository.findAuthorId(sectionId));
+        UserId updaterId = UserId.of(requester.getUserId());
+
+        if (!authorId.same(updaterId)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        updateSectionRepository.updateOne(SectionEntityConverter.toSectionEntity(updateSection, sectionId));
+        UpdateSection section = UpdateSectionConverter.toUpdateSection(sectionInput);
+
+        updateSectionRepository.updateOne(section);
     }
 
-    public void likeSection(String sectionId, String userId) {
-        updateSectionRepository.likeOne(sectionId, userId);
+    public void likeSection(String sectionId, Requester requester) {
+        log.info("like sectionId: {}", sectionId);
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        updateSectionRepository.likeOne(sectionId, requester.getUserId());
     }
 
-    public void deleteLikeSection(String sectionId, String userId) {
-        updateSectionRepository.deleteLikeOne(sectionId, userId);
+    public void deleteLikeSection(String sectionId, Requester requester) {
+        log.info("delete sectionId: {}", sectionId);
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        updateSectionRepository.deleteLikeOne(sectionId, requester.getUserId());
     }
 }
 

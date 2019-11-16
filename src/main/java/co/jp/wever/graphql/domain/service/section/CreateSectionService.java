@@ -6,16 +6,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.application.datamodel.request.CreateSectionInput;
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.section.SectionConverter;
-import co.jp.wever.graphql.domain.domainmodel.section.Section;
+import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
+import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 import co.jp.wever.graphql.infrastructure.repository.section.CreateSectionRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.section.FindSectionRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class CreateSectionService {
 
@@ -28,8 +31,14 @@ public class CreateSectionService {
         this.createSectionRepository = createSectionRepository;
     }
 
-    public String createSection(String userId, String articleId, SectionInput sectionInput) {
-        Section section = SectionConverter.toSection(sectionInput, userId);
+    public String createSection(Requester requester, String articleId, CreateSectionInput sectionInput) {
+        log.info("create section to articleId: {}", articleId);
+        log.info("create section number: {}", sectionInput.getNumber());
+        log.info("create section text size: {}", sectionInput.getText().length());
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        FindSection findSection = FindSectionConverter.toSection(sectionInput, requester.getUserId());
         List<SectionNumberEntity> sectionNumbers = findSectionRepository.findAllNumberOnArticle(articleId);
         List<SectionNumberEntity> incrementNumbers = sectionNumbers.stream()
                                                                    .filter(s -> s.getNumber()
@@ -48,25 +57,25 @@ public class CreateSectionService {
         }
 
         if (!sectionNumbers.isEmpty()) {
-            int maxNumber = sectionNumbers.stream()
-                                          .map(s -> s.getNumber())
-                                          .collect(Collectors.toList())
-                                          .stream()
-                                          .mapToInt(v -> v)
-                                          .max()
-                                          .orElseThrow(() -> new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR
-                                                                                            .value(),
-                                                                                        GraphQLErrorMessage.INTERNAL_SERVER_ERROR
-                                                                                            .getString()));
+            long maxNumber = sectionNumbers.stream()
+                                           .map(s -> s.getNumber())
+                                           .collect(Collectors.toList())
+                                           .stream()
+                                           .mapToLong(v -> v)
+                                           .max()
+                                           .orElseThrow(() -> new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR
+                                                                                             .value(),
+                                                                                         GraphQLErrorMessage.INTERNAL_SERVER_ERROR
+                                                                                             .getString()));
             if (sectionInput.getNumber() > maxNumber + 1) {
                 throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                                  GraphQLErrorMessage.SECTION_NUMBER_INVALID.getString());
             }
         }
 
-        return createSectionRepository.addOne(userId,
+        return createSectionRepository.addOne(requester.getUserId(),
                                               articleId,
-                                              SectionEntityConverter.toSectionEntity(section),
+                                              SectionEntityConverter.toSectionEntity(findSection),
                                               incrementNumbers);
     }
 }

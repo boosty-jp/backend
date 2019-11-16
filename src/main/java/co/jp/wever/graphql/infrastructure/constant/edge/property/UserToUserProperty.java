@@ -1,7 +1,7 @@
 package co.jp.wever.graphql.infrastructure.constant.edge.property;
 
 public enum UserToUserProperty {
-    FOLLOWED_TIME("followedTime");
+    CREATED_TIME("createdTime"), UPDATED_TIME("updatedTime");
 
     private String value;
 

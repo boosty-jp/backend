@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanStatisticsEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanUserActionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
 
 public class PlanListItemEntityConverter {
@@ -14,6 +15,9 @@ public class PlanListItemEntityConverter {
         List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) result.get("tags");
 
         String statusResult = result.get("status").toString();
+        boolean userLiked = (boolean) result.get("userLiked");
+        boolean userLearned = (boolean) result.get("userLearned");
+        boolean userLearning = (boolean) result.get("userLearning");
         long like = (long) result.get("liked");
         long learned = (long) result.get("learned");
         long learning = (long) result.get("learning");
@@ -23,6 +27,11 @@ public class PlanListItemEntityConverter {
                                  .tags(tagResult.stream()
                                                 .map(t -> TagEntityConverter.toTagEntity(t))
                                                 .collect(Collectors.toList()))
+                                 .actions(PlanUserActionEntity.builder()
+                                                              .learned(userLearned)
+                                                              .liked(userLiked)
+                                                              .learning(userLearning)
+                                                              .build())
                                  .statistics(PlanStatisticsEntity.builder()
                                                                  .likeCount(like)
                                                                  .learnedCount(learned)

@@ -6,17 +6,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.plan.PlanConverter;
+import co.jp.wever.graphql.domain.converter.plan.FindPlanElementDetailConverter;
 import co.jp.wever.graphql.domain.converter.plan.PlanDetailConverter;
 import co.jp.wever.graphql.domain.converter.plan.PlanListItemConverter;
-import co.jp.wever.graphql.domain.domainmodel.plan.Plan;
 import co.jp.wever.graphql.domain.domainmodel.plan.PlanDetail;
 import co.jp.wever.graphql.domain.domainmodel.plan.PlanListItem;
-import co.jp.wever.graphql.domain.domainmodel.user.UserId;
+import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElementDetail;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanItemEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
 import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
 
@@ -29,11 +30,25 @@ public class FindPlanService {
         this.findPlanRepository = findPlanRepository;
     }
 
-    public PlanDetail findPlan(String planId, String userId) {
-        PlanDetailEntity planDetailEntity = findPlanRepository.findOne(planId);
+    public PlanListItem findOne(String planId, Requester requester) {
+
+        PlanListItemEntity planListItemEntity = findPlanRepository.findOne(planId, requester.getUserId());
+
+        PlanListItem planListItem = PlanListItemConverter.toPlanListItem(planListItemEntity);
+
+        if (!planListItem.published()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
+        }
+
+        return planListItem;
+    }
+
+    public PlanDetail findDetail(String planId, Requester requester) {
+        PlanDetailEntity planDetailEntity = findPlanRepository.findDetail(planId);
 
         PlanDetail planDetail = PlanDetailConverter.toPlanDetail(planDetailEntity);
-        if (!planDetail.canRead(UserId.of(userId))) {
+        if (!planDetail.canRead(requester)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
@@ -41,34 +56,60 @@ public class FindPlanService {
         return planDetail;
     }
 
-    public List<PlanListItem> findAllPlan(String userId) {
+    public List<PlanListItem> findAllPlan(Requester requester) {
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
 
-        List<PlanListItemEntity> planEntities = findPlanRepository.findAll(userId);
+        List<PlanListItemEntity> planEntities = findPlanRepository.findAll(requester.getUserId());
+
         return planEntities.stream().map(p -> PlanListItemConverter.toPlanListItem(p)).collect(Collectors.toList());
     }
 
-    public List<Plan> findAllPublishedPlan(String userId) {
-        List<PlanEntity> planEntities = findPlanRepository.findAllPublished(userId);
-        return planEntities.stream().map(p -> PlanConverter.toPlan(p)).collect(Collectors.toList());
+    public List<PlanListItem> findAllPublishedPlan(String userId) {
+        List<PlanListItemEntity> planEntities = findPlanRepository.findAllPublished(userId);
+        return planEntities.stream().map(p -> PlanListItemConverter.toPlanListItem(p)).collect(Collectors.toList());
     }
 
-    public List<Plan> findAllDraftedPlan(String userId) {
-        List<PlanEntity> planEntities = findPlanRepository.findAllDrafted(userId);
-        return planEntities.stream().map(p -> PlanConverter.toPlan(p)).collect(Collectors.toList());
+    public List<PlanItemEntity> findAllLikedPlan(Requester requester) {
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        return findPlanRepository.findAllLiked(requester.getUserId());
     }
 
-    public List<Plan> findAllLikedPlan(String userId) {
-        List<PlanEntity> planEntities = findPlanRepository.findAllLiked(userId);
-        return planEntities.stream().map(p -> PlanConverter.toPlan(p)).collect(Collectors.toList());
+    public List<LearningPlanItemEntity> findAllLearnedPlan(Requester requester) {
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        return findPlanRepository.findAllLearning(requester.getUserId());
     }
 
-    public List<Plan> findAllLearnedPlan(String userId) {
-        List<PlanEntity> planEntities = findPlanRepository.findAllLearned(userId);
-        return planEntities.stream().map(p -> PlanConverter.toPlan(p)).collect(Collectors.toList());
+    public List<LearningPlanItemEntity> findAllLearningPlan(Requester requester) {
+        //TODO: Entity返すのはやめる
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        return findPlanRepository.findAllLearning(requester.getUserId());
     }
 
-    public List<Plan> findAllLearningPlan(String userId) {
-        List<PlanEntity> planEntities = findPlanRepository.findAllLearning(userId);
-        return planEntities.stream().map(p -> PlanConverter.toPlan(p)).collect(Collectors.toList());
+    public List<FindPlanElementDetail> findAllPlanElementDetails(String planId, Requester requester) {
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        return findPlanRepository.findAllPlanElementDetails(planId, requester.getUserId())
+                                 .stream()
+                                 .map(p -> FindPlanElementDetailConverter.toFindPlanElementDetail(p))
+                                 .collect(Collectors.toList());
+    }
+
+    public List<PlanItemEntity> findFamous() {
+        return findPlanRepository.findFamous();
     }
 }

@@ -1,9 +1,7 @@
 type Query {
     allSectionOnArticle(articleId: ID!): [Section]!
-    allLikedSections(userId: ID!): [Section]!
+    allLikedSections(userId: ID!): [LikedSection]!
     allBookmarkedSections(userId: ID!): [Section]!
-    famousSections: [Section]!
-    relatedSections: [Section]!
 
     article(articleId: ID!): ArticleDetail!
     allArticles: [ArticleDetail]!
@@ -12,24 +10,40 @@ type Query {
     allLikedArticles(userId: ID!): [ArticleDetail]!
     allLearnedArticles(userId: ID!): [ArticleDetail]!
     famousArticles: [ArticleDetail]!
-    relatedArticles: [ArticleDetail]!
 
-    plan(planId: ID!): PlanDetail!
+    plan(planId: ID!): PlanListItem!
+    planDetail(planId: ID!): PlanDetail!
     allPlans: [PlanListItem]!
     allPublishedPlans(userId: ID!): [PlanDetail]!
     allDraftedPlans: [PlanDetail]!
-    allLikedPlans(userId: ID!): [PlanDetail]!
-    allLearningPlans(userId: ID!): [PlanDetail]!
+    allLikedPlans: [PlanItem]!
+    allLearningPlans(userId: ID!): [LearningPlanItem]!
     allLearnedPlans(userId: ID!): [PlanDetail]!
-    famousPlans: [PlanDetail]!
-    relatedPlans: [PlanDetail]!
+    famousPlans: [PlanItem]!
+    allPlanElementDetails(planId: ID!): [ElementDetail]!
 
     user(userId: ID!): User
+    famousTags: [TagStatistic]!
 }
 
 type PlanListItem{
-    base:PlanBase
+    base: PlanBase
     tags: [Tag]
+    action: PlanAction
+    statistics: PlanStatistics
+}
+
+type PlanItem {
+    base: PlanBase
+    tags: [Tag]
+    author: User
+    elementCount: Int
+    statistics: PlanStatistics
+}
+
+type LearningPlanItem{
+    base: PlanBase
+    action: PlanAction
     statistics: PlanStatistics
 }
 
@@ -62,6 +76,8 @@ type PlanAction {
     liked: Boolean!
     learning: Boolean!
     learned: Boolean!
+    learnedElementCount: Int!
+    allElementCount: Int!
 }
 
 type Element {
@@ -70,6 +86,26 @@ type Element {
     imageUrl: String
     type: String!
     number: Int!
+}
+
+type ElementDetail {
+    id: ID!
+    title: String
+    imageUrl: String
+    type: String!
+    number: Int!
+    action: PlanElementAction!
+    statistics: PlanElementStatistics!
+}
+
+type PlanElementAction {
+    liked: Boolean!
+    learned: Boolean!
+}
+
+type PlanElementStatistics{
+    like: Int!
+    learned: Int!
 }
 
 type ArticleDetail {
@@ -97,6 +133,11 @@ type ArticleStatistics {
 type ArticleAction {
     liked: Boolean!
     learned: Boolean!
+}
+
+type LikedSection {
+    articleId: String!
+    section: Section
 }
 
 type Section {
@@ -127,30 +168,42 @@ type Tag{
     name: String!
 }
 
-input SectionInput{
+type TagStatistic{
+    id: ID!
+    name: String!
+    related: Int!
+}
+
+input CreateSectionInput{
+    title: String!
+    text: String!
+    number: Int!
+}
+
+input UpdateSectionInput{
+    id: ID!
     title: String!
     text: String!
     number: Int!
 }
 
 input ArticleInput {
+    id: ID!
     title: String!
     imageUrl: String
     tags: [String]!
 }
 
 input PlanBaseInput {
+    id: ID!
     title: String!
     description: String!
     tags: [String]!
-    imageUrl: String
+    imageUrl: String!
 }
 
 input PlanElementInput{
     id: ID!
-    title: String,
-    imageUrl: String,
-    type: String!
     number: Int!
 }
 
@@ -158,25 +211,29 @@ input UserInput{
     displayName: String!
     description: String
     url: String
+    imageUrl: String
     tags: [String]
 }
 
 
 type Mutation {
-    createSection(articleId: ID!, section: SectionInput!): CreateResponse
-    updateSection(sectionId: ID!, section: SectionInput!): UpdateResponse
+    createSection(articleId: ID!, section: CreateSectionInput!): CreateResponse
+    updateSection(sectionId: ID!, section: UpdateSectionInput!): UpdateResponse
     deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
     likeSection(sectionId: ID!): UpdateResponse
     deleteLikeSection(sectionId: ID!): UpdateResponse
 
     initArticle: CreateResponse
-   # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
+    # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
     updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
     updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
     updateArticleTags(articleId: ID!, tags: [String]!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
-    publishArticle(articleId: ID!): UpdateResponse
-    draftArticle(articleId: ID!): UpdateResponse
+    #    publishArticle(articleId: ID!): UpdateResponse
+    #    draftArticle(articleId: ID!): UpdateResponse
+    publishArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
+    draftArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
+
     likeArticle(articleId: ID!): UpdateResponse
     deleteLikeArticle(articleId: ID!): UpdateResponse
     finishArticle(articleId: ID!): UpdateResponse
@@ -187,25 +244,21 @@ type Mutation {
     updatePlanImageUrl(planId: ID!, url: String!): UpdateImageResponse
     updatePlanTags(planId: ID!, tags: [String]!): UpdateResponse
     updatePlanDescription(planId: ID!, description: String!): UpdateResponse
-    createPlanBase(planBase: PlanBaseInput): CreateResponse
-    updatePlanBase(planId: ID!, planBase: PlanBaseInput!): UpdateResponse
-    createPlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
-    updatePlanElements(planId: ID!, elements: [PlanElementInput]!): UpdateResponse
 
     deletePlan(planId: ID!): UpdateResponse
-    publishPlan(planId: ID!): UpdateResponse
-    savePlan(planId: ID!, elements: [PlanElementInput], description: String, tags: [String]): UpdateResponse
-    draftPlan(planId: ID!): UpdateResponse
+    publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
+    draftPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
+    likePlan(planId: ID!): UpdateResponse
+    deleteLikePlan(planId: ID!): UpdateResponse
     startPlan(planId: ID!): UpdateResponse
     stopPlan(planId: ID!): UpdateResponse
     finishPlan(planId: ID!): UpdateResponse
 
     createUser(user: UserInput!): UpdateResponse
     updateUser(user: UserInput!): UpdateResponse
-    updateUserImage(imageUrl: String!):UpdateImageResponse
+    updateUserTags(tags: [String]!): UpdateResponse
+    updateUserImageUrl(url: String!):UpdateImageResponse
     deleteUser: UpdateResponse
-    followUser(userId: ID!): UpdateResponse
-    unFollowUser(userId: ID!): UpdateResponse
 
     createTag(name: String!): CreateTagResponse
 }

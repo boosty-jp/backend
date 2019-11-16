@@ -9,17 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.domain.domainmodel.section.SectionNumber;
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToSectionProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
-import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionNumberEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.section.LikedSectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 
@@ -40,8 +38,6 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
     public SectionEntity findOne(String sectionId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        //TODO: このクエリがどうなるか確認
-        // OKなら下の個別のクエリは不要
         Map<String, Object> result = g.V(sectionId)
                                       .project("base", "author", "status", "like", "number")
                                       .by(__.valueMap().with(WithOptions.tokens))
@@ -62,14 +58,7 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
 
     public List<SectionEntity> findAllDetailOnArticle(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        //        List<Map<String, Object>> allResults = g.V(articleId)
-        //                                                .out(ArticleToSectionEdge.INCLUDE.getString())
-        //                                                .hasLabel(VertexLabel.SECTION.getString())
-        //                                                .project("base", "like", "action")
-        //                                                .by(__.valueMap().with(WithOptions.tokens))
-        //                                                .by(__.in(UserToSectionEdge.LIKED.getString()).count())
-        //                                                .by(__.inE(UserToSectionEdge.LIKED.getString()).label().fold())
-        //                                                .toList();
+
         List<Map<String, Object>> results = g.V(articleId)
                                              .out(ArticleToSectionEdge.INCLUDE.getString())
                                              .hasLabel(VertexLabel.SECTION.getString())
@@ -84,8 +73,6 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
                                              .by(__.in(UserToSectionEdge.LIKED.getString()).count())
                                              .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
                                                    .values(ArticleToSectionProperty.NUMBER.getString()))
-                                             //                                             .by(__.inE(UserToSectionEdge.LIKED.getString())
-                                             //                                                   .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()).count()))
                                              .by(coalesce(__.inE(UserToSectionEdge.LIKED.getString())
                                                             .where(outV().hasId(userId)
                                                                          .hasLabel(VertexLabel.USER.getString()))
@@ -103,7 +90,6 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
                                                 .out(ArticleToSectionEdge.INCLUDE.getString())
                                                 .hasLabel(VertexLabel.SECTION.getString())
                                                 .project("id", "number")
-                                                //                                                .by(__.valueMap().with(WithOptions.tokens))
                                                 .by(__.id())
                                                 .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
                                                       .values(ArticleToSectionProperty.NUMBER.getString()))
@@ -114,9 +100,46 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
                          .collect(Collectors.toList());
     }
 
+    public String findAuthorId(String sectionId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        return (String) g.V(sectionId)
+                         .in(UserToSectionEdge.CREATED.getString())
+                         .hasLabel(VertexLabel.USER.getString())
+                         .id()
+                         .next();
+    }
+
     @Override
-    public List<SectionEntity> findAllLiked(String userId) {
-        return null;
+    public List<LikedSectionEntity> findAllLiked(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        List<Map<String, Object>> results = g.V(userId)
+                                             .out(UserToSectionEdge.LIKED.getString())
+                                             .hasLabel(VertexLabel.SECTION.getString())
+                                             .project("articleId", "base", "author", "status", "like", "number")
+                                             .by(__.in(ArticleToSectionEdge.INCLUDE.getString())
+                                                   .hasLabel(VertexLabel.ARTICLE.getString())
+                                                   .id())
+                                             .by(__.valueMap().with(WithOptions.tokens))
+                                             .by(__.in(UserToSectionEdge.CREATED.getString(),
+                                                       UserToSectionEdge.DELETED.getString())
+                                                   .hasLabel(VertexLabel.USER.getString())
+                                                   .id())
+                                             .by(__.inE(UserToSectionEdge.CREATED.getString(),
+                                                        UserToSectionEdge.DELETED.getString()).label())
+                                             .by(__.in(UserToSectionEdge.LIKED.getString()).count())
+                                             .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
+                                                   .values(ArticleToSectionProperty.NUMBER.getString()))
+                                             .toList();
+
+        // TODO: Converter作る
+        return results.stream()
+                      .map(r -> LikedSectionEntity.builder()
+                                                  .articleId((String) r.get("articleId"))
+                                                  .sectionEntity(SectionEntityConverter.toSectionEntity(r, true))
+                                                  .build())
+                      .collect(Collectors.toList());
     }
 
     @Override
