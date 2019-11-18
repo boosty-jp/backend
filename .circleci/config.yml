@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@1.0.0
+  slack: circleci/slack@1.0.0
+  aws-code-deploy: circleci/aws-code-deploy@0.09
 jobs:
   build:
     docker:
@@ -8,15 +12,19 @@ jobs:
       - checkout # ソースコードを引っ張ってくる
       - restore_cache: # `build.gradle` が変更されている場合に、保存されているキャッシュを復元
           key: graphql-{{ checksum "build.gradle" }}
-#      - run:
-#          name: Execute Test
-#          command: gradle test
       - run:
           name: Build
-          command: gradle build
+          command: ./gradlew assemble
       - save_cache: # 依存関係のキャッシュ
           paths:
             - ~/.gradle
           key: graphql-{{ checksum "build.gradle" }}
       - store_artifacts: # アーティファクトへの保存
           path: build/libs
+      - aws-s3/sync: # jarをs3にアップロードする
+          from: build/libs
+          to: AWS_S3_BUCKET_NAME
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_S3_REGION
+          overwrite: true
