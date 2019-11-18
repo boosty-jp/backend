@@ -48,8 +48,8 @@ public class NeptuneClient implements AutoCloseable {
         try {
             cluster = Cluster.build()
                              .addContactPoint(endpoint)
-                             .keyStore(certificateFilePath)
                              .enableSsl(true)
+                             .keyCertChainFile(certificateFilePath)
                              .port(port)
                              .maxInProcessPerConnection(maxInProcessPerConnection)
                              .minInProcessPerConnection(minInProcessPerConnection)
@@ -62,8 +62,6 @@ public class NeptuneClient implements AutoCloseable {
                              .create();
 
 
-            //TODO: Neptuneへの接続パラメータのチューニング行う
-            //            cluster = Cluster.build().addContactPoint(endpoint).port(port).create();
             g = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 
         } catch (Exception e) {
