@@ -3,5 +3,20 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:11.0.3-jdk-stretch
+    working_directory: ~/graphql
     steps:
-      - run: echo "Hello world"
+      - checkout # ソースコードを引っ張ってくる
+      - restore_cache: # `build.gradle` が変更されている場合に、保存されているキャッシュを復元
+          key: graphql-{{ checksum "build.gradle" }}
+#      - run:
+#          name: Execute Test
+#          command: gradle test
+      - run:
+          name: Build
+          command: gradle build
+      - save_cache: # 依存関係のキャッシュ
+          paths:
+            - ~/.gradle
+          key: graphql-{{ checksum "build.gradle" }}
+      - store_artifacts: # アーティファクトへの保存
+          path: build/libs

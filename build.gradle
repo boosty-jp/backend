@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'co.jp.wever'
-version = '0.0.1-SNAPSHOT'
+archivesBaseName = 'wever'
+version = '1.0-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
@@ -17,10 +18,10 @@ test {
 		includeEngines 'junit-jupiter'
 	}
 }
-
-springBoot {
-	executable = true
-}
+//
+//springBoot {
+//	executable = true
+//}
 
 dependencies {
 	implementation 'com.graphql-java:graphql-java:11.0'
