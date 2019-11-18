@@ -1,8 +1,8 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
-  slack: circleci/slack@1.0.0
-#  aws-code-deploy: circleci/aws-code-deploy@0.09
+  slack: circleci/slack@3.4.1
+#  aws-code-deploy: circleci/aws-code-deploy@0.0.9
 jobs:
   build:
     docker:
@@ -28,3 +28,7 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
           overwrite: true
+      - slack/status:
+          success_message: ':circleci-pass: Build Job Done. Uploaded jar file to S3.\n:github_octocat: User：$CIRCLE_USERNAME'
+          failure_message: ':circleci-fail: Build Job Failed.\n:github_octocat: User：$CIRCLE_USERNAME'
+          webhook: '${SLACK_WEBHOOK}'
