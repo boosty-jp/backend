@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  aws-s3: circleci/aws-s3@1.0.0
+  aws-s3: circleci/aws-s3@1.0.11
   slack: circleci/slack@1.0.0
 #  aws-code-deploy: circleci/aws-code-deploy@0.09
 jobs:
@@ -23,8 +23,8 @@ jobs:
           path: build/libs
       - aws-s3/sync: # jarをs3にアップロードする
           from: build/libs
-          to: AWS_S3_BUCKET_NAME
+          to: 's3://wever-content-artifact'
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_S3_REGION
+          aws-region: AWS_REGION
           overwrite: true
