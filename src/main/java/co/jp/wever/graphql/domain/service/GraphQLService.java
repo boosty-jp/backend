@@ -1,20 +1,25 @@
 package co.jp.wever.graphql.domain.service;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
+import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.service.datafetchers.ArticleDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.PlanDataFetchers;
 import co.jp.wever.graphql.domain.service.datafetchers.SectionDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.TagDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.UserDataFetcher;
+import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
@@ -44,8 +49,17 @@ public class GraphQLService {
 
     @PostConstruct
     private void loadSchema() throws IOException {
-        File schemaFile = new ClassPathResource("schema.graphql").getFile();
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(schemaFile);
+        //        File schemaFile = new ClassPathResource("schema.graphql").getFile();
+        InputStream is = new ClassPathResource("schema.graphql").getInputStream();
+        File file = File.createTempFile("tempSchema", ".graphql");
+        try {
+            FileUtils.copyInputStreamToFile(is, file);
+        } catch (IOException e) {
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+
+        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(file);
         RuntimeWiring wiring = buildRuntimeWiring();
         GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
         graphQL = GraphQL.newGraphQL(schema).build();
