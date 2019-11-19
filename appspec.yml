@@ -1,8 +1,8 @@
 version: 0.0
 os: linux
 files:
-    - source: wever-content.jar
-      destination: /var/myapp/
+    - source: /
+      destination: /opt/wever
       overwrite: yes
 hooks:
     ApplicationStop:

@@ -21,6 +21,19 @@ jobs:
           key: graphql-{{ checksum "build.gradle" }}
       - store_artifacts: # アーティファクトへの保存
           path: build/libs
+      - persist_to_workspace: # 他のジョブと共有するパス
+          root: . # workspaceのrootパス（絶対パスかworking_directoryからの相対パス）
+          paths:
+            - . # 共有するパス
+      - slack/status:
+          success_message: 'Build Job Done.'
+          failure_message: 'Build Job Failed.'
+          webhook: '${SLACK_WEBHOOK}'
+  upload:
+    working_directory: ~/graphql
+    steps:
+      - attach_workspace: # persist_to_workspaceで共有したパスを適用する
+            at: .
       - aws-s3/sync: # jarをs3にアップロードする
           from: build/libs
           to: 's3://wever-content-artifact'
@@ -29,6 +42,34 @@ jobs:
           aws-region: AWS_REGION
           overwrite: true
       - slack/status:
-          success_message: ':circleci-pass: Build Job Done. Uploaded jar file to S3.\n:github_octocat: User：$CIRCLE_USERNAME'
-          failure_message: ':circleci-fail: Build Job Failed.\n:github_octocat: User：$CIRCLE_USERNAME'
+          success_message: 'Upload Job Done.'
+          failure_message: 'Upload Job Failed.'
           webhook: '${SLACK_WEBHOOK}'
+  deploy:
+    working_directory: ~/graphql
+    steps:
+      - aws-s3/sync: # jarをs3にアップロードする
+          from: build/libs
+          to: 's3://wever-content-artifact'
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+          overwrite: true
+      - slack/status:
+          success_message: 'Upload Job Done.'
+          failure_message: 'Upload Job Failed.'
+          webhook: '${SLACK_WEBHOOK}'
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - upload:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - upload
