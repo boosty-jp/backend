@@ -1,8 +1,6 @@
 <configuration>
-  <property name="LOG_PATH" value="/var/log/wever" />
   <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-      <file>${LOG_PATH}/error.log</file>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%d [%p] %c{36} [%X{ip}] [%X{logId}] - %m%n</pattern>
       </layout>

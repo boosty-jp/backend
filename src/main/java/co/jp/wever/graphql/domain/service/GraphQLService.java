@@ -49,7 +49,7 @@ public class GraphQLService {
 
     @PostConstruct
     private void loadSchema() throws IOException {
-        //        File schemaFile = new ClassPathResource("schema.graphql").getFile();
+        // getFileはだとDeamon実行時のjavaコマンドで使えないのであえてInputStreamを使う
         InputStream is = new ClassPathResource("schema.graphql").getInputStream();
         File file = File.createTempFile("tempSchema", ".graphql");
         try {
