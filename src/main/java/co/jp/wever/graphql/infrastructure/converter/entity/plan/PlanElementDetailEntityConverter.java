@@ -35,4 +35,31 @@ public class PlanElementDetailEntityConverter {
                                       .Type(VertexConverter.toLabel(baseResult))
                                       .build();
     }
+
+    public static PlanElementDetailEntity toPlanElementDetailEntityForGuest(Map<String, Object> result) {
+        Map<Object, Object> baseResult = (Map<Object, Object>) result.get("base");
+        Map<Object, Object> edgeResult = (Map<Object, Object>) result.get("edge");
+
+        boolean userLiked = false;
+        boolean userLearned = false;
+        long like = (long) result.get("like");
+        long learning = (long) result.get("learned");
+
+        PlanElementStatisticsEntity planElementStatisticsEntity =
+            PlanElementStatisticsEntity.builder().learned(learning).like(like).build();
+
+        PlanElementActionEntity planElementActionEntity =
+            PlanElementActionEntity.builder().learned(userLearned).liked(userLiked).build();
+
+        return PlanElementDetailEntity.builder()
+                                      .id(VertexConverter.toId(baseResult))
+                                      .imageUrl(VertexConverter.toString(PlanVertexProperty.IMAGE_URL.getString(),
+                                                                         baseResult))
+                                      .number(VertexConverter.toNumber(edgeResult))
+                                      .action(planElementActionEntity)
+                                      .statistics(planElementStatisticsEntity)
+                                      .title(VertexConverter.toString(PlanVertexProperty.TITLE.getString(), baseResult))
+                                      .Type(VertexConverter.toLabel(baseResult))
+                                      .build();
+    }
 }

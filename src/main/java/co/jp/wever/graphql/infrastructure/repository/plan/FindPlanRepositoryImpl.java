@@ -386,6 +386,26 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
     }
 
     @Override
+    public List<PlanElementDetailEntity> findAllPlanElementDetailsForGuest(String planId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<String, Object>> results = g.V(planId)
+                                             .out(PlanToPlanElementEdge.INCLUDE.getString())
+                                             .hasLabel(VertexLabel.PLAN.getString(), VertexLabel.ARTICLE.getString())
+                                             .project("base", "edge", "like", "learned")
+                                             .by(__.valueMap().with(WithOptions.tokens))
+                                             .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
+                                                   .where(outV().hasId(planId))
+                                                   .valueMap())
+                                             .by(__.in(UserToPlanEdge.LIKED.getString()).count())
+                                             .by(__.in(UserToPlanEdge.LEARNED.getString()).count())
+                                             .toList();
+
+        return results.stream()
+                      .map(r -> PlanElementDetailEntityConverter.toPlanElementDetailEntityForGuest(r))
+                      .collect(Collectors.toList());
+    }
+
+    @Override
     public String findAuthorId(String planId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         return (String) g.V(planId)

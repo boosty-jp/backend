@@ -37,5 +37,7 @@ public interface FindPlanRepository {
 
     List<PlanElementDetailEntity> findAllPlanElementDetails(String planId, String userId);
 
+    List<PlanElementDetailEntity> findAllPlanElementDetailsForGuest(String planId);
+
     String findAuthorId(String planId);
 }

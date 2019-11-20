@@ -57,7 +57,7 @@ public class FindPlanService {
     }
 
     public List<PlanListItem> findAllPlan(Requester requester) {
-        if(requester.isGuest()){
+        if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -73,7 +73,7 @@ public class FindPlanService {
     }
 
     public List<PlanItemEntity> findAllLikedPlan(Requester requester) {
-        if(requester.isGuest()){
+        if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -81,7 +81,7 @@ public class FindPlanService {
     }
 
     public List<LearningPlanItemEntity> findAllLearnedPlan(Requester requester) {
-        if(requester.isGuest()){
+        if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -90,7 +90,7 @@ public class FindPlanService {
 
     public List<LearningPlanItemEntity> findAllLearningPlan(Requester requester) {
         //TODO: Entity返すのはやめる
-        if(requester.isGuest()){
+        if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -98,9 +98,12 @@ public class FindPlanService {
     }
 
     public List<FindPlanElementDetail> findAllPlanElementDetails(String planId, Requester requester) {
-        if(requester.isGuest()){
-            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
-                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        if (requester.isGuest()) {
+            // ゲスト用のクエリ
+            return findPlanRepository.findAllPlanElementDetailsForGuest(planId)
+                                     .stream()
+                                     .map(p -> FindPlanElementDetailConverter.toFindPlanElementDetail(p))
+                                     .collect(Collectors.toList());
         }
 
         return findPlanRepository.findAllPlanElementDetails(planId, requester.getUserId())
