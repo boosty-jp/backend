@@ -48,8 +48,8 @@ public class NeptuneClient implements AutoCloseable {
         try {
             cluster = Cluster.build()
                              .addContactPoint(endpoint)
-                             .enableSsl(true)
-                             .keyCertChainFile(certificateFilePath)
+//                             .enableSsl(true)
+//                             .keyCertChainFile(certificateFilePath)
                              .port(port)
                              .maxInProcessPerConnection(maxInProcessPerConnection)
                              .minInProcessPerConnection(minInProcessPerConnection)

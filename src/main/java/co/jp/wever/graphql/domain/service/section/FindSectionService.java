@@ -32,7 +32,7 @@ public class FindSectionService {
 
     public List<FindSection> findAllSectionsOnArticle(String articleId, Requester requester) {
         // TODO: ステータスだけ見たいので別の軽いクエリにしたい
-        ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
+        ArticleDetailEntity articleDetailEntity = findArticleRepository.findOneForGuest(articleId);
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 
         if (!articleDetail.canRead(requester)) {

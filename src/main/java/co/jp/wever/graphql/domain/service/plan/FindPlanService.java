@@ -45,7 +45,12 @@ public class FindPlanService {
     }
 
     public PlanDetail findDetail(String planId, Requester requester) {
-        PlanDetailEntity planDetailEntity = findPlanRepository.findDetail(planId);
+        PlanDetailEntity planDetailEntity;
+        if (requester.isGuest()) {
+            planDetailEntity = findPlanRepository.findDetailForGuest(planId);
+        } else {
+            planDetailEntity = findPlanRepository.findDetail(planId, requester.getUserId());
+        }
 
         PlanDetail planDetail = PlanDetailConverter.toPlanDetail(planDetailEntity);
         if (!planDetail.canRead(requester)) {

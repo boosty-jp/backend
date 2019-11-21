@@ -8,7 +8,9 @@ import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleD
 
 @Repository
 public interface FindArticleRepository {
-    ArticleDetailEntity findOne(String articleId);
+    ArticleDetailEntity findOne(String articleId, String userId);
+
+    ArticleDetailEntity findOneForGuest(String articleId);
 
     List<ArticleDetailEntity> findAll(String userId);
 

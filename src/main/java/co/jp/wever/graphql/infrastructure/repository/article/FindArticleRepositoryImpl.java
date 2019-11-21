@@ -20,8 +20,11 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertex
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleDetailEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
 
 @Component
 public class FindArticleRepositoryImpl implements FindArticleRepository {
@@ -33,11 +36,18 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
     }
 
     @Override
-    public ArticleDetailEntity findOne(String articleId) {
+    public ArticleDetailEntity findOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> allResult = g.V(articleId)
-                                         .project("base", "tags", "author", "status", "action", "liked", "learned")
+                                         .project("base",
+                                                  "tags",
+                                                  "author",
+                                                  "status",
+                                                  "userLiked",
+                                                  "userLearned",
+                                                  "liked",
+                                                  "learned")
                                          .by(__.valueMap().with(WithOptions.tokens))
                                          .by(__.out(ArticleToTagEdge.RELATED.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
@@ -58,13 +68,59 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                          .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
                                                     UserToArticleEdge.DELETED.getString(),
                                                     UserToArticleEdge.PUBLISHED.getString()).label())
-                                         .by(__.inE(UserToArticleEdge.LEARNED.getString(),
-                                                    UserToArticleEdge.LIKED.getString()).label().fold())
+                                         .by(coalesce(__.inE(UserToArticleEdge.LIKED.getString())
+                                                        .where(outV().hasId(userId)
+                                                                     .hasLabel(VertexLabel.USER.getString()))
+                                                        .limit(1)
+                                                        .constant(true), constant(false)))
+                                         .by(coalesce(__.inE(UserToArticleEdge.LEARNED.getString())
+                                                        .where(outV().hasId(userId)
+                                                                     .hasLabel(VertexLabel.USER.getString()))
+                                                        .limit(1)
+                                                        .constant(true), constant(false)))
                                          .by(__.in(UserToArticleEdge.LIKED.getString()).count())
                                          .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
                                          .next();
 
         return ArticleDetailEntityConverter.toArticleDetailEntity(allResult);
+    }
+
+    @Override
+    public ArticleDetailEntity findOneForGuest(String articleId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        Map<String, Object> allResult = g.V(articleId)
+                                         .project("base",
+                                                  "tags",
+                                                  "author",
+                                                  "status",
+                                                  "liked",
+                                                  "learned")
+                                         .by(__.valueMap().with(WithOptions.tokens))
+                                         .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                               .hasLabel(VertexLabel.TAG.getString())
+                                               .valueMap()
+                                               .with(WithOptions.tokens)
+                                               .fold())
+                                         .by(__.in(UserToArticleEdge.DRAFTED.getString(),
+                                                   UserToArticleEdge.DELETED.getString(),
+                                                   UserToArticleEdge.PUBLISHED.getString())
+                                               .hasLabel(VertexLabel.USER.getString())
+                                               .project("base", "tags")
+                                               .by(__.valueMap().with(WithOptions.tokens))
+                                               .by(__.out(UserToTagEdge.RELATED.getString())
+                                                     .hasLabel(VertexLabel.TAG.getString())
+                                                     .valueMap()
+                                                     .with(WithOptions.tokens)
+                                                     .fold()))
+                                         .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
+                                                    UserToArticleEdge.DELETED.getString(),
+                                                    UserToArticleEdge.PUBLISHED.getString()).label())
+                                         .by(__.in(UserToArticleEdge.LIKED.getString()).count())
+                                         .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                         .next();
+
+        return ArticleDetailEntityConverter.toArticleDetailEntityForGuest(allResult);
     }
 
     @Override

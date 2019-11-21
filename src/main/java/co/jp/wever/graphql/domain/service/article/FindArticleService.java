@@ -25,7 +25,12 @@ public class FindArticleService {
     }
 
     public ArticleDetail findArticleDetail(String articleId, Requester requester) {
-        ArticleDetailEntity articleDetailEntity = findArticleRepository.findOne(articleId);
+        ArticleDetailEntity articleDetailEntity;
+        if (requester.isGuest()) {
+            articleDetailEntity = findArticleRepository.findOneForGuest(articleId);
+        } else {
+            articleDetailEntity = findArticleRepository.findOne(articleId, requester.getUserId());
+        }
 
         ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
 

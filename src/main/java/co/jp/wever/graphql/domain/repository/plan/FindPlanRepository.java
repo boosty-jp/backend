@@ -15,7 +15,9 @@ import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListIte
 public interface FindPlanRepository {
     PlanListItemEntity findOne(String planId, String userId);
 
-    PlanDetailEntity findDetail(String planId);
+    PlanDetailEntity findDetail(String planId, String userId);
+
+    PlanDetailEntity findDetailForGuest(String planId);
 
     List<PlanListItemEntity> findAll(String id);
 
