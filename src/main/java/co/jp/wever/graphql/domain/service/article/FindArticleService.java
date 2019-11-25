@@ -47,13 +47,18 @@ public class FindArticleService {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        List<ArticleDetailEntity> results = findArticleRepository.findAll(requester.getUserId());
+        List<ArticleDetailEntity> results = findArticleRepository.findAll(requester.getUserId(), requester.getUserId());
 
         return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
-    public List<ArticleDetail> findAllPublishedArticle(String userId) {
-        List<ArticleDetailEntity> results = findArticleRepository.findAllPublished(userId);
+    public List<ArticleDetail> findAllPublishedArticle(String userId, Requester requester) {
+        List<ArticleDetailEntity> results;
+        if (requester.isGuest()) {
+            results = findArticleRepository.findAllPublishedForGuest(userId);
+        } else {
+            results = findArticleRepository.findAllPublished(userId, requester.getUserId());
+        }
 
         return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
@@ -63,22 +68,39 @@ public class FindArticleService {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        List<ArticleDetailEntity> results = findArticleRepository.findAllDrafted(requester.getUserId());
+        List<ArticleDetailEntity> results =
+            findArticleRepository.findAllDrafted(requester.getUserId(), requester.getUserId());
         return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
-    public List<ArticleDetail> findAllLikedArticle(String userId) {
-        List<ArticleDetailEntity> results = findArticleRepository.findAllLiked(userId);
+    public List<ArticleDetail> findAllLikedArticle(String userId, Requester requester) {
+        List<ArticleDetailEntity> results;
+        if (requester.isGuest()) {
+            results = findArticleRepository.findAllLikedForGuest(userId);
+        } else {
+            results = findArticleRepository.findAllLiked(userId, requester.getUserId());
+        }
         return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
-    public List<ArticleDetail> findAllLearnedArticle(String userId) {
-        List<ArticleDetailEntity> results = findArticleRepository.findAllLearned(userId);
+    public List<ArticleDetail> findAllLearnedArticle(String userId, Requester requester) {
+        List<ArticleDetailEntity> results;
+        if (requester.isGuest()) {
+            results = findArticleRepository.findAllLearnedForGuest(userId);
+        } else {
+            results = findArticleRepository.findAllLearned(userId, requester.getUserId());
+        }
         return results.stream().map(e -> ArticleDetailConverter.toArticleDetail(e)).collect(Collectors.toList());
     }
 
-    public List<ArticleDetail> findFamousArticle() {
-        List<ArticleDetailEntity> results = findArticleRepository.findFamous();
+    public List<ArticleDetail> findFamousArticle(Requester requester) {
+        List<ArticleDetailEntity> results;
+        if (requester.isGuest()) {
+            results = findArticleRepository.findFamousForGuest();
+        } else {
+            results = findArticleRepository.findFamous(requester.getUserId());
+        }
+
         List<ArticleDetailEntity> filtered = results.stream()
                                                     .filter(r -> r.getBase()
                                                                   .getStatus()

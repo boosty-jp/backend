@@ -12,17 +12,25 @@ public interface FindArticleRepository {
 
     ArticleDetailEntity findOneForGuest(String articleId);
 
-    List<ArticleDetailEntity> findAll(String userId);
+    List<ArticleDetailEntity> findAll(String targetUserId, String requesterId);
 
-    List<ArticleDetailEntity> findAllPublished(String userId);
+    List<ArticleDetailEntity> findAllPublished(String publisherUserId, String requesterId);
 
-    List<ArticleDetailEntity> findAllDrafted(String userId);
+    List<ArticleDetailEntity> findAllPublishedForGuest(String publisherUserId);
 
-    List<ArticleDetailEntity> findAllLiked(String userId);
+    List<ArticleDetailEntity> findAllDrafted(String draftedUserId, String requesterId);
 
-    List<ArticleDetailEntity> findAllLearned(String userId);
+    List<ArticleDetailEntity> findAllLiked(String likedUserId, String requesterId);
 
-    List<ArticleDetailEntity> findFamous();
+    List<ArticleDetailEntity> findAllLikedForGuest(String likedUserId);
+
+    List<ArticleDetailEntity> findAllLearned(String learnedUserId, String requesterId);
+
+    List<ArticleDetailEntity> findAllLearnedForGuest(String learnedUserId);
+
+    List<ArticleDetailEntity> findFamous(String requesterId);
+
+    List<ArticleDetailEntity> findFamousForGuest();
 
     List<ArticleDetailEntity> findRelated(String userId);
 

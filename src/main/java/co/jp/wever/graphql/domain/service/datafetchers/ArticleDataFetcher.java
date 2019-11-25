@@ -69,8 +69,9 @@ public class ArticleDataFetcher {
 
     public DataFetcher allPublishedArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            return findArticleService.findAllPublishedArticle(userId)
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String publisherUserId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllPublishedArticle(publisherUserId, requester)
                                      .stream()
                                      .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
@@ -89,8 +90,9 @@ public class ArticleDataFetcher {
 
     public DataFetcher allLikedArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            return findArticleService.findAllLikedArticle(userId)
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String likedUserId = dataFetchingEnvironment.getArgument("userId");
+            return findArticleService.findAllLikedArticle(likedUserId, requester)
                                      .stream()
                                      .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
@@ -99,9 +101,9 @@ public class ArticleDataFetcher {
 
     public DataFetcher allLearnedArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
-
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return findArticleService.findAllLearnedArticle(userId)
+            return findArticleService.findAllLearnedArticle(userId, requester)
                                      .stream()
                                      .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
                                      .collect(Collectors.toList());
@@ -109,11 +111,13 @@ public class ArticleDataFetcher {
     }
 
     public DataFetcher famousArticlesDataFetcher() {
-        return dataFetchingEnvironment -> findArticleService.findFamousArticle()
-                                                            .stream()
-                                                            .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(
-                                                                a))
-                                                            .collect(Collectors.toList());
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            return findArticleService.findFamousArticle(requester)
+                                     .stream()
+                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
+                                     .collect(Collectors.toList());
+        };
     }
 
     ///////////////////////////////
