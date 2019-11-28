@@ -15,3 +15,5 @@ aws:
 algolia:
   applicationId: ${ALGOLIA_APPLICATION_ID}
   adminKey: ${ALGOLIA_ADMIN_KEY}
+firebase:
+  databaseUrl: ${FIREBASE_DATABASE_URL}

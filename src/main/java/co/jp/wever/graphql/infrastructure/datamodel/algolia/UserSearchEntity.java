@@ -11,5 +11,6 @@ public class UserSearchEntity {
     private String objectID;
     private String displayName;
     private String description;
+    private String imageUrl;
     private List<String> tags;
 }

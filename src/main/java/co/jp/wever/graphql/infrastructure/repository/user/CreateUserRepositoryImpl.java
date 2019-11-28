@@ -40,17 +40,18 @@ public class CreateUserRepositoryImpl implements CreateUserRepository {
                          .coalesce(unfold(),
                                    g.addV(VertexLabel.USER.getString())
                                     .property(T.id, userEntity.getUserId())
-                                    .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getUserId())
+                                    .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
+                                    .property(UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
                                     .property(UserVertexProperty.CREATED_TIME.getString(), now))
                          .next()
                          .id()
                          .toString();
 
-        //TODO: Algoliaにデータ追加する
         algoliaClient.getUserIndex()
                      .saveObjectAsync(UserSearchEntity.builder()
                                                       .objectID(userId)
-                                                      .displayName(userId)
+                                                      .displayName(userEntity.getDisplayName())
+                                                      .imageUrl(userEntity.getImageUrl())
                                                       .description("")
                                                       .tags(new ArrayList<String>())
                                                       .build());

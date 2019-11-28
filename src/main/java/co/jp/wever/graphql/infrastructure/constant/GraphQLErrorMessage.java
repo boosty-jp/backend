@@ -34,6 +34,7 @@ public enum GraphQLErrorMessage {
     NEED_LOGIN("ログインして、ご利用ください"),
     INVALID_TOKEN("無効なトークン形式です"),
     EXPIRED_TOKEN("期限切れのトークンです"),
+    NEED_RE_AUTH("期限切れのセッションです。ログインしてご利用ください"),
     FOLLOW_OWN("自分自身はフォローできません");
 
     private String value;
