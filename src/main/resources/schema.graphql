@@ -23,6 +23,7 @@ type Query {
     allPlanElementDetails(planId: ID!): [ElementDetail]!
 
     user(userId: ID!): User
+    profile: User
     famousTags: [TagStatistic]!
 }
 

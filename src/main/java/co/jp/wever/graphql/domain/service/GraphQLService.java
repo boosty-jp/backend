@@ -110,6 +110,7 @@ public class GraphQLService {
                                                           .dataFetcher("allPlanElementDetails",
                                                                        planDataFetchers.allPlanElementDetailsDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
+                                                          .dataFetcher("profile", userDataFetcher.profileDataFetcher())
                                                           .dataFetcher("famousTags",
                                                                        tagDataFetcher.famousTagDataFetcher()))
                             .type("Mutation",

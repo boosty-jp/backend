@@ -18,6 +18,7 @@ public class NeptuneClient implements AutoCloseable {
         @Value("${aws.neptune.endpoint}") String endpoint,
         @Value("${aws.neptune.certificateFilePath}") String certificateFilePath,
         @Value("${aws.neptune.port}") int port,
+        @Value("${aws.neptune.useSSL}") boolean useSSL,
         @Value("${aws.neptune.maxInProcessPerConnection}") int maxInProcessPerConnection,
         @Value("${aws.neptune.minInProcessPerConnection}") int minInProcessPerConnection,
         @Value("${aws.neptune.maxConnectionPoolSize}") int maxConnectionPoolSize,
@@ -27,6 +28,7 @@ public class NeptuneClient implements AutoCloseable {
         init(endpoint,
              certificateFilePath,
              port,
+             useSSL,
              maxInProcessPerConnection,
              minInProcessPerConnection,
              maxConnectionPoolSize,
@@ -39,6 +41,7 @@ public class NeptuneClient implements AutoCloseable {
         String endpoint,
         String certificateFilePath,
         int port,
+        boolean useSSL,
         int maxInProcessPerConnection,
         int minInProcessPerConnection,
         int maxConnectionPoolSize,
@@ -48,7 +51,7 @@ public class NeptuneClient implements AutoCloseable {
         try {
             cluster = Cluster.build()
                              .addContactPoint(endpoint)
-//                             .enableSsl(true)
+                             .enableSsl(useSSL)
                              .keyCertChainFile(certificateFilePath)
                              .port(port)
                              .maxInProcessPerConnection(maxInProcessPerConnection)

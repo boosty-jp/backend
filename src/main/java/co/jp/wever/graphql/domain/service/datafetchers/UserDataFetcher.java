@@ -51,6 +51,12 @@ public class UserDataFetcher {
         };
     }
 
+    public DataFetcher profileDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            return UserResponseConverter.toUserResponse(findUserService.findProfile(requester));
+        };
+    }
     ///////////////////////////////
     ///////// Mutations   /////////
     ///////////////////////////////

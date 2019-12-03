@@ -6,6 +6,7 @@ aws:
     endpoint: ${AWS_NEPTUNE_ENDPOINT}
     certificateFilePath: ${AWS_NEPTUNE_CERTIFICATE_PATH}
     port: ${AWS_NEPTUNE_PORT}
+    useSSL: ${AWS_NEPTUNE_USE_SSL}
     maxInProcessPerConnection: ${AWS_NEPTUNE_MAX_PROCESS_PER_CONNECTION}
     minInProcessPerConnection: ${AWS_NEPTUNE_MIN_PROCESS_PER_CONNECTION}
     maxConnectionPoolSize: ${AWS_NEPTUNE_MAX_CONNECTION_POOL_SIZE}
