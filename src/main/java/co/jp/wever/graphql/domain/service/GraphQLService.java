@@ -95,10 +95,10 @@ public class GraphQLService {
                                                                        courseDataFetchers.famousCoursesDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
                                                           .dataFetcher("account", userDataFetcher.accountDataFetcher())
-                                                          .dataFetcher("famousSkills",
-                                                                       userDataFetcher.profileDataFetcher())
                                                           .dataFetcher("famousTags",
-                                                                       tagDataFetcher.famousTagDataFetcher()))
+                                                                       tagDataFetcher.famousTagDataFetcher())
+                                                          .dataFetcher("famousSkills",
+                                                                       userDataFetcher.profileDataFetcher()))
                             .type("Mutation",
                                   typeWiring -> typeWiring.dataFetcher("publishArticle",
                                                                        articleDataFetcher.publishArticleDataFetcher())

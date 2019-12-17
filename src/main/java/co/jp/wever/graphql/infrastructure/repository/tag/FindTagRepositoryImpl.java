@@ -13,8 +13,8 @@ import co.jp.wever.graphql.domain.repository.tag.FindTagRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.TagVertexProperty;
-import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagStatisticEntityConverter;
-import co.jp.wever.graphql.infrastructure.datamodel.tag.TagStatisticEntity;
+import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 
 @Component
 public class FindTagRepositoryImpl implements FindTagRepository {
@@ -24,12 +24,7 @@ public class FindTagRepositoryImpl implements FindTagRepository {
         this.neptuneClient = neptuneClient;
     }
 
-    public boolean exists(String name) {
-        GraphTraversalSource g = neptuneClient.newTraversal();
-        return g.V().hasLabel(VertexLabel.TAG.getString()).has(TagVertexProperty.NAME.getString(), name).hasNext();
-    }
-
-    public List<TagStatisticEntity> famousTags() {
+    public List<TagEntity> famousTags() {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<Object, Object>> results = g.V()
@@ -42,7 +37,7 @@ public class FindTagRepositoryImpl implements FindTagRepository {
                                              .toList();
 
         return results.stream()
-                      .map(r -> TagStatisticEntityConverter.toTagStatisticEntity(r))
+                      .map(r -> TagEntityConverter.toTagEntityWithRelatedCount(r))
                       .collect(Collectors.toList());
     }
 }

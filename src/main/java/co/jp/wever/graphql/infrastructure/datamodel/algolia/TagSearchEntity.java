@@ -8,4 +8,5 @@ import lombok.Data;
 public class TagSearchEntity {
     private String objectID;
     private String name;
+    private int relatedCount;
 }

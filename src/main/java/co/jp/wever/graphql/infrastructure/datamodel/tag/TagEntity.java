@@ -8,6 +8,5 @@ import lombok.Data;
 public class TagEntity {
     private String id;
     private String name;
-    //TODO: 検討する
-    //    private String imageUrl;
+    private long relatedCount;
 }

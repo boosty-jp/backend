@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.converter.article.ArticleDetailResponseConverter;
 import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.converter.section.UpdateSectionInputsConverter;

@@ -12,4 +12,8 @@ public class TagResponseConverter {
     public static TagResponse toTagResponse(TagEntity tag) {
         return TagResponse.builder().id(tag.getId()).name(tag.getName()).build();
     }
+
+    public static TagResponse toTagResponseWithRelatedCount(TagEntity tag) {
+        return TagResponse.builder().id(tag.getId()).name(tag.getName()).relatedCount(tag.getRelatedCount()).build();
+    }
 }

@@ -39,7 +39,8 @@ public class CreateTagRepositoryImpl {
                         .id()
                         .toString();
 
-        algoliaClient.getTagIndex().saveObjectAsync(TagSearchEntity.builder().objectID(tagId).name(name).build());
+        algoliaClient.getTagIndex()
+                     .saveObjectAsync(TagSearchEntity.builder().objectID(tagId).name(name).relatedCount(0).build());
         return tagId;
     }
 }

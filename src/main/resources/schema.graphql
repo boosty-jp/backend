@@ -188,28 +188,28 @@ input UserSettingInput {
 }
 
 type Mutation {
-    publishArticle(articleId: ID, article: ArticleInput!): UpdateResponse
-    draftArticle(articleId: ID, article: ArticleInput!): UpdateResponse
-    deleteArticle(articleId: ID!): UpdateResponse
+    publishArticle(articleId: ID, article: ArticleInput!): Boolean
+    draftArticle(articleId: ID, article: ArticleInput!): Boolean
+    deleteArticle(articleId: ID!): Boolean
 
-    likeArticle(articleId: ID!): UpdateResponse
-    deleteLikeArticle(articleId: ID!): UpdateResponse
-    learnArticle(articleId: ID!): UpdateResponse
-    deleteLearnArticle(articleId: ID!): UpdateResponse
+    likeArticle(articleId: ID!): Boolean
+    deleteLikeArticle(articleId: ID!): Boolean
+    learnArticle(articleId: ID!): Boolean
+    deleteLearnArticle(articleId: ID!): Boolean
 
-    publishCourse(courseId: ID, course: CourseInput!): UpdateResponse
-    draftCourse(courseId: ID, course: CourseInput!): UpdateResponse
-    deleteCourse(courseId: ID!): UpdateResponse
+    publishCourse(courseId: ID, course: CourseInput!): Boolean
+    draftCourse(courseId: ID, course: CourseInput!): Boolean
+    deleteCourse(courseId: ID!): Boolean
 
-    likeCourse(courseId: ID!): UpdateResponse
-    deleteLikeCourse(courseId: ID!): UpdateResponse
-    startCourse(courseId: ID!): UpdateResponse
-    deleteStartCourse(courseId: ID!): UpdateResponse
+    likeCourse(courseId: ID!): Boolean
+    deleteLikeCourse(courseId: ID!): Boolean
+    startCourse(courseId: ID!): Boolean
+    deleteStartCourse(courseId: ID!): Boolean
 
-    createUser(user: UserInput!): UpdateResponse
-    updateUser(user: UserInput!): UpdateResponse
-    updateUserSetting(setting: UserSettingInput): UpdateResponse
-    deleteUser: UpdateResponse
+    createUser(user: UserInput!): Boolean
+    updateUser(user: UserInput!): Boolean
+    updateUserSetting(setting: UserSettingInput): Boolean
+    deleteUser: Boolean
 
     createTag(name: String!): CreateTagResponse
 }
@@ -221,7 +221,4 @@ type CreateResponse {
 type CreateTagResponse {
     id: ID!,
     name: String!
-}
-
-type UpdateResponse {
 }

@@ -4,11 +4,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import co.jp.wever.graphql.infrastructure.datamodel.tag.TagStatisticEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 
 @Repository
 public interface FindTagRepository {
-    boolean exists(String name);
-
-    List<TagStatisticEntity> famousTags();
+    List<TagEntity> famousTags();
 }

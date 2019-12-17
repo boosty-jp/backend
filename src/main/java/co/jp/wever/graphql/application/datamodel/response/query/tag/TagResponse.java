@@ -8,5 +8,5 @@ import lombok.Data;
 public class TagResponse {
     private String id;
     private String name;
-    private int relatedCount;
+    private long relatedCount;
 }
