@@ -1,291 +1,227 @@
 type Query {
-    allSectionOnArticle(articleId: ID!): [Section]!
-    allLikedSections(userId: ID!): [LikedSection]!
-    allBookmarkedSections(userId: ID!): [Section]!
+    article(articleId: ID!): Article!
+    allArticles: [Article]!
+    allPublishedArticles(userId: ID!): [Article]!
+    allDraftedArticles: [Article]!
+    allLikedArticles(userId: ID!): [Article]!
+    allLearnedArticles(userId: ID!): [Article]!
+    famousArticles: [Article]!
 
-    article(articleId: ID!): ArticleDetail!
-    allArticles: [ArticleDetail]!
-    allPublishedArticles(userId: ID!): [ArticleDetail]!
-    allDraftedArticles: [ArticleDetail]!
-    allLikedArticles(userId: ID!): [ArticleDetail]!
-    allLearnedArticles(userId: ID!): [ArticleDetail]!
-    famousArticles: [ArticleDetail]!
+    course(courseId: ID!): Course!
+    allCourses: [Course]!
+    allPublishedCourses(userId: ID!): [Course]!
+    allDraftedCourses: [Course]!
+    allLikedCourses: [Course]!
+    allLearningCourses(userId: ID!): [Course]!
+    allLearnedCourses(userId: ID!): [Course]!
+    famousCourses: [Course]!
 
-    plan(planId: ID!): PlanListItem!
-    planDetail(planId: ID!): PlanDetail!
-    allPlans: [PlanListItem]!
-    allPublishedPlans(userId: ID!): [PlanDetail]!
-    allDraftedPlans: [PlanDetail]!
-    allLikedPlans: [PlanItem]!
-    allLearningPlans(userId: ID!): [LearningPlanItem]!
-    allLearnedPlans(userId: ID!): [PlanDetail]!
-    famousPlans: [PlanItem]!
-    allPlanElementDetails(planId: ID!): [ElementDetail]!
-
-    user(userId: ID!): User
-    profile: User
-    famousTags: [TagStatistic]!
+    user(userId: ID!): User!
+    account: Account!
+    famousTags: [Tag]!
+    famousSkills: [Skill]!
 }
 
-type PlanListItem{
-    base: PlanBase
-    tags: [Tag]
-    action: PlanAction
-    statistics: PlanStatistics
-}
-
-type PlanItem {
-    base: PlanBase
-    tags: [Tag]
-    author: User
-    elementCount: Int
-    statistics: PlanStatistics
-}
-
-type LearningPlanItem{
-    base: PlanBase
-    action: PlanAction
-    statistics: PlanStatistics
-}
-
-type PlanDetail {
-    base: PlanBase
-    author: User
-    tags: [Tag]
-    elements: [Element]
-    statistics: PlanStatistics,
-    action: PlanAction
-}
-
-type PlanBase{
+type User {
     id: ID!
-    title: String!
-    description: String!
-    imageUrl: String!
-    status: String!
-    createDate: String!
-    updateDate: String!
-}
-
-type PlanStatistics {
-    like: Int!
-    learning: Int!
-    learned: Int!
-}
-
-type PlanAction {
-    liked: Boolean!
-    learning: Boolean!
-    learned: Boolean!
-    learnedElementCount: Int!
-    allElementCount: Int!
-}
-
-type Element {
-    id: ID!
-    title: String
+    displayName: String
     imageUrl: String
-    type: String!
-    number: Int!
+    description: String
+    url: String
+    twitter: String
+    facebook: String
+
+    articles: Articles
+    courses: Courses
 }
 
-type ElementDetail {
-    id: ID!
-    title: String
-    imageUrl: String
-    type: String!
-    number: Int!
-    action: PlanElementAction!
-    statistics: PlanElementStatistics!
+type Account {
+    user: User
+    setting: AccountSetting
 }
 
-type PlanElementAction {
-    liked: Boolean!
-    learned: Boolean!
+type AccountSetting {
+    skillPublic: Boolean!
+    learnPublic: Boolean!
+    likePublic: Boolean!
 }
 
-type PlanElementStatistics{
-    like: Int!
-    learned: Int!
-}
-
-type ArticleDetail {
-    base: ArticleBase
-    tags: [Tag]
-    author: User
-    statistics: ArticleStatistics
-    action: ArticleAction
-}
-
-type ArticleBase {
+type Article {
     id: ID!
     title: String!
     imageUrl: String!
     status: String!
+    textUrl: String!
     createDate: String!
     updateDate: String!
+
+    tags: [Tag]
+    author: User
+    skills: [Skill]
+    actionCount: ActionCount
+    accountAction: AccountAction
 }
 
-type ArticleStatistics {
-    like: Int!
-    learned: Int!
+type Articles {
+    learned: [Article]
+    liked: [Article]
+    published: [Article]
+    drafted: [Article]
 }
 
-type ArticleAction {
-    liked: Boolean!
-    learned: Boolean!
-}
-
-type LikedSection {
-    articleId: String!
-    section: Section
+type Content {
+    article: Article!
+    number: Int!
 }
 
 type Section {
     id: ID!
-    title: String!
-    text: String!
     number: Int!
-    authorId: String!
-    statistics: SectionStatistics
-    liked: Boolean!
+    title: String!
+    contents: [Content]
+    createDate: String
+    updateDate: String
 }
 
-type SectionStatistics{
-    like: Int!
-}
-
-type User{
+type Course {
     id: ID!
-    displayName: String!
-    imageUrl: String!
-    description: String!
-    url: String!
+    title: String
+    description: String
+    imageUrl: String
+    publish: Boolean
+    createDate: String
+    updateDate: String
+
     tags: [Tag]
+    sections: [Section]
+    author: User
+
+    actionCount: ActionCount
+    accountAction: AccountAction
+    learnStatus: LearnStatus
 }
 
-type Tag{
+type Courses {
+    learned: [Course]
+    liked: [Course]
+    published: [Course]
+    drafted: [Course]
+}
+
+type Tag {
     id: ID!
     name: String!
+    relatedCount: Int
 }
 
-type TagStatistic{
+type Skill {
     id: ID!
     name: String!
-    related: Int!
+    relatedCount: Int
+    level: Int
 }
 
-input CreateSectionInput{
-    title: String!
-    text: String!
-    number: Int!
+type ActionCount {
+    likeCount: Int
+    learedCount: Int
 }
 
-input UpdateSectionInput{
-    id: ID!
-    title: String!
-    text: String!
-    number: Int!
+type AccountAction {
+    liked: Boolean
+    learned: Boolean
+}
+
+type LearnStatus {
+    progress: Int
+    status: String
 }
 
 input ArticleInput {
     id: ID!
     title: String!
     imageUrl: String
-    tags: [String]!
+    textUrl: String!
+
+    tagIds: [String]!
+    skills: [SkillInput]!
 }
 
-input PlanBaseInput {
+input SkillInput {
+    id: ID!
+    level: Int
+}
+
+input CourseInput {
     id: ID!
     title: String!
-    description: String!
-    tags: [String]!
-    imageUrl: String!
+    imageUrl: String
+    description: String
+
+    tagIds: [String]!
+    sections: [SectionInput]!
 }
 
-input PlanElementInput{
-    id: ID!
-    number: Int!
+input SectionInput {
+    title: String!
+    number: Int
+    contents: [ContentInput]
 }
 
-input UserInput{
+input ContentInput {
+    articleId: ID!
+    number: Int
+}
+
+input AccountInput{
     displayName: String!
     description: String
-    url: String
     imageUrl: String
-    tags: [String]
+    url: String
+    twitter: String
+    facebook: String
 }
 
+input AccountSettingInput {
+    skillPublic: Boolean!
+    learnPublic: Boolean!
+    likePublic: Boolean!
+}
 
 type Mutation {
-    createSection(articleId: ID!, section: CreateSectionInput!): CreateResponse
-    updateSection(sectionId: ID!, section: UpdateSectionInput!): UpdateResponse
-    deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
-    likeSection(sectionId: ID!): UpdateResponse
-    deleteLikeSection(sectionId: ID!): UpdateResponse
-
-    initArticle: CreateResponse
-    # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
-    updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
-    updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
-    updateArticleTags(articleId: ID!, tags: [String]!): UpdateResponse
+    publishArticle(articleId: ID, article: ArticleInput!): UpdateResponse
+    draftArticle(articleId: ID, article: ArticleInput!): UpdateResponse
     deleteArticle(articleId: ID!): UpdateResponse
-    #    publishArticle(articleId: ID!): UpdateResponse
-    #    draftArticle(articleId: ID!): UpdateResponse
-    publishArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
-    draftArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
 
     likeArticle(articleId: ID!): UpdateResponse
     deleteLikeArticle(articleId: ID!): UpdateResponse
-    finishArticle(articleId: ID!): UpdateResponse
-    deleteFinishArticle(articleId: ID!): UpdateResponse
+    learnArticle(articleId: ID!): UpdateResponse
+    deleteLearnArticle(articleId: ID!): UpdateResponse
 
-    initPlan: CreateResponse
-    updatePlanTitle(planId: ID!, title: String!): UpdateResponse
-    updatePlanImageUrl(planId: ID!, url: String!): UpdateImageResponse
-    updatePlanTags(planId: ID!, tags: [String]!): UpdateResponse
-    updatePlanDescription(planId: ID!, description: String!): UpdateResponse
+    publishCourse(courseId: ID, course: CourseInput!): UpdateResponse
+    draftCourse(courseId: ID, course: CourseInput!): UpdateResponse
+    deleteCourse(courseId: ID!): UpdateResponse
 
-    deletePlan(planId: ID!): UpdateResponse
-    publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
-    draftPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
-    likePlan(planId: ID!): UpdateResponse
-    deleteLikePlan(planId: ID!): UpdateResponse
-    startPlan(planId: ID!): UpdateResponse
-    stopPlan(planId: ID!): UpdateResponse
-    finishPlan(planId: ID!): UpdateResponse
+    likeCourse(courseId: ID!): UpdateResponse
+    deleteLikeCourse(courseId: ID!): UpdateResponse
+    startCourse(courseId: ID!): UpdateResponse
+    deleteStartCourse(courseId: ID!): UpdateResponse
 
-    createUser(user: UserInput!): UpdateResponse
-    updateUser(user: UserInput!): UpdateResponse
-    updateUserTags(tags: [String]!): UpdateResponse
-    updateUserImageUrl(url: String!):UpdateImageResponse
-    deleteUser: UpdateResponse
+    createAccount(user: AccountInput!): UpdateResponse
+    updateAccount(user: AccountInput!): UpdateResponse
+    updateAccountSetting(setting: AccountSettingInput): UpdateResponse
+    deleteAccount : UpdateResponse
 
     createTag(name: String!): CreateTagResponse
 }
 
 type CreateResponse {
     id: ID!,
-    error: Error
 }
 
 type CreateTagResponse {
     id: ID!,
     name: String!
-    error: Error
 }
 
 type UpdateResponse {
-    error: Error
-}
-
-type UpdateImageResponse {
-    url: String
-    error: Error
-}
-
-
-type Error{
-    errorCode: String
-    errorMessage: String
 }

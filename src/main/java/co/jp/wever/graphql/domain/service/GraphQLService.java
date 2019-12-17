@@ -15,8 +15,7 @@ import javax.annotation.PostConstruct;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.service.datafetchers.ArticleDataFetcher;
-import co.jp.wever.graphql.domain.service.datafetchers.PlanDataFetchers;
-import co.jp.wever.graphql.domain.service.datafetchers.SectionDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.CourseDataFetchers;
 import co.jp.wever.graphql.domain.service.datafetchers.TagDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.UserDataFetcher;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -33,13 +32,10 @@ public class GraphQLService {
     private GraphQL graphQL;
 
     @Autowired
-    private PlanDataFetchers planDataFetchers;
+    private CourseDataFetchers courseDataFetchers;
 
     @Autowired
     private ArticleDataFetcher articleDataFetcher;
-
-    @Autowired
-    private SectionDataFetcher sectionDataFetcher;
 
     @Autowired
     private UserDataFetcher userDataFetcher;
@@ -68,15 +64,7 @@ public class GraphQLService {
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
                             .type("Query",
-                                  typeWiring -> typeWiring.dataFetcher("allSectionOnArticle",
-                                                                       sectionDataFetcher.allSectionsOnArticleDataFetcher())
-                                                          .dataFetcher("allLikedSections",
-                                                                       sectionDataFetcher.allLikedSectionsDataFetcher())
-                                                          .dataFetcher("allBookmarkedSections",
-                                                                       sectionDataFetcher.allBookmarkedSectionsDataFetcher())
-                                                          .dataFetcher("famousSections",
-                                                                       sectionDataFetcher.famousSectionsDataFetcher())
-                                                          .dataFetcher("article",
+                                  typeWiring -> typeWiring.dataFetcher("article",
                                                                        articleDataFetcher.articleDataFetcher())
                                                           .dataFetcher("allArticles",
                                                                        articleDataFetcher.allArticlesDataFetcher())
@@ -90,97 +78,63 @@ public class GraphQLService {
                                                                        articleDataFetcher.allLearnedArticlesDataFetcher())
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
-                                                          .dataFetcher("plan", planDataFetchers.planDataFetcher())
-                                                          .dataFetcher("planDetail",
-                                                                       planDataFetchers.planDetailDataFetcher())
-                                                          .dataFetcher("allPlans",
-                                                                       planDataFetchers.allPlanDataFetcher())
-                                                          .dataFetcher("allPublishedPlans",
-                                                                       planDataFetchers.allPublishedPlansDataFetcher())
-                                                          .dataFetcher("allDraftedPlans",
-                                                                       planDataFetchers.allDraftedPlansDataFetcher())
-                                                          .dataFetcher("allLikedPlans",
-                                                                       planDataFetchers.allLikedPlansDataFetcher())
-                                                          .dataFetcher("allLearningPlans",
-                                                                       planDataFetchers.allLearningPlansDataFetcher())
-                                                          .dataFetcher("allLearnedPlans",
-                                                                       planDataFetchers.allLearnedPlansDataFetcher())
-                                                          .dataFetcher("famousPlans",
-                                                                       planDataFetchers.famousPlansDataFetcher())
-                                                          .dataFetcher("allPlanElementDetails",
-                                                                       planDataFetchers.allPlanElementDetailsDataFetcher())
+                                                          .dataFetcher("course", courseDataFetchers.courseDataFetcher())
+                                                          .dataFetcher("allCourses",
+                                                                       courseDataFetchers.allCourseDataFetcher())
+                                                          .dataFetcher("allPublishedCourses",
+                                                                       courseDataFetchers.allPublishedCoursesDataFetcher())
+                                                          .dataFetcher("allDraftedCourses",
+                                                                       courseDataFetchers.allDraftedCoursesDataFetcher())
+                                                          .dataFetcher("allLikedCourses",
+                                                                       courseDataFetchers.allLikedCoursesDataFetcher())
+                                                          .dataFetcher("allLearningCourses",
+                                                                       courseDataFetchers.allLearningCoursesDataFetcher())
+                                                          .dataFetcher("allLearnedCourses",
+                                                                       courseDataFetchers.allLearnedCoursesDataFetcher())
+                                                          .dataFetcher("famousCourses",
+                                                                       courseDataFetchers.famousCoursesDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
-                                                          .dataFetcher("profile", userDataFetcher.profileDataFetcher())
+                                                          .dataFetcher("account", userDataFetcher.profileDataFetcher())
+                                                          .dataFetcher("famousSkills",
+                                                                       userDataFetcher.profileDataFetcher())
                                                           .dataFetcher("famousTags",
                                                                        tagDataFetcher.famousTagDataFetcher()))
                             .type("Mutation",
-                                  typeWiring -> typeWiring.dataFetcher("createSection",
-                                                                       sectionDataFetcher.createSectionDataFetcher())
-                                                          .dataFetcher("updateSection",
-                                                                       sectionDataFetcher.updateSectionElementDataFetcher())
-                                                          .dataFetcher("likeSection",
-                                                                       sectionDataFetcher.likeSectionElementDataFetcher())
-                                                          .dataFetcher("deleteLikeSection",
-                                                                       sectionDataFetcher.deleteLikeSectionElementDataFetcher())
-                                                          .dataFetcher("deleteSection",
-                                                                       sectionDataFetcher.deleteSectionElementDataFetcher())
-                                                          .dataFetcher("initArticle",
-                                                                       articleDataFetcher.initArticleDataFetcher())
-                                                          .dataFetcher("updateArticleTitle",
-                                                                       articleDataFetcher.updateArticleTitleDataFetcher())
-                                                          .dataFetcher("updateArticleImageUrl",
-                                                                       articleDataFetcher.updateArticleImageUrlDataFetcher())
-                                                          .dataFetcher("updateArticleTags",
-                                                                       articleDataFetcher.updateArticleTagsDataFetcher())
-                                                          .dataFetcher("deleteArticle",
-                                                                       articleDataFetcher.deleteArticleDataFetcher())
-                                                          .dataFetcher("publishArticle",
+                                  typeWiring -> typeWiring.dataFetcher("publishArticle",
                                                                        articleDataFetcher.publishArticleDataFetcher())
                                                           .dataFetcher("draftArticle",
                                                                        articleDataFetcher.draftArticleDataFetcher())
+                                                          .dataFetcher("deleteArticle",
+                                                                       articleDataFetcher.deleteArticleDataFetcher())
                                                           .dataFetcher("likeArticle",
                                                                        articleDataFetcher.likeArticleDataFetcher())
                                                           .dataFetcher("deleteLikeArticle",
                                                                        articleDataFetcher.deleteLikeArticleDataFetcher())
-                                                          .dataFetcher("finishArticle",
+                                                          .dataFetcher("learnArticle",
                                                                        articleDataFetcher.finishArticleDataFetcher())
-                                                          .dataFetcher("deleteFinishArticle",
+                                                          .dataFetcher("deleteLearnArticle",
                                                                        articleDataFetcher.deleteFinishArticleDataFetcher())
-                                                          .dataFetcher("initPlan",
-                                                                       planDataFetchers.initPlanDataFetcher())
-                                                          .dataFetcher("updatePlanTitle",
-                                                                       planDataFetchers.updatePlanTitleDataFetcher())
-                                                          .dataFetcher("updatePlanTags",
-                                                                       planDataFetchers.updatePlanTagsDataFetcher())
-                                                          .dataFetcher("updatePlanDescription",
-                                                                       planDataFetchers.updatePlanDescriptionDataFetcher())
-                                                          .dataFetcher("updatePlanImageUrl",
-                                                                       planDataFetchers.updatePlanImageUrlDataFetcher())
-                                                          .dataFetcher("deletePlan",
-                                                                       planDataFetchers.deletePlanDataFetcher())
-                                                          .dataFetcher("publishPlan",
-                                                                       planDataFetchers.publishPlanDataFetcher())
-                                                          .dataFetcher("draftPlan",
-                                                                       planDataFetchers.draftPlanDataFetcher())
-                                                          .dataFetcher("likePlan",
-                                                                       planDataFetchers.likePlanDataFetcher())
-                                                          .dataFetcher("deleteLikePlan",
-                                                                       planDataFetchers.deleteLikePlanDataFetcher())
-                                                          .dataFetcher("startPlan",
-                                                                       planDataFetchers.startPlanDataFetcher())
-                                                          .dataFetcher("stopPlan",
-                                                                       planDataFetchers.stopPlanDataFetcher())
-                                                          .dataFetcher("finishPlan",
-                                                                       planDataFetchers.finishPlanDataFetcher())
-                                                          .dataFetcher("createUser",
+                                                          .dataFetcher("publishCourse",
+                                                                       courseDataFetchers.publishCourseDataFetcher())
+                                                          .dataFetcher("draftCourse",
+                                                                       courseDataFetchers.draftCourseDataFetcher())
+                                                          .dataFetcher("deleteCourse",
+                                                                       courseDataFetchers.deleteCourseDataFetcher())
+                                                          .dataFetcher("likeCourse",
+                                                                       courseDataFetchers.likeCourseDataFetcher())
+                                                          .dataFetcher("deleteLikeCourse",
+                                                                       courseDataFetchers.deleteLikeCourseDataFetcher())
+                                                          .dataFetcher("startCourse",
+                                                                       courseDataFetchers.startCourseDataFetcher())
+                                                          .dataFetcher("deleteStartCourse",
+                                                                       courseDataFetchers.stopCourseDataFetcher())
+                                                          .dataFetcher("createAccount",
                                                                        userDataFetcher.createUserDataFetcher())
-                                                          .dataFetcher("updateUser",
+                                                          .dataFetcher("updateAccount",
                                                                        userDataFetcher.updateUserDataFetcher())
-                                                          .dataFetcher("updateUserImageUrl",
-                                                                       userDataFetcher.updateUserImageDataFetcher())
-                                                          .dataFetcher("updateUserTags",
-                                                                       userDataFetcher.updateUserTagsDataFetcher())
-                                                          .dataFetcher("deleteUser",
+                                                          .dataFetcher("updateAccountSetting",
+                                                                       userDataFetcher.updateUserDataFetcher())
+                                                          .dataFetcher("deleteAccount",
                                                                        userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("createTag",
                                                                        tagDataFetcher.createTagDataFetcher()))
