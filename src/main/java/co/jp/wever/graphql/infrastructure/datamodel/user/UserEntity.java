@@ -1,8 +1,5 @@
 package co.jp.wever.graphql.infrastructure.datamodel.user;
 
-import java.util.List;
-
-import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +11,10 @@ public class UserEntity {
     private String imageUrl;
     private String description;
     private String url;
-    private List<TagEntity> tags;
+    private String twitterId;
+    private String facebookId;
+    private Boolean learnPublic;
+    private Boolean likePublic;
+    private Boolean skillPublic;
+    private Boolean deleted;
 }

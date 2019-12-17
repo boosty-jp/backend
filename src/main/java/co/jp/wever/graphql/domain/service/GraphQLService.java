@@ -94,7 +94,7 @@ public class GraphQLService {
                                                           .dataFetcher("famousCourses",
                                                                        courseDataFetchers.famousCoursesDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
-                                                          .dataFetcher("account", userDataFetcher.profileDataFetcher())
+                                                          .dataFetcher("account", userDataFetcher.accountDataFetcher())
                                                           .dataFetcher("famousSkills",
                                                                        userDataFetcher.profileDataFetcher())
                                                           .dataFetcher("famousTags",
@@ -128,13 +128,13 @@ public class GraphQLService {
                                                                        courseDataFetchers.startCourseDataFetcher())
                                                           .dataFetcher("deleteStartCourse",
                                                                        courseDataFetchers.stopCourseDataFetcher())
-                                                          .dataFetcher("createAccount",
+                                                          .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())
-                                                          .dataFetcher("updateAccount",
+                                                          .dataFetcher("updateUser",
                                                                        userDataFetcher.updateUserDataFetcher())
-                                                          .dataFetcher("updateAccountSetting",
-                                                                       userDataFetcher.updateUserDataFetcher())
-                                                          .dataFetcher("deleteAccount",
+                                                          .dataFetcher("updateUserSetting",
+                                                                       userDataFetcher.updateUserSettingDataFetcher())
+                                                          .dataFetcher("deleteUser",
                                                                        userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("createTag",
                                                                        tagDataFetcher.createTagDataFetcher()))

@@ -1,11 +1,5 @@
 package co.jp.wever.graphql.domain.domainmodel.user;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
-
 public class User {
 
     private UserId userId;
@@ -13,7 +7,8 @@ public class User {
     private UserDescription description;
     private UserImageUrl imageUrl;
     private UserUrl url;
-    private List<Tag> tags;
+    private UserTwitterId twitterId;
+    private UserFacebookId facebookId;
 
     public User(
         UserId userId,
@@ -21,13 +16,15 @@ public class User {
         UserDescription description,
         UserImageUrl imageUrl,
         UserUrl url,
-        List<Tag> tags) {
+        UserTwitterId twitterId,
+        UserFacebookId facebookId) {
         this.userId = userId;
         this.description = description;
         this.displayName = displayName;
         this.imageUrl = imageUrl;
         this.url = url;
-        this.tags = tags;
+        this.twitterId = twitterId;
+        this.facebookId = facebookId;
     }
 
     public UserId getUserId() {
@@ -50,16 +47,11 @@ public class User {
         return url;
     }
 
-    public List<Tag> getTags() {
-        return tags;
+    public UserTwitterId getTwitterId() {
+        return twitterId;
     }
 
-    public boolean hasDuplicatedTagIds() {
-        List<String> tagIds = tags.stream().map(t -> t.getId().getValue()).collect(Collectors.toList());
-        return tagIds.stream().filter(t -> Collections.frequency(tagIds, t) > 1).count() > 0 ? true : false;
-    }
-
-    public boolean hasDisplayName(){
-        return displayName.getValue().length() > 0;
+    public UserFacebookId getFacebookId() {
+        return facebookId;
     }
 }

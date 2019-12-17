@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.application.converter.tag;
 
-import co.jp.wever.graphql.application.datamodel.response.query.tag.TagStatisticResponse;
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagStatisticEntity;
 
 public class TagStatisticResponseConverter {

@@ -28,22 +28,22 @@ type User {
     imageUrl: String
     description: String
     url: String
-    twitter: String
-    facebook: String
+    twitterId: String
+    facebookId: String
 
     articles: Articles
     courses: Courses
 }
 
-type Account {
-    user: User
-    setting: AccountSetting
-}
-
-type AccountSetting {
+type UserSetting {
     skillPublic: Boolean!
     learnPublic: Boolean!
     likePublic: Boolean!
+}
+
+type Account {
+    user: User
+    setting: UserSetting
 }
 
 type Article {
@@ -88,7 +88,7 @@ type Course {
     title: String
     description: String
     imageUrl: String
-    publish: Boolean
+    status: String
     createDate: String
     updateDate: String
 
@@ -172,16 +172,16 @@ input ContentInput {
     number: Int
 }
 
-input AccountInput{
+input UserInput{
     displayName: String!
     description: String
     imageUrl: String
     url: String
-    twitter: String
-    facebook: String
+    twitterId: String
+    facebookId: String
 }
 
-input AccountSettingInput {
+input UserSettingInput {
     skillPublic: Boolean!
     learnPublic: Boolean!
     likePublic: Boolean!
@@ -206,10 +206,10 @@ type Mutation {
     startCourse(courseId: ID!): UpdateResponse
     deleteStartCourse(courseId: ID!): UpdateResponse
 
-    createAccount(user: AccountInput!): UpdateResponse
-    updateAccount(user: AccountInput!): UpdateResponse
-    updateAccountSetting(setting: AccountSettingInput): UpdateResponse
-    deleteAccount : UpdateResponse
+    createUser(user: UserInput!): UpdateResponse
+    updateUser(user: UserInput!): UpdateResponse
+    updateUserSetting(setting: UserSettingInput): UpdateResponse
+    deleteUser: UpdateResponse
 
     createTag(name: String!): CreateTagResponse
 }

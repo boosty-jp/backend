@@ -4,8 +4,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 import co.jp.wever.graphql.domain.repository.user.CreateUserRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
@@ -42,7 +40,16 @@ public class CreateUserRepositoryImpl implements CreateUserRepository {
                                     .property(T.id, userEntity.getUserId())
                                     .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
                                     .property(UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
-                                    .property(UserVertexProperty.CREATED_TIME.getString(), now))
+                                    .property(UserVertexProperty.DESCRIPTION.getString(), "")
+                                    .property(UserVertexProperty.URL.getString(), "")
+                                    .property(UserVertexProperty.TWITTER_ID.getString(), "")
+                                    .property(UserVertexProperty.FACEBOOK_ID.getString(), "")
+                                    .property(UserVertexProperty.LEARN_PUBLIC.getString(), true)
+                                    .property(UserVertexProperty.LIKE_PUBLIC.getString(), true)
+                                    .property(UserVertexProperty.SKILL_PUBLIC.getString(), true)
+                                    .property(UserVertexProperty.DELETED.getString(), false)
+                                    .property(UserVertexProperty.CREATED_TIME.getString(), now)
+                                    .property(UserVertexProperty.UPDATED_TIME.getString(), now))
                          .next()
                          .id()
                          .toString();
@@ -53,7 +60,6 @@ public class CreateUserRepositoryImpl implements CreateUserRepository {
                                                       .displayName(userEntity.getDisplayName())
                                                       .imageUrl(userEntity.getImageUrl())
                                                       .description("")
-                                                      .tags(new ArrayList<String>())
                                                       .build());
 
         return userId;

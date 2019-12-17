@@ -12,8 +12,6 @@ import co.jp.wever.graphql.application.converter.section.UpdateSectionInputsConv
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
-import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
-import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
 import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
@@ -123,49 +121,6 @@ public class ArticleDataFetcher {
     ///////////////////////////////
     ///////// Mutations   /////////
     ///////////////////////////////
-    public DataFetcher initArticleDataFetcher() {
-
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String articleId = createArticleService.initArticle(requester);
-
-            return CreateResponse.builder().id(articleId).build();
-        };
-    }
-
-    public DataFetcher updateArticleTitleDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String articleId = dataFetchingEnvironment.getArgument("articleId");
-            String title = dataFetchingEnvironment.getArgument("title");
-
-            updateArticleService.updateArticleTitle(articleId, requester, title);
-            return UpdateResponse.builder().build();
-        };
-    }
-
-    public DataFetcher updateArticleImageUrlDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String articleId = dataFetchingEnvironment.getArgument("articleId");
-            String imageUrl = dataFetchingEnvironment.getArgument("url");
-
-            updateArticleService.updateArticleImageUrl(articleId, requester, imageUrl);
-            return UpdateImageResponse.builder().url(imageUrl).build();
-        };
-    }
-
-    public DataFetcher updateArticleTagsDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String articleId = dataFetchingEnvironment.getArgument("articleId");
-            List<String> tags = (List<String>) dataFetchingEnvironment.getArgument("tags");
-
-            updateArticleService.updateArticleTags(articleId, requester, tags);
-            return UpdateResponse.builder().build();
-        };
-    }
-
     public DataFetcher deleteArticleDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);

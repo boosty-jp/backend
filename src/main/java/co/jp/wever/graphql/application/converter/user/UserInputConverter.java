@@ -2,7 +2,6 @@ package co.jp.wever.graphql.application.converter.user;
 
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
 import java.util.Map;
 
 import co.jp.wever.graphql.application.datamodel.request.UserInput;
@@ -15,9 +14,10 @@ public class UserInputConverter {
             return UserInput.builder()
                             .displayName(input.get("displayName").toString())
                             .description(input.get("description").toString())
-                            .url(input.get("url").toString())
                             .imageUrl(input.get("imageUrl").toString())
-                            .tags((List<String>) input.get("tags"))
+                            .url(input.get("url").toString())
+                            .twitterId(input.get("twitterId").toString())
+                            .facebookId(input.get("facebookId").toString())
                             .build();
         } catch (Exception e) {
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),

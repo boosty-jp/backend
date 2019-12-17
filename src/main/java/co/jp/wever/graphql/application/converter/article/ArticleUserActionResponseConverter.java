@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.application.converter.article;
 
-import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleUserActionResponse;
 import co.jp.wever.graphql.domain.domainmodel.article.action.ArticleUserAction;
 
 public class ArticleUserActionResponseConverter {

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+import io.netty.util.internal.StringUtil;
 
 public class UserDisplayName {
 
@@ -18,6 +19,11 @@ public class UserDisplayName {
         if (value.length() > MAX_WORD_COUNT) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.USER_NAME_OVER.getString());
+        }
+
+        if (StringUtil.isNullOrEmpty(value)) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.USER_NAME_EMPTY.getString());
         }
 
         return new UserDisplayName(value);

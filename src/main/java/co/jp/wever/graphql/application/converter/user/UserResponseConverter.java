@@ -1,9 +1,6 @@
 package co.jp.wever.graphql.application.converter.user;
 
-import java.util.stream.Collectors;
-
-import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
-import co.jp.wever.graphql.application.datamodel.response.query.UserResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.user.UserResponse;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
@@ -15,10 +12,8 @@ public class UserResponseConverter {
                            .description(user.getDescription().getValue())
                            .imageUrl(user.getImageUrl().getValue())
                            .url(user.getUrl().getValue())
-                           .tags(user.getTags()
-                                     .stream()
-                                     .map(t -> TagResponseConverter.toTagResponse(t))
-                                     .collect(Collectors.toList()))
+                           .twitterId(user.getTwitterId().getValue())
+                           .facebookId(user.getFacebookId().getValue())
                            .build();
     }
 
@@ -26,7 +21,11 @@ public class UserResponseConverter {
         return UserResponse.builder()
                            .id(user.getUserId())
                            .displayName(user.getDisplayName())
+                           .description(user.getDescription())
                            .imageUrl(user.getImageUrl())
+                           .url(user.getUrl())
+                           .twitterId(user.getTwitterId())
+                           .facebookId(user.getFacebookId())
                            .build();
     }
 }

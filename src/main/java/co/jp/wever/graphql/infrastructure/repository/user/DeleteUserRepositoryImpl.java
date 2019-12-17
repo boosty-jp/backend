@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.domain.repository.user.DeleteUserRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.UserVertexProperty;
+
+import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
 @Component
 public class DeleteUserRepositoryImpl implements DeleteUserRepository {
@@ -17,6 +20,11 @@ public class DeleteUserRepositoryImpl implements DeleteUserRepository {
     @Override
     public void deleteUser(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        g.V(userId).drop().iterate();
+        long now = System.currentTimeMillis();
+
+        g.V(userId)
+         .property(single, UserVertexProperty.DELETED.getString(), true)
+         .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
+         .next();
     }
 }

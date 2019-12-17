@@ -24,6 +24,8 @@ public enum GraphQLErrorMessage {
     SECTION_EMPTY("セクションを入力してください"),
     USER_NAME_OVER("ユーザー名は30文字以内にしてください"),
     USER_NAME_EMPTY("ユーザー名を入力してください"),
+    USER_NOT_FOUND("対象のユーザーが見つかりません"),
+    INVALID_SNS_ID("正しいIDを指定してください"),
     FORBIDDEN_REQUEST("権限のないリクエストです"),
     INVALID_PLAN_ELEMENT_ID("下書きまたは削除済みの要素が含まれています"),
     TAG_DUPLICATED("タグが重複しています"),

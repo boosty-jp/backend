@@ -2,15 +2,15 @@ package co.jp.wever.graphql.domain.service.datafetchers;
 
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
+import co.jp.wever.graphql.application.converter.user.AccountResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserInputConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
+import co.jp.wever.graphql.application.converter.user.UserSettingInputConverter;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
-import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import co.jp.wever.graphql.domain.service.user.CreateUserService;
 import co.jp.wever.graphql.domain.service.user.DeleteUserService;
@@ -51,18 +51,19 @@ public class UserDataFetcher {
         };
     }
 
-    public DataFetcher profileDataFetcher() {
+    public DataFetcher accountDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            return UserResponseConverter.toUserResponse(findUserService.findProfile(requester));
+            return AccountResponseConverter.toAccountResponse(findUserService.findAccount(requester));
         };
     }
+
     ///////////////////////////////
     ///////// Mutations   /////////
     ///////////////////////////////
     public DataFetcher createUserDataFetcher() {
         return dataFetchingEnvironment -> {
-            Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("user");
+            Map<String, Object> userInputMap = dataFetchingEnvironment.getArgument("user");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
             createUserService.createUser(UserInputConverter.toUserInput(userInputMap), requester);
@@ -72,30 +73,21 @@ public class UserDataFetcher {
 
     public DataFetcher updateUserDataFetcher() {
         return dataFetchingEnvironment -> {
+            Map<String, Object> userInputMap = dataFetchingEnvironment.getArgument("user");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            Map<String, Object> userInputMap = (Map) dataFetchingEnvironment.getArgument("user");
 
             updateUserService.updateUser(UserInputConverter.toUserInput(userInputMap), requester);
             return UpdateResponse.builder().build();
         };
     }
 
-    public DataFetcher updateUserImageDataFetcher() {
+    public DataFetcher updateUserSettingDataFetcher() {
         return dataFetchingEnvironment -> {
+            Map<String, Object> userSettingInputMap = dataFetchingEnvironment.getArgument("setting");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String imageUrl = dataFetchingEnvironment.getArgument("url");
 
-            updateUserService.updateUserImage(imageUrl, requester);
-            return UpdateImageResponse.builder().url(imageUrl).build();
-        };
-    }
-
-    public DataFetcher updateUserTagsDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            List<String> tags = dataFetchingEnvironment.getArgument("tags");
-
-            updateUserService.updateUserTags(tags, requester);
+            updateUserService.updateUserSetting(UserSettingInputConverter.toUserSettingInput(userSettingInputMap),
+                                                requester);
             return UpdateResponse.builder().build();
         };
     }

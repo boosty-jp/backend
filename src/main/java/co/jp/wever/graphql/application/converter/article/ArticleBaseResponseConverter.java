@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.application.converter.article;
 
-import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleBaseResponse;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.infrastructure.util.DateToStringConverter;
 

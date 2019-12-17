@@ -29,6 +29,14 @@ public class VertexConverter {
         return ((List<Object>) target.get(key)).get(0).toString();
     }
 
+    public static Boolean toBool(String key, Map<Object, Object> target) {
+        if (!hasKey(key, target)) {
+            return false;
+        }
+
+        return (Boolean) ((List<Object>) target.get(key)).get(0);
+    }
+
     public static long toLong(String key, Map<Object, Object> target) {
         try {
             return Long.parseLong(toString(key, target));
@@ -40,7 +48,7 @@ public class VertexConverter {
 
     public static int toInt(String key, Map<Object, Object> target) {
         try {
-           return Integer.parseInt(toString(key, target));
+            return Integer.parseInt(toString(key, target));
         } catch (NumberFormatException e) {
             //TODO: ログ
             return 0;
