@@ -1,36 +1,36 @@
-package co.jp.wever.graphql.domain.domainmodel.article.statistics;
+package co.jp.wever.graphql.domain.domainmodel.article.base;
 
 import org.springframework.http.HttpStatus;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+import io.netty.util.internal.StringUtil;
 
-public class ArticleLearnedCount {
+public class ArticleTextUrl {
+    private String value;
 
-    private long value;
-    private final static long MIN_VALUE = 0;
-    private final static long MAX_VALUE = 999_999_999;
+    // TODO: S3の画像URLのサイズを確認する
+    private final static int MAX_URL_SIZE = 2048;
 
-    private ArticleLearnedCount(long value) {
+    private ArticleTextUrl(String value) {
         this.value = value;
     }
 
-    public static ArticleLearnedCount of(long value) {
-        if (value < MIN_VALUE) {
+    public static ArticleTextUrl of(String value) {
+        if (StringUtil.isNullOrEmpty(value)) {
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
-        if (value > MAX_VALUE) {
+        if (value.length() > MAX_URL_SIZE) {
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
-        return new ArticleLearnedCount(value);
+        return new ArticleTextUrl(value);
     }
 
-    public long getValue() {
+    public String getValue() {
         return value;
     }
 }
-

@@ -66,16 +66,8 @@ public class GraphQLService {
                             .type("Query",
                                   typeWiring -> typeWiring.dataFetcher("article",
                                                                        articleDataFetcher.articleDataFetcher())
-                                                          .dataFetcher("allArticles",
-                                                                       articleDataFetcher.allArticlesDataFetcher())
-                                                          .dataFetcher("allPublishedArticles",
-                                                                       articleDataFetcher.allPublishedArticlesDataFetcher())
-                                                          .dataFetcher("allDraftedArticles",
-                                                                       articleDataFetcher.allDraftedArticlesDataFetcher())
-                                                          .dataFetcher("allLikedArticles",
-                                                                       articleDataFetcher.allLikedArticlesDataFetcher())
-                                                          .dataFetcher("allLearnedArticles",
-                                                                       articleDataFetcher.allLearnedArticlesDataFetcher())
+                                                          .dataFetcher("createdArticles",
+                                                                       articleDataFetcher.createdArticlesDataFetcher())
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
                                                           .dataFetcher("course", courseDataFetchers.courseDataFetcher())

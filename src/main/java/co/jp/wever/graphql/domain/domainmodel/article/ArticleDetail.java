@@ -3,10 +3,9 @@ package co.jp.wever.graphql.domain.domainmodel.article;
 import java.util.List;
 
 import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.domain.domainmodel.article.action.ArticleUserAction;
+import co.jp.wever.graphql.domain.domainmodel.action.AccountAction;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
-import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleStatistics;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
@@ -17,10 +16,10 @@ public class ArticleDetail {
     private List<Tag> tags;
     private User author;
     private ArticleStatistics statistics;
-    private ArticleUserAction userAction;
+    private AccountAction userAction;
 
     public ArticleDetail(
-        ArticleBase base, List<Tag> tags, User author, ArticleStatistics statistics, ArticleUserAction userAction) {
+        ArticleBase base, List<Tag> tags, User author, ArticleStatistics statistics, AccountAction userAction) {
         this.base = base;
         this.tags = tags;
         this.author = author;
@@ -90,7 +89,7 @@ public class ArticleDetail {
         return statistics;
     }
 
-    public ArticleUserAction getUserAction() {
+    public AccountAction getUserAction() {
         return userAction;
     }
 }

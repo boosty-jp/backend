@@ -1,11 +1,11 @@
-package co.jp.wever.graphql.infrastructure.datamodel.article;
+package co.jp.wever.graphql.infrastructure.datamodel.user;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class ArticleUserActionEntity {
+public class AccountActionEntity {
     private boolean liked;
     private boolean learned;
 }

@@ -1,13 +1,11 @@
 package co.jp.wever.graphql.domain.converter.article;
 
-import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleLearnedCount;
-import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleLikeCount;
-import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleStatistics;
-import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleStatisticsEntity;
+import co.jp.wever.graphql.domain.domainmodel.action.LearnedCount;
+import co.jp.wever.graphql.domain.domainmodel.action.LikeCount;
 
 public class ArticleStatisticsConverter {
     public static ArticleStatistics toArticleStatistics(ArticleStatisticsEntity articleStatisticsEntity) {
-        return new ArticleStatistics(ArticleLikeCount.of(articleStatisticsEntity.getLikeCount()),
-                                     ArticleLearnedCount.of(articleStatisticsEntity.getLearnedCount()));
+        return new ArticleStatistics(LikeCount.of(articleStatisticsEntity.getLikeCount()),
+                                     LearnedCount.of(articleStatisticsEntity.getLearnedCount()));
     }
 }

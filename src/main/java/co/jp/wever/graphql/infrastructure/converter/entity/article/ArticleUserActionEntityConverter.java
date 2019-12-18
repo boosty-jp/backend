@@ -3,7 +3,6 @@ package co.jp.wever.graphql.infrastructure.converter.entity.article;
 import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
-import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleUserActionEntity;
 
 public class ArticleUserActionEntityConverter {
     public static ArticleUserActionEntity toArticleUserActionEntity(List<String> actionResult) {

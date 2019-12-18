@@ -3,8 +3,6 @@ package co.jp.wever.graphql.infrastructure.datamodel.article.aggregation;
 import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleStatisticsEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleUserActionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import lombok.Builder;

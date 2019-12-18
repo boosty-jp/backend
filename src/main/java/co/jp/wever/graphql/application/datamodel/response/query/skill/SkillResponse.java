@@ -8,6 +8,6 @@ import lombok.Data;
 public class SkillResponse {
     private String id;
     private String name;
-    private int relatedCount;
-    private int level;
+    private long relatedCount;
+    private long level;
 }

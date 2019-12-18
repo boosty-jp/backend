@@ -3,10 +3,11 @@ package co.jp.wever.graphql.domain.domainmodel.article;
 import java.util.List;
 
 import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.domain.domainmodel.article.action.ArticleUserAction;
+import co.jp.wever.graphql.domain.domainmodel.action.AccountAction;
+import co.jp.wever.graphql.domain.domainmodel.action.ActionCount;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
-import co.jp.wever.graphql.domain.domainmodel.article.statistics.ArticleStatistics;
+import co.jp.wever.graphql.domain.domainmodel.skill.ArticleSkills;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
@@ -14,17 +15,24 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 public class Article {
     private ArticleBase base;
     private List<Tag> tags;
+    private ArticleSkills skills;
     private User author;
-    private ArticleStatistics statistics;
-    private ArticleUserAction userAction;
+    private ActionCount actionCount;
+    private AccountAction accountAction;
 
     public Article(
-        ArticleBase base, List<Tag> tags, User author, ArticleStatistics statistics, ArticleUserAction userAction) {
+        ArticleBase base,
+        List<Tag> tags,
+        ArticleSkills skills,
+        User author,
+        ActionCount actionCount,
+        AccountAction accountAction) {
         this.base = base;
         this.tags = tags;
+        this.skills = skills;
         this.author = author;
-        this.statistics = statistics;
-        this.userAction = userAction;
+        this.actionCount = actionCount;
+        this.accountAction = accountAction;
     }
 
     public boolean canRead(Requester requester) {
@@ -85,11 +93,16 @@ public class Article {
         return author;
     }
 
-    public ArticleStatistics getStatistics() {
-        return statistics;
+    public ActionCount getActionCount() {
+        return actionCount;
     }
 
-    public ArticleUserAction getUserAction() {
-        return userAction;
+    public AccountAction getAccountAction() {
+        return accountAction;
     }
+
+    public ArticleSkills getSkills() {
+        return skills;
+    }
+
 }

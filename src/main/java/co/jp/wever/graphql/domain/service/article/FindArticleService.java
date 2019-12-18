@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.article.ArticleConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.Article;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
+import co.jp.wever.graphql.domain.domainmodel.search.others.SearchCondition;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
@@ -42,6 +44,15 @@ public class FindArticleService {
         }
 
         return article;
+    }
+
+    public List<ArticleEntity> findCreatedArticles(String userId, SearchConditionInput searchConditionInput) {
+        SearchCondition searchCondition = SearchCondition.of(searchConditionInput.getSortField(),
+                                                             searchConditionInput.getSortOrder(),
+                                                             searchConditionInput.getPage(),
+                                                             searchConditionInput.getResultCount());
+
+        return findArticleRepository.findCreated(userId, searchCondition);
     }
 
     public List<ArticleDetail> findAllArticle(Requester requester) {

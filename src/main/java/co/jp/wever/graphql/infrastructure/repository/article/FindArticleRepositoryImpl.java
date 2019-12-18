@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.domain.domainmodel.search.others.SearchCondition;
 import co.jp.wever.graphql.domain.repository.article.FindArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSkillEdge;
@@ -25,8 +26,10 @@ import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleD
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.valueMap;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.select;
 
 @Component
 public class FindArticleRepositoryImpl implements FindArticleRepository {
@@ -130,6 +133,95 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                          .next();
 
         return ArticleEntityConverter.toArticleEntityForGuest(allResult);
+    }
+
+    @Override
+    public List<ArticleEntity> findCreated(String userId, SearchCondition searchCondition) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        List<Map<String, Object>> allResults;
+        if (searchCondition.shouldSort()) {
+            Order orderType = searchCondition.isAscend() ? Order.asc : Order.desc;
+            if (searchCondition.vertexSort()) {
+                allResults = g.V(userId)
+                              .out(UserToArticleEdge.PUBLISHED.getString())
+                              .hasLabel(VertexLabel.ARTICLE.getString())
+                              .order()
+                              .by(searchCondition.getField(), orderType)
+                              .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
+                              .project("base", "tags", "skills", "liked", "learned")
+                              .by(__.valueMap().with(WithOptions.tokens))
+                              .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                    .hasLabel(VertexLabel.TAG.getString())
+                                    .valueMap()
+                                    .with(WithOptions.tokens)
+                                    .fold())
+                              .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                                    .hasLabel(VertexLabel.SKILL.getString())
+                                    .as("teachEdge")
+                                    .inV()
+                                    .as("skillVertex")
+                                    .select("teachEdge", "skillVertex")
+                                    .by(valueMap())
+                                    .fold())
+                              .by(__.in(UserToArticleEdge.LIKED.getString()).count())
+                              .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                              .toList();
+            } else {
+                allResults = g.V(userId)
+                              .out(UserToArticleEdge.PUBLISHED.getString())
+                              .hasLabel(VertexLabel.ARTICLE.getString())
+                              .project("base", "tags", "skills", "liked", "learned", "sortEdge")
+                              .by(__.valueMap().with(WithOptions.tokens))
+                              .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                    .hasLabel(VertexLabel.TAG.getString())
+                                    .valueMap()
+                                    .with(WithOptions.tokens)
+                                    .fold())
+                              .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                                    .hasLabel(VertexLabel.SKILL.getString())
+                                    .as("teachEdge")
+                                    .inV()
+                                    .as("skillVertex")
+                                    .select("teachEdge", "skillVertex")
+                                    .by(valueMap())
+                                    .fold())
+                              .by(__.in(UserToArticleEdge.LIKED.getString()).count())
+                              .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                              .by(__.in(searchCondition.getField()).count())
+                              .order()
+                              .by(select("sortEdge"), orderType)
+                              .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
+                              .toList();
+            }
+        } else {
+            allResults = g.V(userId)
+                          .out(UserToArticleEdge.PUBLISHED.getString())
+                          .hasLabel(VertexLabel.ARTICLE.getString())
+                          .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
+                          .project("base", "tags", "skills", "liked", "learned")
+                          .by(__.valueMap().with(WithOptions.tokens))
+                          .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                .hasLabel(VertexLabel.TAG.getString())
+                                .valueMap()
+                                .with(WithOptions.tokens)
+                                .fold())
+                          .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                                .hasLabel(VertexLabel.SKILL.getString())
+                                .as("teachEdge")
+                                .inV()
+                                .as("skillVertex")
+                                .select("teachEdge", "skillVertex")
+                                .by(valueMap())
+                                .fold())
+                          .by(__.in(UserToArticleEdge.LIKED.getString()).count())
+                          .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                          .toList();
+        }
+
+
+
+        return allResults.stream().map(r -> ArticleEntityConverter.toArticleEntityForList(r)).collect(Collectors.toList());
     }
 
     @Override

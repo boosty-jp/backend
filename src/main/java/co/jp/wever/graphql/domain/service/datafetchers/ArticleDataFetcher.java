@@ -5,16 +5,21 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.converter.SearchConditionConverter;
 import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
+import co.jp.wever.graphql.application.converter.article.ArticleResponseConverter;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
 import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
+import co.jp.wever.graphql.domain.converter.article.ArticleConverter;
 import co.jp.wever.graphql.domain.service.article.CreateArticleService;
 import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
 import co.jp.wever.graphql.domain.service.article.FindArticleService;
 import co.jp.wever.graphql.domain.service.article.UpdateArticleService;
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import graphql.schema.DataFetcher;
 
 @Component
@@ -48,8 +53,18 @@ public class ArticleDataFetcher {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
 
-            return ArticleDetailResponseConverter.toArticleDetailResponse(findArticleService.findArticle(articleId,
-                                                                                                               requester));
+            return ArticleResponseConverter.toArticleResponse(findArticleService.findArticle(articleId, requester));
+        };
+    }
+
+    public DataFetcher createdArticlesDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String userId = dataFetchingEnvironment.getArgument("userId");
+            SearchConditionInput searchConditionInput =
+                SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
+
+            List<ArticleEntity> results = findArticleService.findCreatedArticles(userId, searchConditionInput);
+            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
         };
     }
 

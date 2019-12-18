@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import co.jp.wever.graphql.domain.domainmodel.search.others.SearchCondition;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
@@ -13,21 +14,23 @@ public interface FindArticleRepository {
 
     ArticleEntity findOneForGuest(String articleId);
 
-    List<ArticleDetailEntity> findAll(String targetUserId, String requesterId);
+    List<ArticleEntity> findCreated(String userId, SearchCondition searchCondition);
 
-    List<ArticleDetailEntity> findAllPublished(String publisherUserId, String requesterId);
-
-    List<ArticleDetailEntity> findAllPublishedForGuest(String publisherUserId);
-
-    List<ArticleDetailEntity> findAllDrafted(String draftedUserId, String requesterId);
-
-    List<ArticleDetailEntity> findAllLiked(String likedUserId, String requesterId);
-
-    List<ArticleDetailEntity> findAllLikedForGuest(String likedUserId);
-
-    List<ArticleDetailEntity> findAllLearned(String learnedUserId, String requesterId);
-
-    List<ArticleDetailEntity> findAllLearnedForGuest(String learnedUserId);
+//    List<ArticleDetailEntity> findAll(String targetUserId, String requesterId);
+//
+//    List<ArticleDetailEntity> findAllPublished(String publisherUserId, String requesterId);
+//
+//    List<ArticleDetailEntity> findAllPublishedForGuest(String publisherUserId);
+//
+//    List<ArticleDetailEntity> findAllDrafted(String draftedUserId, String requesterId);
+//
+//    List<ArticleDetailEntity> findAllLiked(String likedUserId, String requesterId);
+//
+//    List<ArticleDetailEntity> findAllLikedForGuest(String likedUserId);
+//
+//    List<ArticleDetailEntity> findAllLearned(String learnedUserId, String requesterId);
+//
+//    List<ArticleDetailEntity> findAllLearnedForGuest(String learnedUserId);
 
     List<ArticleDetailEntity> findFamous(String requesterId);
 

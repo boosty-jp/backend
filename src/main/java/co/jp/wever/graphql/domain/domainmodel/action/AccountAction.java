@@ -1,11 +1,11 @@
-package co.jp.wever.graphql.domain.domainmodel.article.action;
+package co.jp.wever.graphql.domain.domainmodel.action;
 
-public class ArticleUserAction {
+public class AccountAction {
 
     private boolean liked;
     private boolean learned;
 
-    public ArticleUserAction(boolean liked, boolean learned) {
+    public AccountAction(boolean liked, boolean learned) {
         this.liked = liked;
         this.learned = learned;
     }

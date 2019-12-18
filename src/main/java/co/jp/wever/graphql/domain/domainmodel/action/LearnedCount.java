@@ -1,21 +1,21 @@
-package co.jp.wever.graphql.domain.domainmodel.article.statistics;
+package co.jp.wever.graphql.domain.domainmodel.action;
 
 import org.springframework.http.HttpStatus;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
-public class ArticleLikeCount {
+public class LearnedCount {
 
     private long value;
     private final static long MIN_VALUE = 0;
     private final static long MAX_VALUE = 999_999_999;
 
-    private ArticleLikeCount(long value) {
+    private LearnedCount(long value) {
         this.value = value;
     }
 
-    public static ArticleLikeCount of(long value) {
+    public static LearnedCount of(long value) {
         if (value < MIN_VALUE) {
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
@@ -26,10 +26,11 @@ public class ArticleLikeCount {
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
-        return new ArticleLikeCount(value);
+        return new LearnedCount(value);
     }
 
     public long getValue() {
         return value;
     }
 }
+

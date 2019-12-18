@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ActionCountResponse {
-    private int likeCount;
-    private int learnedCount;
+    private long likeCount;
+    private long learnedCount;
 }
