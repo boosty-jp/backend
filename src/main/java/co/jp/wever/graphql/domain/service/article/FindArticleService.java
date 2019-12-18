@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
-import co.jp.wever.graphql.domain.converter.article.ArticleDetailConverter;
+import co.jp.wever.graphql.domain.converter.article.ArticleConverter;
+import co.jp.wever.graphql.domain.domainmodel.article.Article;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
 
@@ -24,22 +26,22 @@ public class FindArticleService {
         this.findArticleRepository = findArticleRepository;
     }
 
-    public ArticleDetail findArticleDetail(String articleId, Requester requester) {
-        ArticleDetailEntity articleDetailEntity;
+    public Article findArticle(String articleId, Requester requester) {
+        ArticleEntity articleEntity;
         if (requester.isGuest()) {
-            articleDetailEntity = findArticleRepository.findOneForGuest(articleId);
+            articleEntity = findArticleRepository.findOneForGuest(articleId);
         } else {
-            articleDetailEntity = findArticleRepository.findOne(articleId, requester.getUserId());
+            articleEntity = findArticleRepository.findOne(articleId, requester.getUserId());
         }
 
-        ArticleDetail articleDetail = ArticleDetailConverter.toArticleDetail(articleDetailEntity);
+        Article article = ArticleConverter.toArticle(articleEntity);
 
-        if (!articleDetail.canRead(requester)) {
+        if (!article.canRead(requester)) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
 
-        return articleDetail;
+        return article;
     }
 
     public List<ArticleDetail> findAllArticle(Requester requester) {

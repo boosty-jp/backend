@@ -4,13 +4,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
 @Repository
 public interface FindArticleRepository {
-    ArticleDetailEntity findOne(String articleId, String userId);
+    ArticleEntity findOne(String articleId, String userId);
 
-    ArticleDetailEntity findOneForGuest(String articleId);
+    ArticleEntity findOneForGuest(String articleId);
 
     List<ArticleDetailEntity> findAll(String targetUserId, String requesterId);
 

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
-import co.jp.wever.graphql.application.converter.section.UpdateSectionInputsConverter;
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
@@ -49,7 +48,7 @@ public class ArticleDataFetcher {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
 
-            return ArticleDetailResponseConverter.toArticleDetailResponse(findArticleService.findArticleDetail(articleId,
+            return ArticleDetailResponseConverter.toArticleDetailResponse(findArticleService.findArticle(articleId,
                                                                                                                requester));
         };
     }

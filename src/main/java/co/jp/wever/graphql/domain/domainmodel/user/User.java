@@ -10,6 +10,7 @@ public class User {
     private UserTwitterId twitterId;
     private UserFacebookId facebookId;
 
+    // TODO: privateにする
     public User(
         UserId userId,
         UserDisplayName displayName,
@@ -25,6 +26,23 @@ public class User {
         this.url = url;
         this.twitterId = twitterId;
         this.facebookId = facebookId;
+    }
+
+    public static User of(
+        String userId,
+        String displayName,
+        String description,
+        String imageUrl,
+        String url,
+        String twitterId,
+        String facebookId) {
+        return new User(UserId.of(userId),
+                        UserDisplayName.of(displayName),
+                        UserDescription.of(description),
+                        UserImageUrl.of(imageUrl),
+                        UserUrl.of(url),
+                        UserTwitterId.of(twitterId),
+                        UserFacebookId.of(facebookId));
     }
 
     public UserId getUserId() {

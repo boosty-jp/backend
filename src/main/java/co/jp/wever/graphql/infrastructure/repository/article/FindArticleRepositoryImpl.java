@@ -12,12 +12,14 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.repository.article.FindArticleRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSkillEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToTagEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
-import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleDetailEntityConverter;
+import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleEntityConverter;
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
@@ -36,12 +38,13 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
     }
 
     @Override
-    public ArticleDetailEntity findOne(String articleId, String userId) {
+    public ArticleEntity findOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> allResult = g.V(articleId)
                                          .project("base",
                                                   "tags",
+                                                  "skills",
                                                   "author",
                                                   "status",
                                                   "userLiked",
@@ -53,6 +56,14 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens)
+                                               .fold())
+                                         .by(__.out(ArticleToSkillEdge.TEACH.getString())
+                                               .hasLabel(VertexLabel.SKILL.getString())
+                                               .valueMap()
+                                               .project("skillVertex", "teachEdge") //TODO: もう少し良い書き方あるので変更する
+                                               .by(__.valueMap().with(WithOptions.tokens))
+                                               .by(__.inE(ArticleToSkillEdge.TEACH.getString())
+                                                     .where((outV().hasId(articleId)).valueMap()))
                                                .fold())
                                          .by(__.in(UserToArticleEdge.DRAFTED.getString(),
                                                    UserToArticleEdge.DELETED.getString(),
@@ -82,32 +93,35 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                          .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
                                          .next();
 
-        return ArticleDetailEntityConverter.toArticleDetailEntity(allResult);
+        return ArticleEntityConverter.toArticleEntity(allResult);
     }
 
     @Override
-    public ArticleDetailEntity findOneForGuest(String articleId) {
+    public ArticleEntity findOneForGuest(String articleId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> allResult = g.V(articleId)
-                                         .project("base", "tags", "author", "status", "liked", "learned")
+                                         .project("base", "tags", "skills", "author", "status", "liked", "learned")
                                          .by(__.valueMap().with(WithOptions.tokens))
                                          .by(__.out(ArticleToTagEdge.RELATED.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens)
                                                .fold())
+                                         .by(__.out(ArticleToSkillEdge.TEACH.getString())
+                                               .hasLabel(VertexLabel.SKILL.getString())
+                                               .valueMap()
+                                               .project("skillVertex", "teachEdge") //TODO: もう少し良い書き方あるので変更する
+                                               .by(__.valueMap().with(WithOptions.tokens))
+                                               .by(__.inE(ArticleToSkillEdge.TEACH.getString())
+                                                     .where((outV().hasId(articleId)).valueMap()))
+                                               .fold())
                                          .by(__.in(UserToArticleEdge.DRAFTED.getString(),
                                                    UserToArticleEdge.DELETED.getString(),
                                                    UserToArticleEdge.PUBLISHED.getString())
                                                .hasLabel(VertexLabel.USER.getString())
-                                               .project("base", "tags")
-                                               .by(__.valueMap().with(WithOptions.tokens))
-                                               .by(__.out(UserToTagEdge.RELATED.getString())
-                                                     .hasLabel(VertexLabel.TAG.getString())
-                                                     .valueMap()
-                                                     .with(WithOptions.tokens)
-                                                     .fold()))
+                                               .valueMap()
+                                               .with(WithOptions.tokens))
                                          .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
                                                     UserToArticleEdge.DELETED.getString(),
                                                     UserToArticleEdge.PUBLISHED.getString()).label())
@@ -115,7 +129,7 @@ public class FindArticleRepositoryImpl implements FindArticleRepository {
                                          .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
                                          .next();
 
-        return ArticleDetailEntityConverter.toArticleDetailEntityForGuest(allResult);
+        return ArticleEntityConverter.toArticleEntityForGuest(allResult);
     }
 
     @Override

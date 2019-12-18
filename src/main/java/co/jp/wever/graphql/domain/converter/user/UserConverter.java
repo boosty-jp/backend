@@ -14,11 +14,13 @@ import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 public class UserConverter {
     public static User toUser(UserEntity user) {
 
-        return new User(UserId.of(user.getUserId()),
-                        UserDisplayName.of(user.getDisplayName()),
-                        UserDescription.of(user.getDescription()),
-                        UserImageUrl.of(user.getImageUrl()),
-                        UserUrl.of(user.getUrl()), );
+        return User.of(user.getUserId(),
+                       user.getDisplayName(),
+                       user.getDescription(),
+                       user.getImageUrl(),
+                       user.getUrl(),
+                       user.getTwitterId(),
+                       user.getFacebookId());
     }
 
     public static User toUser(UserInput userInput, String userId) {

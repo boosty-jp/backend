@@ -104,5 +104,21 @@ public class VertexConverter {
             return 0;
         }
     }
+
+    public static int toLevel(Map<Object, Object> target) {
+        try {
+            Set<Object> keys = target.keySet();
+            for (Object key : keys) {
+                if (key.toString().equals("level")) {
+                    return Integer.parseInt(target.get(key).toString());
+                }
+            }
+            // TODO: Exception発生させる
+            return 0;
+        } catch (NumberFormatException e) {
+            //TODO: Exception発生させる
+            return 0;
+        }
+    }
 }
 
