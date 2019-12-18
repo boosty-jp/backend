@@ -68,56 +68,36 @@ public class ArticleDataFetcher {
         };
     }
 
-    public DataFetcher allArticlesDataFetcher() {
+    public DataFetcher createdArticlesBySelfDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            return findArticleService.findAllArticle(requester)
-                                     .stream()
-                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
-                                     .collect(Collectors.toList());
+            SearchConditionInput searchConditionInput =
+                SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
+
+            List<ArticleEntity> results = findArticleService.findCreatedArticlesBySelf(requester, searchConditionInput);
+            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
         };
     }
 
-    public DataFetcher allPublishedArticlesDataFetcher() {
+    public DataFetcher actionedArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String publisherUserId = dataFetchingEnvironment.getArgument("userId");
-            return findArticleService.findAllPublishedArticle(publisherUserId, requester)
-                                     .stream()
-                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
-                                     .collect(Collectors.toList());
+            SearchConditionInput searchConditionInput =
+                SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
+
+            List<ArticleEntity> results = findArticleService.findCreatedArticlesBySelf(requester, searchConditionInput);
+            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
         };
     }
 
-    public DataFetcher allDraftedArticlesDataFetcher() {
+    public DataFetcher actionedArticlesBySelfDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            return findArticleService.findAllDraftedArticle(requester)
-                                     .stream()
-                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
-                                     .collect(Collectors.toList());
-        };
-    }
+            SearchConditionInput searchConditionInput =
+                SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-    public DataFetcher allLikedArticlesDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String likedUserId = dataFetchingEnvironment.getArgument("userId");
-            return findArticleService.findAllLikedArticle(likedUserId, requester)
-                                     .stream()
-                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
-                                     .collect(Collectors.toList());
-        };
-    }
-
-    public DataFetcher allLearnedArticlesDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String userId = dataFetchingEnvironment.getArgument("userId");
-            return findArticleService.findAllLearnedArticle(userId, requester)
-                                     .stream()
-                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
-                                     .collect(Collectors.toList());
+            List<ArticleEntity> results = findArticleService.findCreatedArticlesBySelf(requester, searchConditionInput);
+            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
         };
     }
 

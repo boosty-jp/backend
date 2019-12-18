@@ -13,19 +13,24 @@ import co.jp.wever.graphql.domain.converter.article.ArticleConverter;
 import co.jp.wever.graphql.domain.domainmodel.article.Article;
 import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.search.others.SearchCondition;
+import co.jp.wever.graphql.domain.domainmodel.search.self.SelfSearchCondition;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.user.FindUserRepositoryImpl;
 
 @Service
 public class FindArticleService {
 
     private final FindArticleRepositoryImpl findArticleRepository;
+    private final FindUserRepositoryImpl findUserRepository;
 
-    FindArticleService(FindArticleRepositoryImpl findArticleRepository) {
+    FindArticleService(FindArticleRepositoryImpl findArticleRepository, FindUserRepositoryImpl findUserRepository) {
         this.findArticleRepository = findArticleRepository;
+        this.findUserRepository = findUserRepository;
     }
 
     public Article findArticle(String articleId, Requester requester) {
@@ -51,7 +56,29 @@ public class FindArticleService {
                                                              searchConditionInput.getSortOrder(),
                                                              searchConditionInput.getPage(),
                                                              searchConditionInput.getResultCount());
+        return findArticleRepository.findCreated(userId, searchCondition);
+    }
 
+    public List<ArticleEntity> findCreatedArticlesBySelf(
+        Requester requester, SearchConditionInput searchConditionInput) {
+        SelfSearchCondition selfSearchCondition = SelfSearchCondition.of(searchConditionInput.getFilter(),
+                                                                         searchConditionInput.getSortField(),
+                                                                         searchConditionInput.getSortOrder(),
+                                                                         searchConditionInput.getPage(),
+                                                                         searchConditionInput.getResultCount());
+        return findArticleRepository.findCreatedBySelf(requester.getUserId(), selfSearchCondition);
+    }
+
+    public List<ArticleEntity> findActionedArticles(String userId, SearchConditionInput searchConditionInput) {
+        SearchCondition searchCondition = SearchCondition.of(searchConditionInput.getSortField(),
+                                                             searchConditionInput.getSortOrder(),
+                                                             searchConditionInput.getPage(),
+                                                             searchConditionInput.getResultCount());
+
+
+        UserEntity userEntity = this.findUserRepository.findOne(userId);
+
+        if(searchCondition.get)
         return findArticleRepository.findCreated(userId, searchCondition);
     }
 

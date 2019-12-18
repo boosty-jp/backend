@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import co.jp.wever.graphql.domain.domainmodel.search.others.SearchCondition;
+import co.jp.wever.graphql.domain.domainmodel.search.self.SelfSearchCondition;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
@@ -15,6 +16,8 @@ public interface FindArticleRepository {
     ArticleEntity findOneForGuest(String articleId);
 
     List<ArticleEntity> findCreated(String userId, SearchCondition searchCondition);
+
+    List<ArticleEntity> findCreatedBySelf(String userId, SelfSearchCondition searchCondition);
 
 //    List<ArticleDetailEntity> findAll(String targetUserId, String requesterId);
 //

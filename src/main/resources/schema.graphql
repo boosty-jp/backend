@@ -4,11 +4,6 @@ type Query {
     createdArticlesBySelf(condition: SearchCondition): [Article]!
     actionedArticles(userId: ID! ,condition: SearchCondition): [Article]!
     actionedArticlesBySelf(condition: SearchCondition): [Article]!
-#    allArticles: [Article]!
-#    allPublishedArticles(userId: ID!): [Article]!
-#    allDraftedArticles: [Article]!
-#    allLikedArticles(userId: ID!): [Article]!
-#    allLearnedArticles(userId: ID!): [Article]!
     famousArticles: [Article]!
 
     course(courseId: ID!): Course!

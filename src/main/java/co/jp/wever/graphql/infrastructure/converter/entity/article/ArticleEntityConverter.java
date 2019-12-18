@@ -87,4 +87,26 @@ public class ArticleEntityConverter {
                             .actionCount(ActionCountEntity.builder().likeCount(like).learnedCount(learned).build())
                             .build();
     }
+
+    public static ArticleEntity toArticleEntityForListBySelf(Map<String, Object> findResult) {
+        Map<Object, Object> baseResult = (Map<Object, Object>) findResult.get("base");
+        List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) findResult.get("tags");
+        List<Map<String, Object>> skillResult = (List<Map<String, Object>>) findResult.get("skills");
+
+        String status = (String) findResult.get("status");
+        long like = (long) findResult.get("liked");
+        long learned = (long) findResult.get("learned");
+
+        return ArticleEntity.builder()
+                            .base(ArticleBaseEntityConverter.toArticleBaseEntity(baseResult, status))
+                            .tags(tagResult.stream()
+                                           .map(t -> TagEntityConverter.toTagEntity(t))
+                                           .collect(Collectors.toList()))
+                            .skills(skillResult.stream()
+                                               .map(s -> SkillEntityConverter.toSkillEntity((Map<Object, Object>) s.get(
+                                                   "skillVertex"), (Map<Object, Object>) s.get("skillEdge")))
+                                               .collect(Collectors.toList()))
+                            .actionCount(ActionCountEntity.builder().likeCount(like).learnedCount(learned).build())
+                            .build();
+    }
 }
