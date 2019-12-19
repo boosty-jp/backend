@@ -17,4 +17,7 @@ public class ArticleSkill {
         return id;
     }
 
+    public SkillLevel getLevel() {
+        return level;
+    }
 }

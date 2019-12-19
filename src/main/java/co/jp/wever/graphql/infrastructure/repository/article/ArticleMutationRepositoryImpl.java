@@ -196,17 +196,15 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
     }
 
     private void addSkills(GraphTraversalSource g, String articleId, Article article, long now) {
-        List<String> skillIds =
-            article.getSkills().getSkills().stream().map(s -> s.getId().getValue()).collect(Collectors.toList());
-
-        if (!skillIds.isEmpty()) {
-            g.V(skillIds)
-             .hasLabel(VertexLabel.SKILL.getString())
-             .addE(EdgeLabel.TEACH.getString())
-             .property(DateProperty.CREATE_TIME.getString(), now)
-             .from(g.V(articleId))
-             .iterate();
-        }
+        article.getSkills()
+               .getSkills()
+               .forEach(s -> g.V(articleId)
+                              .hasLabel(VertexLabel.ARTICLE.getString())
+                              .addE(EdgeLabel.TEACH.getString())
+                              .property("level", s.getLevel().getValue())
+                              .property(DateProperty.CREATE_TIME.getString(), now)
+                              .to(g.V(s.getId().getValue()).hasLabel(VertexLabel.SKILL.getString()))
+                              .iterate());
     }
 
     private void clearStatus(GraphTraversalSource g, String articleId, String authorId) {

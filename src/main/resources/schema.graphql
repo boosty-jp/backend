@@ -218,14 +218,10 @@ type Mutation {
     updateUserSetting(setting: UserSettingInput): Boolean
     deleteUser: Boolean
 
-    createTag(name: String!): CreateTagResponse
+    createTag(name: String!): CreateResponse
+    createSkill(name: String!): CreateResponse
 }
 
 type CreateResponse {
     id: ID!,
-}
-
-type CreateTagResponse {
-    id: ID!,
-    name: String!
 }

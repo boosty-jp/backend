@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.application.datamodel.response.mutation.CreateTagResponse;
 import co.jp.wever.graphql.domain.service.tag.CreateTagService;
 import co.jp.wever.graphql.domain.service.tag.FindTagService;
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
