@@ -8,10 +8,6 @@ import java.util.List;
 
 import co.jp.wever.graphql.domain.repository.section.DeleteSectionRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToSectionProperty;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToSectionProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 

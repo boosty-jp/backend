@@ -3,9 +3,7 @@ package co.jp.wever.graphql.domain.converter.article;
 import java.util.Date;
 
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
-import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleDate;
-import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleId;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleImageUrl;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleTitle;

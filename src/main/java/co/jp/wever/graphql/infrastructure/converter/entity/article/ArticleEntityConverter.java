@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToContentProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.skill.SkillEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
@@ -33,7 +32,7 @@ public class ArticleEntityConverter {
                                            .collect(Collectors.toList()))
                             .skills(skillResult.stream()
                                                .map(s -> SkillEntityConverter.toSkillEntity((Map<Object, Object>) s.get(
-                                                   "skillVertex"), (Map<Object, Object>) s.get("skillEdge")))
+                                                   "skillVertex"), (Map<Object, Object>) s.get("teachEdge")))
                                                .collect(Collectors.toList()))
                             .author(UserEntityConverter.toUserEntity(authorResult))
                             .actions(AccountActionEntity.builder().learned(userLearned).liked(userLiked).build())
@@ -58,7 +57,7 @@ public class ArticleEntityConverter {
                                            .collect(Collectors.toList()))
                             .skills(skillResult.stream()
                                                .map(s -> SkillEntityConverter.toSkillEntity((Map<Object, Object>) s.get(
-                                                   "skillVertex"), (Map<Object, Object>) s.get("skillEdge")))
+                                                   "skillVertex"), (Map<Object, Object>) s.get("teachEdge")))
                                                .collect(Collectors.toList()))
                             .author(UserEntityConverter.toUserEntity(authorResult))
                             .actions(AccountActionEntity.builder().learned(false).liked(false).build())
@@ -88,7 +87,7 @@ public class ArticleEntityConverter {
                             .build();
     }
 
-    public static ArticleEntity toArticleEntityForListBySelf(Map<String, Object> findResult) {
+    public static ArticleEntity toArticleEntityForListWithStatus(Map<String, Object> findResult) {
         Map<Object, Object> baseResult = (Map<Object, Object>) findResult.get("base");
         List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) findResult.get("tags");
         List<Map<String, Object>> skillResult = (List<Map<String, Object>>) findResult.get("skills");

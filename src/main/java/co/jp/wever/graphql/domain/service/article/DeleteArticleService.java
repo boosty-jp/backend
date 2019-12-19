@@ -8,18 +8,18 @@ import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.article.DeleteArticleRepositoryImpl;
-import co.jp.wever.graphql.infrastructure.repository.article.FindArticleRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryQueryRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class DeleteArticleService {
 
-    private final FindArticleRepositoryImpl findArticleRepository;
+    private final ArticleQueryQueryRepositoryImpl findArticleRepository;
     private final DeleteArticleRepositoryImpl deleteArticleRepository;
 
     public DeleteArticleService(
-        FindArticleRepositoryImpl findArticleRepository, DeleteArticleRepositoryImpl deleteArticleRepository) {
+        ArticleQueryQueryRepositoryImpl findArticleRepository, DeleteArticleRepositoryImpl deleteArticleRepository) {
         this.findArticleRepository = findArticleRepository;
         this.deleteArticleRepository = deleteArticleRepository;
     }

@@ -9,36 +9,32 @@ import co.jp.wever.graphql.application.converter.user.AccountActionResponseConve
 import co.jp.wever.graphql.application.converter.user.ActionCountResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
 import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleResponse;
-import co.jp.wever.graphql.domain.domainmodel.article.Article;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToContentProperty;
+import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.util.DateToStringConverter;
 
 public class ArticleResponseConverter {
-    public static ArticleResponse toArticleResponse(Article article) {
+    public static ArticleResponse toArticleResponse(ArticleEntity article) {
         return ArticleResponse.builder()
                               .id(article.getBase().getId())
                               .title(article.getBase().getTitle())
                               .imageUrl(article.getBase().getImageUrl())
-                              .status(article.getBase().getStatus().getString())
-                              .textUrl(article.getBase().getTextUrl().getValue())
-                              .createDate(DateToStringConverter.toDateString(article.getBase()
-                                                                                    .getDate()
-                                                                                    .getCreateDate()))
-                              .updateDate(DateToStringConverter.toDateString(article.getBase()
-                                                                                    .getDate()
-                                                                                    .getUpdateDate()))
+                              .status(article.getBase().getStatus())
+                              .textUrl(article.getBase().getTextUrl()) //TODO: presignedUrlを渡す
+                              .createDate(DateToStringConverter.toDateString(new Date(article.getBase()
+                                                                                             .getCreatedDate())))
+                              .updateDate(DateToStringConverter.toDateString(new Date(article.getBase()
+                                                                                             .getUpdatedDate())))
                               .tags(article.getTags()
                                            .stream()
                                            .map(t -> TagResponseConverter.toTagResponse(t))
                                            .collect(Collectors.toList()))
                               .author(UserResponseConverter.toUserResponse(article.getAuthor()))
                               .skills(article.getSkills()
-                                             .getSkills()
                                              .stream()
                                              .map(s -> SkillResponseConverter.toSkillResponse(s))
                                              .collect(Collectors.toList()))
-                              .accountAction(AccountActionResponseConverter.toAccountAction(article.getAccountAction()))
+                              .accountAction(AccountActionResponseConverter.toAccountAction(article.getActions()))
                               .actionCount(ActionCountResponseConverter.toActionCountResponse(article.getActionCount()))
                               .build();
     }
@@ -48,7 +44,7 @@ public class ArticleResponseConverter {
                               .id(article.getBase().getId())
                               .title(article.getBase().getTitle())
                               .imageUrl(article.getBase().getImageUrl())
-                              .status(UserToContentProperty.PUBLISHED.getString())
+                              .status(EdgeLabel.PUBLISH.getString())
                               .createDate(DateToStringConverter.toDateString(new Date(article.getBase()
                                                                                              .getCreatedDate())))
                               .updateDate(DateToStringConverter.toDateString(new Date(article.getBase()

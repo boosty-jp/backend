@@ -4,7 +4,9 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.application.converter.skill.SkillInputConverter;
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -15,11 +17,16 @@ public class ArticleInputConverter {
         try {
             Map<String, Object> article = request.getArgument("article");
 
+            List<Map<String, Object>> skills = (List<Map<String, Object>>) article.get("skills");
             return ArticleInput.builder()
                                .id(article.get("id").toString())
                                .title(article.get("title").toString())
                                .imageUrl(article.get("imageUrl").toString())
-                               .tags((List<String>) article.get("tags"))
+                               .textUrl(article.get("textUrl").toString())
+                               .tagIds((List<String>) article.get("tagsIds"))
+                               .skills(skills.stream()
+                                             .map(s -> SkillInputConverter.toSkillInput(s))
+                                             .collect(Collectors.toList()))
                                .build();
         } catch (Exception e) {
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),

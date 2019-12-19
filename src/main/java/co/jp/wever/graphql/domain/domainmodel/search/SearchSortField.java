@@ -1,8 +1,5 @@
 package co.jp.wever.graphql.domain.domainmodel.search;
 
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToContentProperty;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.DateProperty;
-
 public class SearchSortField {
 
     private String value;

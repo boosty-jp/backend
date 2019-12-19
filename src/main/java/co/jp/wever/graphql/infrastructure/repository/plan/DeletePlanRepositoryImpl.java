@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import co.jp.wever.graphql.domain.repository.plan.DeletePlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.outV;

@@ -200,18 +200,18 @@ type Mutation {
     deleteArticle(articleId: ID!): Boolean
 
     likeArticle(articleId: ID!): Boolean
-    deleteLikeArticle(articleId: ID!): Boolean
+    clearLikeArticle(articleId: ID!): Boolean
     learnArticle(articleId: ID!): Boolean
-    deleteLearnArticle(articleId: ID!): Boolean
+    clearLearnArticle(articleId: ID!): Boolean
 
     publishCourse(courseId: ID, course: CourseInput!): Boolean
     draftCourse(courseId: ID, course: CourseInput!): Boolean
     deleteCourse(courseId: ID!): Boolean
 
     likeCourse(courseId: ID!): Boolean
-    deleteLikeCourse(courseId: ID!): Boolean
+    clearLikeCourse(courseId: ID!): Boolean
     startCourse(courseId: ID!): Boolean
-    deleteStartCourse(courseId: ID!): Boolean
+    clearStartCourse(courseId: ID!): Boolean
 
     createUser(user: UserInput!): Boolean
     updateUser(user: UserInput!): Boolean

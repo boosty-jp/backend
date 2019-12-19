@@ -12,35 +12,25 @@ import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
-import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
-import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
-import co.jp.wever.graphql.domain.converter.article.ArticleConverter;
-import co.jp.wever.graphql.domain.service.article.CreateArticleService;
-import co.jp.wever.graphql.domain.service.article.DeleteArticleService;
-import co.jp.wever.graphql.domain.service.article.FindArticleService;
-import co.jp.wever.graphql.domain.service.article.UpdateArticleService;
+import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.domain.service.article.ArticleMutationService;
+import co.jp.wever.graphql.domain.service.article.ArticleQueryService;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import graphql.schema.DataFetcher;
 
 @Component
 public class ArticleDataFetcher {
 
-    private final FindArticleService findArticleService;
-    private final CreateArticleService createArticleService;
-    private final UpdateArticleService updateArticleService;
-    private final DeleteArticleService deleteArticleService;
+    private final ArticleQueryService articleQueryService;
+    private final ArticleMutationService articleMutationService;
     private final RequesterConverter requesterConverter;
 
     public ArticleDataFetcher(
-        FindArticleService findArticleService,
-        CreateArticleService createArticleService,
-        UpdateArticleService updateArticleService,
-        DeleteArticleService deleteArticleService,
+        ArticleQueryService articleQueryService,
+        ArticleMutationService articleMutationService,
         RequesterConverter requesterConverter) {
-        this.findArticleService = findArticleService;
-        this.createArticleService = createArticleService;
-        this.updateArticleService = updateArticleService;
-        this.deleteArticleService = deleteArticleService;
+        this.articleQueryService = articleQueryService;
+        this.articleMutationService = articleMutationService;
         this.requesterConverter = requesterConverter;
     }
 
@@ -53,7 +43,7 @@ public class ArticleDataFetcher {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
 
-            return ArticleResponseConverter.toArticleResponse(findArticleService.findArticle(articleId, requester));
+            return ArticleResponseConverter.toArticleResponse(articleQueryService.findArticle(articleId, requester));
         };
     }
 
@@ -63,8 +53,10 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = findArticleService.findCreatedArticles(userId, searchConditionInput);
-            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
+            List<ArticleEntity> results = articleQueryService.findCreatedArticles(userId, searchConditionInput);
+            return results.stream()
+                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .collect(Collectors.toList());
         };
     }
 
@@ -74,19 +66,24 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = findArticleService.findCreatedArticlesBySelf(requester, searchConditionInput);
-            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
+            List<ArticleEntity> results =
+                articleQueryService.findCreatedArticlesBySelf(requester, searchConditionInput);
+            return results.stream()
+                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .collect(Collectors.toList());
         };
     }
 
     public DataFetcher actionedArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String userId = dataFetchingEnvironment.getArgument("userId");
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = findArticleService.findCreatedArticlesBySelf(requester, searchConditionInput);
-            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
+            List<ArticleEntity> results = articleQueryService.findActionedArticles(userId, searchConditionInput);
+            return results.stream()
+                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .collect(Collectors.toList());
         };
     }
 
@@ -96,18 +93,20 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = findArticleService.findCreatedArticlesBySelf(requester, searchConditionInput);
-            return results.stream().map(r -> ArticleConverter.toArticle(r)).collect(Collectors.toList());
+            List<ArticleEntity> results =
+                articleQueryService.findActionedArticlesBySelf(requester, searchConditionInput);
+            return results.stream()
+                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .collect(Collectors.toList());
         };
     }
 
     public DataFetcher famousArticlesDataFetcher() {
         return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            return findArticleService.findFamousArticle(requester)
-                                     .stream()
-                                     .map(a -> ArticleDetailResponseConverter.toArticleDetailResponse(a))
-                                     .collect(Collectors.toList());
+            List<ArticleEntity> results = articleQueryService.findFamousArticle();
+            return results.stream()
+                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .collect(Collectors.toList());
         };
     }
 
@@ -118,9 +117,9 @@ public class ArticleDataFetcher {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            deleteArticleService.deleteArticle(articleId, requester);
+            articleMutationService.delete(articleId, requester);
 
-            return UpdateResponse.builder().build();
+            return true;
         };
     }
 
@@ -128,11 +127,9 @@ public class ArticleDataFetcher {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             ArticleInput articleInput = ArticleInputConverter.toArticleInput(dataFetchingEnvironment);
-            List<UpdateSectionInput> sectionInputs =
-                UpdateSectionInputsConverter.toUpdateSectionInputs(dataFetchingEnvironment);
-            updateArticleService.publishArticle(articleInput, sectionInputs, requester);
+            String articleId = articleMutationService.publish(articleInput, requester);
 
-            return UpdateResponse.builder().build();
+            return CreateResponse.builder().id(articleId).build();
         };
     }
 
@@ -140,11 +137,9 @@ public class ArticleDataFetcher {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             ArticleInput articleInput = ArticleInputConverter.toArticleInput(dataFetchingEnvironment);
-            List<UpdateSectionInput> sectionInputs =
-                UpdateSectionInputsConverter.toUpdateSectionInputs(dataFetchingEnvironment);
+            String articleId = articleMutationService.draft(articleInput, requester);
 
-            updateArticleService.draftArticle(articleInput, sectionInputs, requester);
-            return UpdateResponse.builder().build();
+            return CreateResponse.builder().id(articleId).build();
         };
     }
 
@@ -152,39 +147,39 @@ public class ArticleDataFetcher {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            updateArticleService.likeArticle(articleId, requester);
+            articleMutationService.like(articleId, requester);
 
-            return UpdateResponse.builder().build();
+            return true;
         };
     }
 
-    public DataFetcher deleteLikeArticleDataFetcher() {
+    public DataFetcher clearLikeArticleDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            updateArticleService.deleteLikeArticle(articleId, requester);
+            articleMutationService.clearLike(articleId, requester);
 
-            return UpdateResponse.builder().build();
+            return true;
         };
     }
 
-    public DataFetcher finishArticleDataFetcher() {
+    public DataFetcher learnArticleDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            updateArticleService.finishArticle(articleId, requester);
+            articleMutationService.learn(articleId, requester);
 
-            return UpdateResponse.builder().build();
+            return true;
         };
     }
 
-    public DataFetcher deleteFinishArticleDataFetcher() {
+    public DataFetcher clearLearnArticleDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String articleId = dataFetchingEnvironment.getArgument("articleId");
-            updateArticleService.deleteFinishArticle(articleId, requester);
+            articleMutationService.clearLearn(articleId, requester);
 
-            return UpdateResponse.builder().build();
+            return true;
         };
     }
 }

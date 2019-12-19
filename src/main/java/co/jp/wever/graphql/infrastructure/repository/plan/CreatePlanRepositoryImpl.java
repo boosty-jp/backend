@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.domain.repository.plan.CreatePlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.UserToPlanProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;

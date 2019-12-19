@@ -2,8 +2,6 @@ package co.jp.wever.graphql.infrastructure.converter.entity.article;
 
 import java.util.List;
 
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToArticleEdge;
-
 public class ArticleUserActionEntityConverter {
     public static ArticleUserActionEntity toArticleUserActionEntity(List<String> actionResult) {
         boolean liked = false;

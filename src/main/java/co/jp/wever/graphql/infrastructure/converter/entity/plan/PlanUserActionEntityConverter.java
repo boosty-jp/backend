@@ -2,7 +2,6 @@ package co.jp.wever.graphql.infrastructure.converter.entity.plan;
 
 import java.util.List;
 
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanUserActionEntity;
 
 public class PlanUserActionEntityConverter {

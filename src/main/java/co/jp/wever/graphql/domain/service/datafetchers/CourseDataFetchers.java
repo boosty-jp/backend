@@ -17,8 +17,6 @@ import co.jp.wever.graphql.application.datamodel.request.CourseBaseInput;
 import co.jp.wever.graphql.application.datamodel.request.CourseElementInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
-import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateImageResponse;
-import co.jp.wever.graphql.application.datamodel.response.mutation.UpdateResponse;
 import co.jp.wever.graphql.domain.domainmodel.course.element.FindCourseElementDetail;
 import co.jp.wever.graphql.domain.service.course.CreateCourseService;
 import co.jp.wever.graphql.domain.service.course.DeleteCourseService;

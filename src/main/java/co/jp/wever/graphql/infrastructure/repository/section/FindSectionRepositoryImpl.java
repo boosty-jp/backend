@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.ArticleToSectionEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToSectionEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.ArticleToSectionProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionNumberEntityConverter;

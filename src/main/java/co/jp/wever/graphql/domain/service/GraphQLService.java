@@ -106,12 +106,12 @@ public class GraphQLService {
                                                                        articleDataFetcher.deleteArticleDataFetcher())
                                                           .dataFetcher("likeArticle",
                                                                        articleDataFetcher.likeArticleDataFetcher())
-                                                          .dataFetcher("deleteLikeArticle",
-                                                                       articleDataFetcher.deleteLikeArticleDataFetcher())
+                                                          .dataFetcher("clearLikeArticle",
+                                                                       articleDataFetcher.clearLikeArticleDataFetcher())
                                                           .dataFetcher("learnArticle",
-                                                                       articleDataFetcher.finishArticleDataFetcher())
-                                                          .dataFetcher("deleteLearnArticle",
-                                                                       articleDataFetcher.deleteFinishArticleDataFetcher())
+                                                                       articleDataFetcher.learnArticleDataFetcher())
+                                                          .dataFetcher("clearLearnArticle",
+                                                                       articleDataFetcher.clearLearnArticleDataFetcher())
                                                           .dataFetcher("publishCourse",
                                                                        courseDataFetchers.publishCourseDataFetcher())
                                                           .dataFetcher("draftCourse",
@@ -120,11 +120,11 @@ public class GraphQLService {
                                                                        courseDataFetchers.deleteCourseDataFetcher())
                                                           .dataFetcher("likeCourse",
                                                                        courseDataFetchers.likeCourseDataFetcher())
-                                                          .dataFetcher("deleteLikeCourse",
+                                                          .dataFetcher("clearLikeCourse",
                                                                        courseDataFetchers.deleteLikeCourseDataFetcher())
                                                           .dataFetcher("startCourse",
                                                                        courseDataFetchers.startCourseDataFetcher())
-                                                          .dataFetcher("deleteStartCourse",
+                                                          .dataFetcher("clearStartCourse",
                                                                        courseDataFetchers.stopCourseDataFetcher())
                                                           .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())

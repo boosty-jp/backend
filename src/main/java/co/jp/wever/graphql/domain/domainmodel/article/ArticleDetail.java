@@ -4,7 +4,6 @@ import java.util.List;
 
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.domainmodel.action.AccountAction;
-import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleStatus;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;

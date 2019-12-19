@@ -2,7 +2,6 @@ package co.jp.wever.graphql.infrastructure.converter.entity.article;
 
 import java.util.Map;
 
-import co.jp.wever.graphql.domain.domainmodel.article.base.ArticleBase;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.common.VertexConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleBaseEntity;

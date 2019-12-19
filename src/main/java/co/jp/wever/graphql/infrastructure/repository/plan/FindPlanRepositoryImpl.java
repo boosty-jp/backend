@@ -12,9 +12,6 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.repository.plan.FindPlanRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToPlanElementEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.PlanToTagEdge;
-import co.jp.wever.graphql.infrastructure.constant.edge.label.UserToPlanEdge;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.PlanVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.plan.PlanItemEntityConverter;
