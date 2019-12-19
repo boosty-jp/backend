@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
-import co.jp.wever.graphql.domain.domainmodel.article.ArticleDetail;
 import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
