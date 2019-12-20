@@ -8,6 +8,7 @@ import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
 import co.jp.wever.graphql.application.converter.user.AccountActionResponseConverter;
 import co.jp.wever.graphql.application.converter.user.ActionCountResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
+import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleBlockResponse;
 import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleResponse;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
@@ -20,7 +21,13 @@ public class ArticleResponseConverter {
                               .title(article.getBase().getTitle())
                               .imageUrl(article.getBase().getImageUrl())
                               .status(article.getBase().getStatus())
-                              .textUrl(article.getBase().getTextUrl()) //TODO: presignedUrlを渡す
+                              .blocks(article.getBlocks()
+                                             .stream()
+                                             .map(a -> ArticleBlockResponse.builder()
+                                                                           .type(a.getType())
+                                                                           .data(a.getData())
+                                                                           .build())
+                                             .collect(Collectors.toList()))
                               .createDate(DateToStringConverter.toDateString(new Date(article.getBase()
                                                                                              .getCreatedDate())))
                               .updateDate(DateToStringConverter.toDateString(new Date(article.getBase()
@@ -40,6 +47,28 @@ public class ArticleResponseConverter {
     }
 
     public static ArticleResponse toArticleResponseForList(ArticleEntity article) {
+        return ArticleResponse.builder()
+                              .id(article.getBase().getId())
+                              .title(article.getBase().getTitle())
+                              .imageUrl(article.getBase().getImageUrl())
+                              .status(article.getBase().getStatus())
+                              .createDate(DateToStringConverter.toDateString(new Date(article.getBase()
+                                                                                             .getCreatedDate())))
+                              .updateDate(DateToStringConverter.toDateString(new Date(article.getBase()
+                                                                                             .getUpdatedDate())))
+                              .tags(article.getTags()
+                                           .stream()
+                                           .map(t -> TagResponseConverter.toTagResponse(t))
+                                           .collect(Collectors.toList()))
+                              .skills(article.getSkills()
+                                             .stream()
+                                             .map(s -> SkillResponseConverter.toSkillResponse(s))
+                                             .collect(Collectors.toList()))
+                              .actionCount(ActionCountResponseConverter.toActionCountResponse(article.getActionCount()))
+                              .build();
+    }
+
+    public static ArticleResponse toArticleResponseForPublishedList(ArticleEntity article) {
         return ArticleResponse.builder()
                               .id(article.getBase().getId())
                               .title(article.getBase().getTitle())

@@ -45,7 +45,7 @@ type Account {
     setting: UserSetting
 }
 
-type ArticleBlocks {
+type ArticleBlock {
     type: String!
     data: String!
 }
@@ -54,7 +54,7 @@ type Article {
     id: ID!
     title: String!
     imageUrl: String!
-    blocks: [ArticleBlocks]!
+    blocks: [ArticleBlock]!
     status: String!
     createDate: String!
     updateDate: String!
@@ -149,11 +149,16 @@ input SearchCondition {
     resultCount: Int
 }
 
+input ArticleBlockInput {
+    type: String!
+    data: String!
+}
+
 input ArticleInput {
     id: ID!
     title: String!
     imageUrl: String
-    textUrl: String!
+    blocks: [ArticleBlockInput]
 
     tagIds: [String]!
     skills: [SkillInput]!

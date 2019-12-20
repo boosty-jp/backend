@@ -14,6 +14,7 @@ import lombok.Data;
 @Builder
 public class ArticleEntity {
     private ArticleBaseEntity base;
+    private List<ArticleBlockEntity> blocks;
     private List<TagEntity> tags;
     private List<SkillEntity> skills;
     private ActionCountEntity actionCount;

@@ -6,7 +6,6 @@ import java.util.List;
 
 import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
 @Repository
 public interface ArticleQueryRepository {
@@ -21,8 +20,6 @@ public interface ArticleQueryRepository {
     List<ArticleEntity> findActioned(String userId, SearchCondition searchCondition);
 
     List<ArticleEntity> findFamous();
-
-    List<ArticleDetailEntity> findRelated(String userId);
 
     String findAuthorId(String articleId);
 }

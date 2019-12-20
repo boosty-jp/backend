@@ -55,7 +55,7 @@ public class ArticleDataFetcher {
 
             List<ArticleEntity> results = articleQueryService.findCreatedArticles(userId, searchConditionInput);
             return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .map(r -> ArticleResponseConverter.toArticleResponseForPublishedList(r))
                           .collect(Collectors.toList());
         };
     }
@@ -82,7 +82,7 @@ public class ArticleDataFetcher {
 
             List<ArticleEntity> results = articleQueryService.findActionedArticles(userId, searchConditionInput);
             return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .map(r -> ArticleResponseConverter.toArticleResponseForPublishedList(r))
                           .collect(Collectors.toList());
         };
     }

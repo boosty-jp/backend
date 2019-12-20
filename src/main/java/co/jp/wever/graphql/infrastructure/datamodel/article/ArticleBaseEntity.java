@@ -10,7 +10,6 @@ public class ArticleBaseEntity {
     private String id;
     private String title;
     private String imageUrl;
-    private String textUrl;
     private String status;
     private long createdDate;
     private long updatedDate;

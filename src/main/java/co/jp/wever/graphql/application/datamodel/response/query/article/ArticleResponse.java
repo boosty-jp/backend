@@ -17,7 +17,7 @@ public class ArticleResponse {
     private String title;
     private String imageUrl;
     private String status;
-    private String textUrl;
+    private List<ArticleBlockResponse> blocks;
     private String createDate;
     private String updateDate;
 

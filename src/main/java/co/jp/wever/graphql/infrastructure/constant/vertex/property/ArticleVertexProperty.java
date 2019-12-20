@@ -2,8 +2,7 @@ package co.jp.wever.graphql.infrastructure.constant.vertex.property;
 
 public enum ArticleVertexProperty {
     TITLE("title"),
-    IMAGE_URL("imageUrl"),
-    TEXT_URL("textUrl");
+    IMAGE_URL("imageUrl");
 
     private String value;
 

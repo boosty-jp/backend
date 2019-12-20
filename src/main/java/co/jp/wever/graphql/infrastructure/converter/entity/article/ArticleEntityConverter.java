@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.skill.SkillEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.tag.TagEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
@@ -15,6 +16,7 @@ public class ArticleEntityConverter {
 
     public static ArticleEntity toArticleEntity(Map<String, Object> findResult) {
         Map<Object, Object> baseResult = (Map<Object, Object>) findResult.get("base");
+        List<Map<Object, Object>> blocks = (List<Map<Object, Object>>) findResult.get("blocks");
         List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) findResult.get("tags");
         List<Map<String, Object>> skillResult = (List<Map<String, Object>>) findResult.get("skills");
         Map<Object, Object> authorResult = (Map<Object, Object>) findResult.get("author");
@@ -27,6 +29,9 @@ public class ArticleEntityConverter {
 
         return ArticleEntity.builder()
                             .base(ArticleBaseEntityConverter.toArticleBaseEntity(baseResult, statusResult))
+                            .blocks(blocks.stream()
+                                          .map(b -> ArticleBlockEntityConverter.toArticleBlockEntity(b))
+                                          .collect(Collectors.toList()))
                             .tags(tagResult.stream()
                                            .map(t -> TagEntityConverter.toTagEntity(t))
                                            .collect(Collectors.toList()))
@@ -42,6 +47,7 @@ public class ArticleEntityConverter {
 
     public static ArticleEntity toArticleEntityForGuest(Map<String, Object> findResult) {
         Map<Object, Object> baseResult = (Map<Object, Object>) findResult.get("base");
+        List<Map<Object, Object>> blocks = (List<Map<Object, Object>>) findResult.get("blocks");
         List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) findResult.get("tags");
         List<Map<String, Object>> skillResult = (List<Map<String, Object>>) findResult.get("skills");
         Map<Object, Object> authorResult = (Map<Object, Object>) findResult.get("author");
@@ -52,6 +58,9 @@ public class ArticleEntityConverter {
 
         return ArticleEntity.builder()
                             .base(ArticleBaseEntityConverter.toArticleBaseEntity(baseResult, statusResult))
+                            .blocks(blocks.stream()
+                                          .map(b -> ArticleBlockEntityConverter.toArticleBlockEntity(b))
+                                          .collect(Collectors.toList()))
                             .tags(tagResult.stream()
                                            .map(t -> TagEntityConverter.toTagEntity(t))
                                            .collect(Collectors.toList()))
@@ -75,7 +84,7 @@ public class ArticleEntityConverter {
 
         return ArticleEntity.builder()
                             .base(ArticleBaseEntityConverter.toArticleBaseEntity(baseResult,
-                                                                                 UserToContentProperty.PUBLISHED.getString()))
+                                                                                 EdgeLabel.PUBLISH.getString()))
                             .tags(tagResult.stream()
                                            .map(t -> TagEntityConverter.toTagEntity(t))
                                            .collect(Collectors.toList()))

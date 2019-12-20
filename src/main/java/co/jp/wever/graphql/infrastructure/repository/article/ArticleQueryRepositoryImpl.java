@@ -17,7 +17,6 @@ import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
@@ -41,6 +40,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
 
         Map<String, Object> allResult = g.V(articleId)
                                          .project("base",
+                                                  "blocks",
                                                   "tags",
                                                   "skills",
                                                   "author",
@@ -50,6 +50,12 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                                                   "liked",
                                                   "learned")
                                          .by(__.valueMap().with(WithOptions.tokens))
+                                         .by(__.out(EdgeLabel.INCLUDE.getString())
+                                               .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
+                                               .out(EdgeLabel.INCLUDE.getString())
+                                               .hasLabel(VertexLabel.ARTICLE_BLOCK.getString())
+                                               .valueMap()
+                                               .fold())
                                          .by(__.out(EdgeLabel.RELATED_TO.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
@@ -99,8 +105,21 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> allResult = g.V(articleId)
-                                         .project("base", "tags", "skills", "author", "status", "liked", "learned")
+                                         .project("base",
+                                                  "blocks",
+                                                  "tags",
+                                                  "skills",
+                                                  "author",
+                                                  "status",
+                                                  "liked",
+                                                  "learned")
                                          .by(__.valueMap().with(WithOptions.tokens))
+                                         .by(__.out(EdgeLabel.INCLUDE.getString())
+                                               .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
+                                               .out(EdgeLabel.INCLUDE.getString())
+                                               .hasLabel(VertexLabel.ARTICLE_BLOCK.getString())
+                                               .valueMap()
+                                               .fold())
                                          .by(__.out(EdgeLabel.RELATED_TO.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
@@ -347,8 +366,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                               .select("teachEdge", "skillVertex")
                               .by(valueMap())
                               .fold())
-                        .by(__.inE(EdgeLabel.DRAFT.getString(),
-                                   EdgeLabel.PUBLISH.getString()).label())
+                        .by(__.inE(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString()).label())
                         .by(__.in(EdgeLabel.LIKE.getString()).count())
                         .by(__.in(EdgeLabel.LEARN.getString()).count())
                         .toList();
@@ -371,8 +389,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                               .select("teachEdge", "skillVertex")
                               .by(valueMap())
                               .fold())
-                        .by(__.inE(EdgeLabel.DRAFT.getString(),
-                                   EdgeLabel.PUBLISH.getString()).label())
+                        .by(__.inE(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString()).label())
                         .by(__.in(EdgeLabel.LIKE.getString()).count())
                         .by(__.in(EdgeLabel.LEARN.getString()).count())
                         .by(__.in(searchCondition.getField()).count())
@@ -401,8 +418,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                           .select("teachEdge", "skillVertex")
                           .by(valueMap())
                           .fold())
-                    .by(__.inE(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
-                          .label())
+                    .by(__.inE(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString()).label())
                     .by(__.in(EdgeLabel.LIKE.getString()).count())
                     .by(__.in(EdgeLabel.LEARN.getString()).count())
                     .toList();
@@ -542,10 +558,6 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
         return allResults.stream()
                          .map(r -> ArticleEntityConverter.toArticleEntityForList(r))
                          .collect(Collectors.toList());
-    }
-
-    public List<ArticleDetailEntity> findRelated(String userId) {
-        return null;
     }
 
     @Override
