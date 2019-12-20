@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
-import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.plan.DraftPlanConverter;
@@ -17,8 +15,8 @@ import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanDescription;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanImageUrl;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
-import co.jp.wever.graphql.infrastructure.repository.plan.UpdatePlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.course.FindPlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.course.UpdatePlanRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

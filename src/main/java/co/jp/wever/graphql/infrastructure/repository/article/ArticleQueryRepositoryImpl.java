@@ -39,6 +39,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> allResult = g.V(articleId)
+                                         .hasLabel(VertexLabel.ARTICLE.getString())
                                          .project("base",
                                                   "blocks",
                                                   "tags",
@@ -568,5 +569,16 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                          .in(EdgeLabel.PUBLISH.getString(), EdgeLabel.DRAFT.getString())
                          .id()
                          .next();
+    }
+
+    @Override
+    public int publishedArticleCount(List<String> articleIds) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        return g.V(articleIds)
+                .hasLabel(VertexLabel.ARTICLE.getString())
+                .in(EdgeLabel.PUBLISH.getString())
+                .id()
+                .toList()
+                .size();
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.datamodel.request.CreateSectionInput;
+import co.jp.wever.graphql.application.datamodel.request.SectionInput;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.section.FindSectionConverter;
@@ -31,7 +31,7 @@ public class CreateSectionService {
         this.createSectionRepository = createSectionRepository;
     }
 
-    public String createSection(Requester requester, String articleId, CreateSectionInput sectionInput) {
+    public String createSection(Requester requester, String articleId, SectionInput sectionInput) {
         log.info("create section to articleId: {}", articleId);
         log.info("create section number: {}", sectionInput.getNumber());
         log.info("create section text size: {}", sectionInput.getText().length());

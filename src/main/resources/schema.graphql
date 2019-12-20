@@ -7,12 +7,10 @@ type Query {
     famousArticles: [Article]!
 
     course(courseId: ID!): Course!
-    allCourses: [Course]!
-    allPublishedCourses(userId: ID!): [Course]!
-    allDraftedCourses: [Course]!
-    allLikedCourses: [Course]!
-    allLearningCourses(userId: ID!): [Course]!
-    allLearnedCourses(userId: ID!): [Course]!
+    createdCourses(userId: ID! ,condition: SearchCondition): [Article]!
+    createdCoursesBySelf(condition: SearchCondition): [Article]!
+    actionedCourses(userId: ID! ,condition: SearchCondition): [Article]!
+    actionedCoursesBySelf(condition: SearchCondition): [Article]!
     famousCourses: [Course]!
 
     user(userId: ID!): User!
@@ -75,7 +73,7 @@ type Articles {
 }
 
 type Content {
-    article: Article!
+    id: ID!
     number: Int!
 }
 
@@ -155,7 +153,7 @@ input ArticleBlockInput {
 }
 
 input ArticleInput {
-    id: ID!
+    id: ID
     title: String!
     imageUrl: String
     blocks: [ArticleBlockInput]
@@ -170,7 +168,7 @@ input SkillInput {
 }
 
 input CourseInput {
-    id: ID!
+    id: ID
     title: String!
     imageUrl: String
     description: String
@@ -206,8 +204,8 @@ input UserSettingInput {
 }
 
 type Mutation {
-    publishArticle(articleId: ID, article: ArticleInput!): Boolean
-    draftArticle(articleId: ID, article: ArticleInput!): Boolean
+    publishArticle(article: ArticleInput!): Boolean
+    draftArticle(article: ArticleInput!): Boolean
     deleteArticle(articleId: ID!): Boolean
 
     likeArticle(articleId: ID!): Boolean
@@ -215,8 +213,8 @@ type Mutation {
     learnArticle(articleId: ID!): Boolean
     clearLearnArticle(articleId: ID!): Boolean
 
-    publishCourse(courseId: ID, course: CourseInput!): Boolean
-    draftCourse(courseId: ID, course: CourseInput!): Boolean
+    publishCourse(course: CourseInput!): Boolean
+    draftCourse(course: CourseInput!): Boolean
     deleteCourse(courseId: ID!): Boolean
 
     likeCourse(courseId: ID!): Boolean

@@ -15,11 +15,11 @@ import co.jp.wever.graphql.domain.domainmodel.plan.PlanDetail;
 import co.jp.wever.graphql.domain.domainmodel.plan.PlanListItem;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElementDetail;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.LearningPlanItemEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanItemEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
-import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.datamodel.course.LearningPlanItemEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.aggregation.PlanDetailEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.aggregation.PlanItemEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.aggregation.PlanListItemEntity;
+import co.jp.wever.graphql.infrastructure.repository.course.FindPlanRepositoryImpl;
 
 @Service
 public class FindCourseService {

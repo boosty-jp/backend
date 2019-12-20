@@ -3,7 +3,7 @@ package co.jp.wever.graphql.infrastructure.constant.vertex.label;
 
 public enum VertexLabel {
     COURSE("course"),
-    SECTION("section"),
+    COURSE_SECTION("courseSection"),
     ARTICLE("article"),
     ARTICLE_TEXT("articleText"),
     ARTICLE_BLOCK("articleBlock"),

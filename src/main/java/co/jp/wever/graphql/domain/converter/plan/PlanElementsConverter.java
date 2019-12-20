@@ -3,7 +3,6 @@ package co.jp.wever.graphql.domain.converter.plan;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElement;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElements;
 

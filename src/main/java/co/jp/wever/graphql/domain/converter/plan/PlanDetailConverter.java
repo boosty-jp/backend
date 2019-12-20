@@ -12,7 +12,7 @@ import co.jp.wever.graphql.domain.domainmodel.plan.element.FindPlanElements;
 import co.jp.wever.graphql.domain.domainmodel.plan.statistics.PlanStatistics;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanDetailEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.aggregation.PlanDetailEntity;
 
 public class PlanDetailConverter {
     public static PlanDetail toPlanDetail(PlanDetailEntity planDetailEntity) {

@@ -15,7 +15,7 @@ import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionEntityConverter;
 import co.jp.wever.graphql.infrastructure.converter.entity.section.SectionNumberEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.section.LikedSectionEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseSectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
@@ -32,7 +32,7 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
     }
 
     @Override
-    public SectionEntity findOne(String sectionId) {
+    public CourseSectionEntity findOne(String sectionId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> result = g.V(sectionId)
@@ -53,12 +53,12 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
         return SectionEntityConverter.toSectionEntity(result, true);
     }
 
-    public List<SectionEntity> findAllDetailOnArticle(String articleId, String userId) {
+    public List<CourseSectionEntity> findAllDetailOnArticle(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<String, Object>> results = g.V(articleId)
                                              .out(ArticleToSectionEdge.INCLUDE.getString())
-                                             .hasLabel(VertexLabel.SECTION.getString())
+                                             .hasLabel(VertexLabel.COURSE_SECTION.getString())
                                              .project("base", "author", "status", "like", "number", "liked")
                                              .by(__.valueMap().with(WithOptions.tokens))
                                              .by(__.in(UserToSectionEdge.CREATED.getString(),
@@ -85,7 +85,7 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
 
         List<Map<String, Object>> allResults = g.V(articleId)
                                                 .out(ArticleToSectionEdge.INCLUDE.getString())
-                                                .hasLabel(VertexLabel.SECTION.getString())
+                                                .hasLabel(VertexLabel.COURSE_SECTION.getString())
                                                 .project("id", "number")
                                                 .by(__.id())
                                                 .by(__.inE(ArticleToSectionEdge.INCLUDE.getString())
@@ -113,7 +113,7 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
 
         List<Map<String, Object>> results = g.V(userId)
                                              .out(UserToSectionEdge.LIKED.getString())
-                                             .hasLabel(VertexLabel.SECTION.getString())
+                                             .hasLabel(VertexLabel.COURSE_SECTION.getString())
                                              .project("articleId", "base", "author", "status", "like", "number")
                                              .by(__.in(ArticleToSectionEdge.INCLUDE.getString())
                                                    .hasLabel(VertexLabel.ARTICLE.getString())
@@ -134,23 +134,23 @@ public class FindSectionRepositoryImpl implements FindSectionRepository {
         return results.stream()
                       .map(r -> LikedSectionEntity.builder()
                                                   .articleId((String) r.get("articleId"))
-                                                  .sectionEntity(SectionEntityConverter.toSectionEntity(r, true))
+                                                  .courseSectionEntity(SectionEntityConverter.toSectionEntity(r, true))
                                                   .build())
                       .collect(Collectors.toList());
     }
 
     @Override
-    public List<SectionEntity> findAllBookmarked(String userId) {
+    public List<CourseSectionEntity> findAllBookmarked(String userId) {
         return null;
     }
 
     @Override
-    public List<SectionEntity> findFamous() {
+    public List<CourseSectionEntity> findFamous() {
         return null;
     }
 
     @Override
-    public List<SectionEntity> findRelated(String userId) {
+    public List<CourseSectionEntity> findRelated(String userId) {
         return null;
     }
 

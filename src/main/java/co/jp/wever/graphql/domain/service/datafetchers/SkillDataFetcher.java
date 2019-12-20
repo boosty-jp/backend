@@ -1,5 +1,7 @@
 package co.jp.wever.graphql.domain.service.datafetchers;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +14,7 @@ import co.jp.wever.graphql.domain.service.skill.SkillQueryService;
 import co.jp.wever.graphql.infrastructure.datamodel.skill.SkillEntity;
 import graphql.schema.DataFetcher;
 
+@Component
 public class SkillDataFetcher {
     private final SkillMutationService skillMutationService;
     private final SkillQueryService skillQueryService;

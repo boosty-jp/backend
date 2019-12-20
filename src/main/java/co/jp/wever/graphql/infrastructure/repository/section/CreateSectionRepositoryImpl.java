@@ -10,7 +10,7 @@ import co.jp.wever.graphql.domain.repository.section.CreateSectionRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.SectionVertexProperty;
-import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseSectionEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.SectionNumberEntity;
 import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
@@ -27,13 +27,13 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
 
     @Override
     public String addOne(
-        String authorId, String articleId, SectionEntity sectionEntity, List<SectionNumberEntity> incrementNumbers) {
+        String authorId, String articleId, CourseSectionEntity courseSectionEntity, List<SectionNumberEntity> incrementNumbers) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
 
-        String sectionId = g.addV(VertexLabel.SECTION.getString())
-                            .property(single, SectionVertexProperty.TITLE.getString(), sectionEntity.getTitle())
-                            .property(single, SectionVertexProperty.TEXT.getString(), sectionEntity.getText())
+        String sectionId = g.addV(VertexLabel.COURSE_SECTION.getString())
+                            .property(single, SectionVertexProperty.TITLE.getString(), courseSectionEntity.getTitle())
+                            .property(single, SectionVertexProperty.TEXT.getString(), courseSectionEntity.getText())
                             .property(single, SectionVertexProperty.CREATED_TIME.getString(), now)
                             .property(single, SectionVertexProperty.UPDATED_TIME.getString(), now)
                             .next()
@@ -43,7 +43,7 @@ public class CreateSectionRepositoryImpl implements CreateSectionRepository {
         g.V(sectionId)
          .addE(ArticleToSectionEdge.INCLUDE.getString())
          .property(T.id, EdgeIdCreator.createId(articleId, sectionId, ArticleToSectionEdge.INCLUDE.getString()))
-         .property(ArticleToSectionProperty.NUMBER.getString(), sectionEntity.getNumber())
+         .property(ArticleToSectionProperty.NUMBER.getString(), courseSectionEntity.getNumber())
          .property(ArticleToSectionProperty.CREATED_TIME.getString(), now)
          .property(ArticleToSectionProperty.UPDATED_TIME.getString(), now)
          .from(g.V(articleId))

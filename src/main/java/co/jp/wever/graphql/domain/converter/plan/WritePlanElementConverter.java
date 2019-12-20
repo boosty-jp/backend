@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.domain.converter.plan;
 
-import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.WritePlanElement;
 
 public class WritePlanElementConverter {

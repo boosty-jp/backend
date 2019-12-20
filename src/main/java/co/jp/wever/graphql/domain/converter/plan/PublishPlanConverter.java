@@ -2,8 +2,6 @@ package co.jp.wever.graphql.domain.converter.plan;
 
 import java.util.List;
 
-import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
-import co.jp.wever.graphql.application.datamodel.request.PlanElementInput;
 import co.jp.wever.graphql.domain.domainmodel.plan.PublishPlan;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.publish.PublishPlanBase;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PublishPlanElements;

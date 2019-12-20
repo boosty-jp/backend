@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class SectionResponse {
     private String id;
-    private int number;
+    private long number;
     private String title;
     private List<ContentResponse> contents;
     private String createDate;

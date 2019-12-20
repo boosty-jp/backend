@@ -9,7 +9,7 @@ import co.jp.wever.graphql.domain.domainmodel.plan.action.PlanUserAction;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.plan.statistics.PlanStatistics;
 import co.jp.wever.graphql.domain.domainmodel.tag.Tag;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.aggregation.PlanListItemEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.aggregation.PlanListItemEntity;
 
 public class PlanListItemConverter {
     public static PlanListItem toPlanListItem(PlanListItemEntity planListItemEntity) {

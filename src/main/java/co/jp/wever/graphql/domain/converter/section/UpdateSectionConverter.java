@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.domain.converter.section;
 
-import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.domain.domainmodel.section.UpdateSection;
 
 public class UpdateSectionConverter {

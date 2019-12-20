@@ -20,7 +20,7 @@ public class CourseResponse {
     private String createDate;
     private String updateDate;
 
-    private List<TagResponse> tqgs;
+    private List<TagResponse> tags;
     private List<SectionResponse> sections;
     private UserResponse author;
 

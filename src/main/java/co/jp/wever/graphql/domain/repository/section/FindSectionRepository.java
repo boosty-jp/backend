@@ -5,23 +5,23 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.datamodel.section.LikedSectionEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseSectionEntity;
 
 
 @Repository
 public interface FindSectionRepository {
 
-    SectionEntity findOne(String sectionId);
+    CourseSectionEntity findOne(String sectionId);
 
-    List<SectionEntity> findAllDetailOnArticle(String articleId, String userId);
+    List<CourseSectionEntity> findAllDetailOnArticle(String articleId, String userId);
 
     List<LikedSectionEntity> findAllLiked(String userId);
 
-    List<SectionEntity> findAllBookmarked(String userId);
+    List<CourseSectionEntity> findAllBookmarked(String userId);
 
-    List<SectionEntity> findFamous();
+    List<CourseSectionEntity> findFamous();
 
-    List<SectionEntity> findRelated(String userId);
+    List<CourseSectionEntity> findRelated(String userId);
 
     String findAuthorId(String sectionId);
 }

@@ -1,6 +1,6 @@
 package co.jp.wever.graphql.domain.converter.section;
 
-import co.jp.wever.graphql.application.datamodel.request.CreateSectionInput;
+import co.jp.wever.graphql.application.datamodel.request.SectionInput;
 import co.jp.wever.graphql.domain.domainmodel.section.FindSection;
 import co.jp.wever.graphql.domain.domainmodel.section.SectionId;
 import co.jp.wever.graphql.domain.domainmodel.section.SectionNumber;
@@ -8,10 +8,10 @@ import co.jp.wever.graphql.domain.domainmodel.section.SectionText;
 import co.jp.wever.graphql.domain.domainmodel.section.SectionTitle;
 import co.jp.wever.graphql.domain.domainmodel.section.statistic.SectionStatistic;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
-import co.jp.wever.graphql.infrastructure.datamodel.section.SectionEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseSectionEntity;
 
 public class FindSectionConverter {
-    public static FindSection toSection(CreateSectionInput sectionInput, String userId) {
+    public static FindSection toSection(SectionInput sectionInput, String userId) {
         return new FindSection(SectionId.of(""),
                                //TODO: ドメインじゃないので分離したい
                                SectionTitle.of(sectionInput.getTitle()),
@@ -23,13 +23,13 @@ public class FindSectionConverter {
                                false); //TODO: ドメインじゃないので分離したい
     }
 
-    public static FindSection toSection(SectionEntity sectionEntity) {
-        return new FindSection(SectionId.of(sectionEntity.getId()),
-                               SectionTitle.of(sectionEntity.getTitle()),
-                               SectionText.of(sectionEntity.getText()),
-                               SectionNumber.of(sectionEntity.getNumber()),
-                               UserId.of(sectionEntity.getAuthorId()),
-                               SectionStatistic.of(sectionEntity.getLikeCount()),
-                               sectionEntity.isLiked());
+    public static FindSection toSection(CourseSectionEntity courseSectionEntity) {
+        return new FindSection(SectionId.of(courseSectionEntity.getId()),
+                               SectionTitle.of(courseSectionEntity.getTitle()),
+                               SectionText.of(courseSectionEntity.getText()),
+                               SectionNumber.of(courseSectionEntity.getNumber()),
+                               UserId.of(courseSectionEntity.getAuthorId()),
+                               SectionStatistic.of(courseSectionEntity.getLikeCount()),
+                               courseSectionEntity.isLiked());
     }
 }

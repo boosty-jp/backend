@@ -97,6 +97,8 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
 
         clearStatus(g, articleId, userId);
         addStatus(g, articleId, userId, EdgeLabel.DRAFT.getString(), now);
+
+        algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
     }
 
     @Override
@@ -111,6 +113,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         addBlocks(g, articleId, article, now);
         addStatus(g, articleId, EdgeLabel.DRAFT.getString(), userId, now);
 
+        algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
         return articleId;
     }
 
@@ -182,13 +185,14 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
              .hasLabel(VertexLabel.TAG.getString())
              .addE(EdgeLabel.RELATED_TO.getString())
              .property(DateProperty.CREATE_TIME.getString(), now)
-             .from(g.V(articleId))
+             .from(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
              .iterate();
         }
     }
 
     private void clearTag(GraphTraversalSource g, String articleId) {
         g.V(articleId)
+         .hasLabel(VertexLabel.ARTICLE.getString())
          .outE(EdgeLabel.RELATED_TO.getString())
          .where(inV().hasLabel(VertexLabel.TAG.getString()))
          .drop()
@@ -217,6 +221,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
 
     private void clearStatus(GraphTraversalSource g, String articleId, String authorId) {
         g.V(articleId)
+         .hasLabel(VertexLabel.ARTICLE.getString())
          .inE(EdgeLabel.PUBLISH.getString(), EdgeLabel.DRAFT.getString())
          .where(outV().hasLabel(VertexLabel.USER.getString()).hasId(authorId))
          .drop()
@@ -225,6 +230,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
 
     private void addStatus(GraphTraversalSource g, String articleId, String status, String authorId, long now) {
         g.V(articleId)
+         .hasLabel(VertexLabel.ARTICLE.getString())
          .addE(status)
          .property(T.id, EdgeIdCreator.createId(authorId, articleId, status))
          .from(g.V(authorId))
@@ -247,7 +253,12 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
     }
 
     private void clearAction(GraphTraversalSource g, String articleId, String action, String userId) {
-        g.V(articleId).inE(action).hasId(EdgeIdCreator.createId(userId, articleId, action)).drop().iterate();
+        g.V(articleId)
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .inE(action)
+         .hasId(EdgeIdCreator.createId(userId, articleId, action))
+         .drop()
+         .iterate();
     }
 
     private void clearBlocks(GraphTraversalSource g, String articleId, long now) {

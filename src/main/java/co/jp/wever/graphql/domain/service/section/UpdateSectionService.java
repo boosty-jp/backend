@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.application.datamodel.request.UpdateSectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.section.UpdateSectionConverter;
 import co.jp.wever.graphql.domain.domainmodel.section.UpdateSection;

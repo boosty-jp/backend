@@ -20,21 +20,21 @@ import co.jp.wever.graphql.infrastructure.repository.user.FindUserRepositoryImpl
 @Service
 public class ArticleQueryService {
 
-    private final ArticleQueryRepositoryImpl findArticleRepository;
+    private final ArticleQueryRepositoryImpl articleQueryRepository;
     private final FindUserRepositoryImpl findUserRepository;
 
     ArticleQueryService(
-        ArticleQueryRepositoryImpl findArticleRepository, FindUserRepositoryImpl findUserRepository) {
-        this.findArticleRepository = findArticleRepository;
+        ArticleQueryRepositoryImpl articleQueryRepository, FindUserRepositoryImpl findUserRepository) {
+        this.articleQueryRepository = articleQueryRepository;
         this.findUserRepository = findUserRepository;
     }
 
     public ArticleEntity findArticle(String articleId, Requester requester) {
         ArticleEntity articleEntity;
         if (requester.isGuest()) {
-            articleEntity = findArticleRepository.findOneForGuest(articleId);
+            articleEntity = articleQueryRepository.findOneForGuest(articleId);
         } else {
-            articleEntity = findArticleRepository.findOne(articleId, requester.getUserId());
+            articleEntity = articleQueryRepository.findOne(articleId, requester.getUserId());
         }
 
         if (!canRead(articleEntity, requester.getUserId())) {
@@ -48,7 +48,7 @@ public class ArticleQueryService {
     public List<ArticleEntity> findCreatedArticles(String userId, SearchConditionInput searchConditionInput) {
         SearchCondition searchCondition = SearchConditionFactory.makeFilteredPublished(searchConditionInput);
 
-        return findArticleRepository.findCreated(userId, searchCondition);
+        return articleQueryRepository.findCreated(userId, searchCondition);
     }
 
     public List<ArticleEntity> findCreatedArticlesBySelf(
@@ -60,7 +60,7 @@ public class ArticleQueryService {
                                              GraphQLErrorMessage.INVALID_SEARCH_CONDITION.getString());
         }
 
-        return findArticleRepository.findCreatedBySelf(requester.getUserId(), searchCondition);
+        return articleQueryRepository.findCreatedBySelf(requester.getUserId(), searchCondition);
     }
 
     public List<ArticleEntity> findActionedArticles(String userId, SearchConditionInput searchConditionInput) {
@@ -78,7 +78,7 @@ public class ArticleQueryService {
                                              GraphQLErrorMessage.SEARCH_FORBIDDEN.getString());
         }
 
-        return findArticleRepository.findActioned(userId, searchCondition);
+        return articleQueryRepository.findActioned(userId, searchCondition);
     }
 
     public List<ArticleEntity> findActionedArticlesBySelf(
@@ -90,13 +90,14 @@ public class ArticleQueryService {
                                              GraphQLErrorMessage.INVALID_SEARCH_CONDITION.getString());
         }
 
-        return findArticleRepository.findActioned(requester.getUserId(), searchCondition);
+        return articleQueryRepository.findActioned(requester.getUserId(), searchCondition);
     }
 
     public List<ArticleEntity> findFamousArticle() {
-        return findArticleRepository.findFamous();
+        return articleQueryRepository.findFamous();
     }
 
+    //TODO: ドメイン化
     private boolean canRead(ArticleEntity articleEntity, String requesterId) {
         if (articleEntity.getBase().getStatus().equals(EdgeLabel.PUBLISH.getString())) {
             return true;

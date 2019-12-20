@@ -3,7 +3,7 @@ package co.jp.wever.graphql.domain.converter.plan;
 import java.util.Date;
 
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanBaseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.PlanBaseEntity;
 
 public class PlanBaseConverter {
     public static PlanBase toPlanBase(PlanBaseEntity planBaseEntity) {

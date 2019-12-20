@@ -22,4 +22,6 @@ public interface ArticleQueryRepository {
     List<ArticleEntity> findFamous();
 
     String findAuthorId(String articleId);
+
+    int publishedArticleCount(List<String> articleIds);
 }

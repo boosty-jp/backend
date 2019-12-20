@@ -7,8 +7,8 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.repository.plan.DeletePlanRepositoryImpl;
-import co.jp.wever.graphql.infrastructure.repository.plan.FindPlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.course.DeletePlanRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.course.FindPlanRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

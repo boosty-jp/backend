@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.service.datafetchers.ArticleDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.CourseDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.SkillDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.TagDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.UserDataFetcher;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -42,6 +43,9 @@ public class GraphQLService {
 
     @Autowired
     private TagDataFetcher tagDataFetcher;
+
+    @Autowired
+    private SkillDataFetcher skillDataFetcher;
 
     @PostConstruct
     private void loadSchema() throws IOException {
@@ -96,7 +100,7 @@ public class GraphQLService {
                                                           .dataFetcher("famousTags",
                                                                        tagDataFetcher.famousTagDataFetcher())
                                                           .dataFetcher("famousSkills",
-                                                                       userDataFetcher.profileDataFetcher()))
+                                                                       skillDataFetcher.famousSkillDataFetcher()))
                             .type("Mutation",
                                   typeWiring -> typeWiring.dataFetcher("publishArticle",
                                                                        articleDataFetcher.publishArticleDataFetcher())
@@ -121,11 +125,11 @@ public class GraphQLService {
                                                           .dataFetcher("likeCourse",
                                                                        courseDataFetcher.likeCourseDataFetcher())
                                                           .dataFetcher("clearLikeCourse",
-                                                                       courseDataFetcher.deleteLikeCourseDataFetcher())
+                                                                       courseDataFetcher.clearLikeCourseDataFetcher())
                                                           .dataFetcher("startCourse",
                                                                        courseDataFetcher.startCourseDataFetcher())
                                                           .dataFetcher("clearStartCourse",
-                                                                       courseDataFetcher.stopCourseDataFetcher())
+                                                                       courseDataFetcher.clearStartCourseDataFetcher())
                                                           .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",
@@ -135,7 +139,9 @@ public class GraphQLService {
                                                           .dataFetcher("deleteUser",
                                                                        userDataFetcher.deleteUserDataFetcher())
                                                           .dataFetcher("createTag",
-                                                                       tagDataFetcher.createTagDataFetcher()))
+                                                                       tagDataFetcher.createTagDataFetcher())
+                                                          .dataFetcher("createSkill",
+                                                                       skillDataFetcher.createSkillDataFetcher()))
                             .build();
     }
 

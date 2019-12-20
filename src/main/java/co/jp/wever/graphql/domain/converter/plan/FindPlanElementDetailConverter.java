@@ -8,7 +8,7 @@ import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementImageUrl;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementNumber;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementTitle;
 import co.jp.wever.graphql.domain.domainmodel.plan.element.PlanElementType;
-import co.jp.wever.graphql.infrastructure.datamodel.plan.PlanElementDetailEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.PlanElementDetailEntity;
 
 public class FindPlanElementDetailConverter {
     public static FindPlanElementDetail toFindPlanElementDetail(PlanElementDetailEntity planElementDetailEntity) {

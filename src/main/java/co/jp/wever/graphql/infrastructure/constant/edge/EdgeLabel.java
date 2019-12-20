@@ -3,6 +3,7 @@ package co.jp.wever.graphql.infrastructure.constant.edge;
 public enum EdgeLabel {
     LIKE("like"),
     LEARN("learn"),
+    ONGOING("ongoing"),
     TEACH("teach"),
     INCLUDE("include"),
     PUBLISH("publish"),

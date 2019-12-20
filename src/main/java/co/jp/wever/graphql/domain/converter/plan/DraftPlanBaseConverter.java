@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.domain.converter.plan;
 
-import co.jp.wever.graphql.application.datamodel.request.PlanBaseInput;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.draft.DraftPlanBase;
 
 public class DraftPlanBaseConverter {
