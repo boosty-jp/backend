@@ -15,7 +15,6 @@ import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryRepositoryImpl;
-import co.jp.wever.graphql.infrastructure.repository.user.FindUserRepositoryImpl;
 
 @Service
 public class ArticleQueryService {

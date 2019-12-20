@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
 
 @Repository
@@ -15,4 +16,12 @@ public interface CourseQueryRepository {
     String findAuthorId(String courseId);
 
     List<Long> findLearnList(String courseId, String userId);
+
+    List<CourseEntity> findCreated(String userId, SearchCondition searchCondition);
+
+    List<CourseEntity> findCreatedBySelf(String userId, SearchCondition searchCondition);
+
+    List<CourseEntity> findActioned(String userId, SearchCondition searchCondition);
+
+    List<CourseEntity> findFamous();
 }

@@ -6,19 +6,21 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import co.jp.wever.graphql.domain.repository.user.FindUserRepository;
+import co.jp.wever.graphql.domain.repository.user.UserQueryRepository;
+import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
-
 @Component
-public class FindUserRepositoryImpl implements FindUserRepository {
-
+public class UserQueryRepositoryImpl implements UserQueryRepository {
     private final NeptuneClient neptuneClient;
+    private final AlgoliaClient algoliaClient;
 
-    public FindUserRepositoryImpl(NeptuneClient neptuneClient) {
+    public UserQueryRepositoryImpl(
+        NeptuneClient neptuneClient, AlgoliaClient algoliaClient) {
         this.neptuneClient = neptuneClient;
+        this.algoliaClient = algoliaClient;
     }
 
     @Override

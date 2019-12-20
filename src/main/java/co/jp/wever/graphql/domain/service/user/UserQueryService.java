@@ -7,15 +7,16 @@ import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
-import co.jp.wever.graphql.infrastructure.repository.user.FindUserRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.user.UserQueryRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
-public class FindUserService {
-    private final FindUserRepositoryImpl findUserRepository;
+public class UserQueryService {
+    private final UserQueryRepositoryImpl userQueryRepository;
 
-
-    public FindUserService(FindUserRepositoryImpl findUserRepository) {
-        this.findUserRepository = findUserRepository;
+    public UserQueryService(UserQueryRepositoryImpl userQueryRepository) {
+        this.userQueryRepository = userQueryRepository;
     }
 
     public UserEntity findUser(String userId) {
@@ -24,7 +25,7 @@ public class FindUserService {
                                              GraphQLErrorMessage.USER_ID_EMPTY.getString());
         }
 
-        UserEntity userEntity = findUserRepository.findOne(userId);
+        UserEntity userEntity = userQueryRepository.findOne(userId);
         if(userEntity.getDeleted()){
             throw new GraphQLCustomException(HttpStatus.NOT_FOUND.value(),
                                              GraphQLErrorMessage.USER_NOT_FOUND.getString());
@@ -38,7 +39,7 @@ public class FindUserService {
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        UserEntity userEntity = findUserRepository.findOne(requester.getUserId());
+        UserEntity userEntity = userQueryRepository.findOne(requester.getUserId());
         if(userEntity.getDeleted()){
             throw new GraphQLCustomException(HttpStatus.NOT_FOUND.value(),
                                              GraphQLErrorMessage.USER_NOT_FOUND.getString());

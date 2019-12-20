@@ -11,10 +11,6 @@ import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserSettingInputConverter;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
-import co.jp.wever.graphql.domain.service.user.CreateUserService;
-import co.jp.wever.graphql.domain.service.user.DeleteUserService;
-import co.jp.wever.graphql.domain.service.user.FindUserService;
-import co.jp.wever.graphql.domain.service.user.UpdateUserService;
 import graphql.schema.DataFetcher;
 
 @Component

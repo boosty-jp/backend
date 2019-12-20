@@ -1,5 +1,8 @@
 package co.jp.wever.graphql.infrastructure.datamodel.course;
 
+import java.util.List;
+
+import co.jp.wever.graphql.infrastructure.datamodel.skill.SkillEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,5 +12,6 @@ public class CourseSectionContentEntity {
     private String id;
     private long number;
     private String title;
+    private List<SkillEntity> skills;
     private boolean learned;
 }

@@ -1,10 +1,11 @@
 package co.jp.wever.graphql.infrastructure.repository.user;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.application.datamodel.request.UserSettingInput;
-import co.jp.wever.graphql.domain.repository.user.UpdateUserRepository;
+import co.jp.wever.graphql.domain.repository.user.UserMutationRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
@@ -16,16 +17,54 @@ import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
 
 @Component
-public class UpdateUserRepositoryImpl implements UpdateUserRepository {
-
+public class UserMutationRepositoryImpl implements UserMutationRepository {
     private final NeptuneClient neptuneClient;
     private final AlgoliaClient algoliaClient;
 
-    public UpdateUserRepositoryImpl(
+    public UserMutationRepositoryImpl(
         NeptuneClient neptuneClient, AlgoliaClient algoliaClient) {
         this.neptuneClient = neptuneClient;
         this.algoliaClient = algoliaClient;
     }
+
+    @Override
+    public String createOne(UserEntity userEntity) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        long now = System.currentTimeMillis();
+
+        String userId = g.V(userEntity.getUserId())
+                         .fold()
+                         .coalesce(unfold(),
+                                   g.addV(VertexLabel.USER.getString())
+                                    .property(T.id, userEntity.getUserId())
+                                    .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
+                                    .property(UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
+                                    .property(UserVertexProperty.DESCRIPTION.getString(), "")
+                                    .property(UserVertexProperty.URL.getString(), "")
+                                    .property(UserVertexProperty.TWITTER_ID.getString(), "")
+                                    .property(UserVertexProperty.FACEBOOK_ID.getString(), "")
+                                    .property(UserVertexProperty.LEARN_PUBLIC.getString(), true)
+                                    .property(UserVertexProperty.LIKE_PUBLIC.getString(), true)
+                                    .property(UserVertexProperty.SKILL_PUBLIC.getString(), true)
+                                    .property(UserVertexProperty.DELETED.getString(), false)
+                                    .property(UserVertexProperty.CREATED_TIME.getString(), now)
+                                    .property(UserVertexProperty.UPDATED_TIME.getString(), now))
+                         .next()
+                         .id()
+                         .toString();
+
+        algoliaClient.getUserIndex()
+                     .saveObjectAsync(UserSearchEntity.builder()
+                                                      .objectID(userId)
+                                                      .displayName(userEntity.getDisplayName())
+                                                      .imageUrl(userEntity.getImageUrl())
+                                                      .description("")
+                                                      .build());
+
+        return userId;
+    }
+
 
     public void updateOne(UserEntity userEntity) {
         GraphTraversalSource g = neptuneClient.newTraversal();
@@ -74,6 +113,17 @@ public class UpdateUserRepositoryImpl implements UpdateUserRepository {
          .property(single, UserVertexProperty.LEARN_PUBLIC.getString(), userSettingInput.getLearnPublic())
          .property(single, UserVertexProperty.LIKE_PUBLIC.getString(), userSettingInput.getLikePublic())
          .property(single, UserVertexProperty.SKILL_PUBLIC.getString(), userSettingInput.getSkillPublic())
+         .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
+         .next();
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        long now = System.currentTimeMillis();
+
+        g.V(userId)
+         .property(single, UserVertexProperty.DELETED.getString(), true)
          .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
          .next();
     }

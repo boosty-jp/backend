@@ -6,7 +6,11 @@ import co.jp.wever.graphql.application.datamodel.request.UserSettingInput;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
 @Repository
-public interface UpdateUserRepository {
+public interface UserMutationRepository {
+    String createOne(UserEntity userEntity);
+
+    void deleteUser(String userId);
+
     void updateOne(UserEntity userEntity);
 
     void updateSetting(String userId, UserSettingInput userSettingInput);

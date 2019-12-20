@@ -11,17 +11,26 @@ import co.jp.wever.graphql.domain.converter.user.UserConverter;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
-import co.jp.wever.graphql.infrastructure.repository.user.UpdateUserRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.user.UserMutationRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class UpdateUserService {
+public class UserMutationService {
+    private final UserMutationRepositoryImpl userMutationRepository;
 
-    private final UpdateUserRepositoryImpl updateUserRepository;
+    public UserMutationService(UserMutationRepositoryImpl userMutationRepository) {
+        this.userMutationRepository = userMutationRepository;
+    }
 
-    public UpdateUserService(UpdateUserRepositoryImpl updateUserRepository) {
-        this.updateUserRepository = updateUserRepository;
+    public String createUser(UserInput userInput, Requester requester) {
+        log.info("create user: {}", userInput);
+        if(requester.isGuest()){
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        User user = UserConverter.toUser(userInput, requester.getUserId());
+        return userMutationRepository.createOne(UserEntityConverter.toUserEntity(user));
     }
 
     public void updateUser(UserInput userInput, Requester requester) {
@@ -37,7 +46,7 @@ public class UpdateUserService {
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        this.updateUserRepository.updateOne(UserEntityConverter.toUserEntity(user));
+        userMutationRepository.updateOne(UserEntityConverter.toUserEntity(user));
     }
 
     public void updateUserSetting(UserSettingInput userSettingInput, Requester requester) {
@@ -46,6 +55,16 @@ public class UpdateUserService {
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        this.updateUserRepository.updateSetting(requester.getUserId(), userSettingInput);
+        userMutationRepository.updateSetting(requester.getUserId(), userSettingInput);
+    }
+
+    public void deleteUser(Requester requester) {
+        log.info("delete user: {}", requester.getUserId());
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        userMutationRepository.deleteUser(requester.getUserId());
     }
 }

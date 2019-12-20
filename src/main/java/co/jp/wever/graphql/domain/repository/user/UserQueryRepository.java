@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
 @Repository
-public interface CreateUserRepository {
-    String createOne(UserEntity userEntity);
+public interface UserQueryRepository {
+    UserEntity findOne(String userId);
 }
