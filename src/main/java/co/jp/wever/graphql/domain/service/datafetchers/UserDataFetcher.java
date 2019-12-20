@@ -11,30 +11,25 @@ import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserSettingInputConverter;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.domain.service.user.UserMutationService;
+import co.jp.wever.graphql.domain.service.user.UserQueryService;
 import graphql.schema.DataFetcher;
 
 @Component
 public class UserDataFetcher {
 
-    private final FindUserService findUserService;
-    private final CreateUserService createUserService;
-    private final UpdateUserService updateUserService;
-    private final DeleteUserService deleteUserService;
+    private final UserQueryService userQueryService;
+    private final UserMutationService userMutationService;
     private final RequesterConverter requesterConverter;
 
     public UserDataFetcher(
-        FindUserService findUserService,
-        CreateUserService createUserService,
-        UpdateUserService updateUserService,
-        DeleteUserService deleteUserService,
+        UserQueryService userQueryService,
+        UserMutationService userMutationService,
         RequesterConverter requesterConverter) {
-        this.findUserService = findUserService;
-        this.createUserService = createUserService;
-        this.updateUserService = updateUserService;
-        this.deleteUserService = deleteUserService;
+        this.userQueryService = userQueryService;
+        this.userMutationService = userMutationService;
         this.requesterConverter = requesterConverter;
     }
-
 
     ///////////////////////////////
     ///////////   Query  //////////
@@ -42,14 +37,14 @@ public class UserDataFetcher {
     public DataFetcher userDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
-            return UserResponseConverter.toUserResponse(findUserService.findUser(userId));
+            return UserResponseConverter.toUserResponse(userQueryService.findUser(userId));
         };
     }
 
     public DataFetcher accountDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            return AccountResponseConverter.toAccountResponse(findUserService.findAccount(requester));
+            return AccountResponseConverter.toAccountResponse(userQueryService.findAccount(requester));
         };
     }
 
@@ -61,7 +56,7 @@ public class UserDataFetcher {
             Map<String, Object> userInputMap = dataFetchingEnvironment.getArgument("user");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
-            createUserService.createUser(UserInputConverter.toUserInput(userInputMap), requester);
+            userMutationService.createUser(UserInputConverter.toUserInput(userInputMap), requester);
             return CreateResponse.builder().id(requester.getUserId()).build();
         };
     }
@@ -71,8 +66,8 @@ public class UserDataFetcher {
             Map<String, Object> userInputMap = dataFetchingEnvironment.getArgument("user");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
-            updateUserService.updateUser(UserInputConverter.toUserInput(userInputMap), requester);
-            return UpdateResponse.builder().build();
+            userMutationService.updateUser(UserInputConverter.toUserInput(userInputMap), requester);
+            return true;
         };
     }
 
@@ -81,9 +76,9 @@ public class UserDataFetcher {
             Map<String, Object> userSettingInputMap = dataFetchingEnvironment.getArgument("setting");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
 
-            updateUserService.updateUserSetting(UserSettingInputConverter.toUserSettingInput(userSettingInputMap),
+            userMutationService.updateUserSetting(UserSettingInputConverter.toUserSettingInput(userSettingInputMap),
                                                 requester);
-            return UpdateResponse.builder().build();
+            return true;
         };
     }
 
@@ -91,8 +86,8 @@ public class UserDataFetcher {
 
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            deleteUserService.deleteUser(requester);
-            return UpdateResponse.builder().build();
+            userMutationService.deleteUser(requester);
+            return true;
         };
     }
 }

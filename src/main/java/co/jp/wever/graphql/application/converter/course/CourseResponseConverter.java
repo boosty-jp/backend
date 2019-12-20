@@ -8,6 +8,7 @@ import co.jp.wever.graphql.application.converter.user.AccountActionResponseConve
 import co.jp.wever.graphql.application.converter.user.ActionCountResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
 import co.jp.wever.graphql.application.datamodel.response.query.course.CourseResponse;
+import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
 import co.jp.wever.graphql.infrastructure.util.DateToStringConverter;
 
@@ -36,5 +37,41 @@ public class CourseResponseConverter {
                              .actionCount(ActionCountResponseConverter.toActionCountResponse(courseEntity.getActionCounts()))
                              .build();
 
+    }
+
+    public static CourseResponse toCourseResponseForPublishedList(CourseEntity course) {
+        return CourseResponse.builder()
+                             .id(course.getBase().getId())
+                             .title(course.getBase().getTitle())
+                             .imageUrl(course.getBase().getImageUrl())
+                             .status(EdgeLabel.PUBLISH.getString())
+                             .createDate(DateToStringConverter.toDateString(new Date(course.getBase()
+                                                                                           .getCreatedDate())))
+                             .updateDate(DateToStringConverter.toDateString(new Date(course.getBase()
+                                                                                           .getUpdatedDate())))
+                             .tags(course.getTags()
+                                          .stream()
+                                          .map(t -> TagResponseConverter.toTagResponse(t))
+                                          .collect(Collectors.toList()))
+                             .actionCount(ActionCountResponseConverter.toActionCountResponse(course.getActionCounts()))
+                             .build();
+    }
+
+    public static CourseResponse toCourseResponseForList(CourseEntity course) {
+        return CourseResponse.builder()
+                             .id(course.getBase().getId())
+                             .title(course.getBase().getTitle())
+                             .imageUrl(course.getBase().getImageUrl())
+                             .status(course.getBase().getStatus())
+                             .createDate(DateToStringConverter.toDateString(new Date(course.getBase()
+                                                                                           .getCreatedDate())))
+                             .updateDate(DateToStringConverter.toDateString(new Date(course.getBase()
+                                                                                           .getUpdatedDate())))
+                             .tags(course.getTags()
+                                         .stream()
+                                         .map(t -> TagResponseConverter.toTagResponse(t))
+                                         .collect(Collectors.toList()))
+                             .actionCount(ActionCountResponseConverter.toActionCountResponse(course.getActionCounts()))
+                             .build();
     }
 }

@@ -81,21 +81,11 @@ public class GraphQLService {
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
                                                           .dataFetcher("course", courseDataFetcher.courseDataFetcher())
-                                                          .dataFetcher("allCourses",
-                                                                       courseDataFetcher.allCourseDataFetcher())
-                                                          .dataFetcher("allPublishedCourses",
-                                                                       courseDataFetcher.allPublishedCoursesDataFetcher())
-                                                          .dataFetcher("allDraftedCourses",
-                                                                       courseDataFetcher.allDraftedCoursesDataFetcher())
-                                                          .dataFetcher("allLikedCourses",
-                                                                       courseDataFetcher.allLikedCoursesDataFetcher())
-                                                          .dataFetcher("allLearningCourses",
-                                                                       courseDataFetcher.allLearningCoursesDataFetcher())
-                                                          .dataFetcher("allLearnedCourses",
-                                                                       courseDataFetcher.allLearnedCoursesDataFetcher())
-                                                          .dataFetcher("famousCourses",
-                                                                       courseDataFetcher.famousCoursesDataFetcher())
-                                                          .dataFetcher("user", userDataFetcher.userDataFetcher())
+                                                          .dataFetcher("createdCourses", courseDataFetcher.createdCoursesDataFetcher())
+                                                          .dataFetcher("createdCoursesBySelf", courseDataFetcher.createdArticlesBySelfDataFetcher())
+                                                          .dataFetcher("actionedCourses", courseDataFetcher.actionedArticlesDataFetcher())
+                                                          .dataFetcher("actionedCoursesBySelf", courseDataFetcher.actionedArticlesBySelfDataFetcher())
+                                                         .dataFetcher("user", userDataFetcher.userDataFetcher())
                                                           .dataFetcher("account", userDataFetcher.accountDataFetcher())
                                                           .dataFetcher("famousTags",
                                                                        tagDataFetcher.famousTagDataFetcher())

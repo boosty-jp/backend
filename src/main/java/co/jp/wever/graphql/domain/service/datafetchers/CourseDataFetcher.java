@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.SearchConditionConverter;
-import co.jp.wever.graphql.application.converter.article.ArticleResponseConverter;
 import co.jp.wever.graphql.application.converter.course.CourseInputConverter;
 import co.jp.wever.graphql.application.converter.course.CourseResponseConverter;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
@@ -16,7 +15,6 @@ import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.domain.service.course.CourseMutationService;
 import co.jp.wever.graphql.domain.service.course.CourseQueryService;
-import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
 import graphql.schema.DataFetcher;
 
@@ -52,9 +50,9 @@ public class CourseDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<CourseEntity> results = courseQueryService.(userId, searchConditionInput);
+            List<CourseEntity> results = courseQueryService.findCreatedCourse(userId, searchConditionInput);
             return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForPublishedList(r))
+                          .map(r -> CourseResponseConverter.toCourseResponseForPublishedList(r))
                           .collect(Collectors.toList());
         };
     }
@@ -65,10 +63,9 @@ public class CourseDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results =
-                articleQueryService.findCreatedArticlesBySelf(requester, searchConditionInput);
+            List<CourseEntity> results = courseQueryService.findCreatedCoursesBySelf(requester, searchConditionInput);
             return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .map(r -> CourseResponseConverter.toCourseResponseForList(r))
                           .collect(Collectors.toList());
         };
     }
@@ -79,9 +76,9 @@ public class CourseDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = articleQueryService.findActionedArticles(userId, searchConditionInput);
+            List<CourseEntity> results = courseQueryService.findActionedCourses(userId, searchConditionInput);
             return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForPublishedList(r))
+                          .map(r -> CourseResponseConverter.toCourseResponseForPublishedList(r))
                           .collect(Collectors.toList());
         };
     }
@@ -92,38 +89,16 @@ public class CourseDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results =
-                articleQueryService.findActionedArticlesBySelf(requester, searchConditionInput);
+            List<CourseEntity> results = courseQueryService.findActionedCoursesBySelf(requester, searchConditionInput);
             return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                          .map(r -> CourseResponseConverter.toCourseResponseForList(r))
                           .collect(Collectors.toList());
         };
-    }
-
-    public DataFetcher famousCoursesDataFetcher() {
-        return dataFetchingEnvironment -> findCourseService.findFamous()
-                                                           .stream()
-                                                           .map(p -> FamousCourseResponseConverter.toFamousCourseResponse(
-                                                               p))
-                                                           .collect(Collectors.toList());
     }
 
     public DataFetcher relatedCoursesDataFetcher() {
         return dataFetchingEnvironment -> {
             return null;
-        };
-    }
-
-    public DataFetcher allCourseElementDetailsDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
-            String courseId = dataFetchingEnvironment.getArgument("courseId");
-            List<FindCourseElementDetail> findCourseElementDetails =
-                findCourseService.findAllCourseElementDetails(courseId, requester);
-            return findCourseElementDetails.stream()
-                                           .map(p -> CourseElementDetailResponseConverter.toCourseElementDetailResponse(
-                                               p))
-                                           .collect(Collectors.toList());
         };
     }
 

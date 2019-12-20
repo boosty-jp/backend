@@ -31,12 +31,12 @@ public class ArticleBlockType {
     public static ArticleBlockType of(String value) {
         if (StringUtil.isNullOrEmpty(value)) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
-                                             GraphQLErrorMessage.INVALID_ARTICLE_BLOCK_TYPE.getString());
+                                             GraphQLErrorMessage.INVALID_ARTICLE_BLOCK.getString());
         }
 
         if (!ALLOWED_LIST.stream().anyMatch(b -> b.equals(value))) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
-                                             GraphQLErrorMessage.INVALID_ARTICLE_BLOCK_TYPE.getString());
+                                             GraphQLErrorMessage.INVALID_ARTICLE_BLOCK.getString());
         }
         return new ArticleBlockType(value);
     }

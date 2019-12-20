@@ -15,17 +15,18 @@ import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.user.UserQueryRepositoryImpl;
 
 @Service
 public class ArticleQueryService {
 
     private final ArticleQueryRepositoryImpl articleQueryRepository;
-    private final FindUserRepositoryImpl findUserRepository;
+    private final UserQueryRepositoryImpl userQueryRepository;
 
-    ArticleQueryService(
-        ArticleQueryRepositoryImpl articleQueryRepository, FindUserRepositoryImpl findUserRepository) {
+    public ArticleQueryService(
+        ArticleQueryRepositoryImpl articleQueryRepository, UserQueryRepositoryImpl userQueryRepository) {
         this.articleQueryRepository = articleQueryRepository;
-        this.findUserRepository = findUserRepository;
+        this.userQueryRepository = userQueryRepository;
     }
 
     public ArticleEntity findArticle(String articleId, Requester requester) {
@@ -70,7 +71,7 @@ public class ArticleQueryService {
                                              GraphQLErrorMessage.INVALID_SEARCH_CONDITION.getString());
         }
 
-        UserEntity userEntity = this.findUserRepository.findOne(userId);
+        UserEntity userEntity = userQueryRepository.findOne(userId);
 
         if (!searchCondition.canSearch(userEntity.getLikePublic(), userEntity.getLearnPublic())) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),

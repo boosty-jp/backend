@@ -12,19 +12,22 @@ import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.domain.factory.SearchConditionFactory;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
-import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.repository.course.CourseQueryRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.user.UserQueryRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class CourseQueryService {
     private final CourseQueryRepositoryImpl courseQueryRepository;
+    private final UserQueryRepositoryImpl userQueryRepository;
 
-    public CourseQueryService(CourseQueryRepositoryImpl courseQueryRepository) {
+    public CourseQueryService(
+        CourseQueryRepositoryImpl courseQueryRepository, UserQueryRepositoryImpl userQueryRepository) {
         this.courseQueryRepository = courseQueryRepository;
+        this.userQueryRepository = userQueryRepository;
     }
 
     public CourseEntity findCourse(String courseId, Requester requester) {
@@ -69,7 +72,7 @@ public class CourseQueryService {
                                              GraphQLErrorMessage.INVALID_SEARCH_CONDITION.getString());
         }
 
-        UserEntity userEntity = this.findUserRepository.findOne(userId);
+        UserEntity userEntity = userQueryRepository.findOne(userId);
 
         if (!searchCondition.canSearch(userEntity.getLikePublic(), userEntity.getLearnPublic())) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
