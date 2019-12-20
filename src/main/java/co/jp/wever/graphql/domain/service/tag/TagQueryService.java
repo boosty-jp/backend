@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
-import co.jp.wever.graphql.infrastructure.repository.tag.FindTagRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.tag.TagQueryRepositoryImpl;
 
 @Service
-public class FindTagService {
-    private final FindTagRepositoryImpl findTagRepository;
+public class TagQueryService {
+    private final TagQueryRepositoryImpl findTagRepository;
 
-    public FindTagService(FindTagRepositoryImpl findTagRepository) {
+    public TagQueryService(TagQueryRepositoryImpl findTagRepository) {
         this.findTagRepository = findTagRepository;
     }
 

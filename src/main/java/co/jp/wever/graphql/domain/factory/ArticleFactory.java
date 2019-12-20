@@ -4,7 +4,8 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
 import co.jp.wever.graphql.domain.domainmodel.article.Article;
-import co.jp.wever.graphql.domain.domainmodel.article.ArticleTextUrl;
+import co.jp.wever.graphql.domain.domainmodel.article.ArticleBlock;
+import co.jp.wever.graphql.domain.domainmodel.article.ArticleBlocks;
 import co.jp.wever.graphql.domain.domainmodel.content.ContentBase;
 import co.jp.wever.graphql.domain.domainmodel.skill.ArticleSkill;
 import co.jp.wever.graphql.domain.domainmodel.skill.ArticleSkills;
@@ -20,12 +21,15 @@ public class ArticleFactory {
 
         ContentBase base =
             ContentBase.of(articleInput.getTitle(), articleInput.getImageUrl(), articleInput.getTagIds(), entry);
-        ArticleTextUrl textUrl = ArticleTextUrl.of(articleInput.getTitle());
+        ArticleBlocks blocks = ArticleBlocks.of(articleInput.getBlocks()
+                                                            .stream()
+                                                            .map(b -> ArticleBlock.of(b.getType(), b.getData()))
+                                                            .collect(Collectors.toList()));
         ArticleSkills articleSkills = ArticleSkills.of(articleInput.getSkills()
                                                                    .stream()
                                                                    .map(s -> ArticleSkill.of(s.getId(), s.getLevel()))
                                                                    .collect(Collectors.toList()));
 
-        return Article.of(base, textUrl, articleSkills);
+        return Article.of(base, blocks, articleSkills);
     }
 }

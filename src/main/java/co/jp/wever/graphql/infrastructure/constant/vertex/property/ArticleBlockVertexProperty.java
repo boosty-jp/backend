@@ -1,11 +1,13 @@
 package co.jp.wever.graphql.infrastructure.constant.vertex.property;
 
-public enum TagVertexProperty {
-    NAME("name");
+
+public enum ArticleBlockVertexProperty {
+    TYPE("type"),
+    DATA("data");
 
     private String value;
 
-    private TagVertexProperty(String value) {
+    ArticleBlockVertexProperty(String value) {
         this.value = value;
     }
 

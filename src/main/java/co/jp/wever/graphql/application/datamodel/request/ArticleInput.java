@@ -12,7 +12,7 @@ public class ArticleInput {
     private String id;
     private String title;
     private String imageUrl;
-    private String textUrl;
+    private List<ArticleBlockInput>blocks;
     private List<String> tagIds;
     private List<SkillInput> skills;
 }

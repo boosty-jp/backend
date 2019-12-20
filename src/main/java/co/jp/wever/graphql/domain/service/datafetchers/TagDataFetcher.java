@@ -8,21 +8,22 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.domain.service.tag.CreateTagService;
-import co.jp.wever.graphql.domain.service.tag.FindTagService;
+import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.domain.service.tag.TagMutationService;
+import co.jp.wever.graphql.domain.service.tag.TagQueryService;
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 import graphql.schema.DataFetcher;
 
 @Component
 public class TagDataFetcher {
-    private final CreateTagService createTagService;
-    private final FindTagService findTagService;
+    private final TagMutationService tagMutationService;
+    private final TagQueryService tagQueryService;
     private final RequesterConverter requesterConverter;
 
     public TagDataFetcher(
-        CreateTagService createTagService, FindTagService findTagService, RequesterConverter requesterConverter) {
-        this.createTagService = createTagService;
-        this.findTagService = findTagService;
+        TagMutationService tagMutationService, TagQueryService tagQueryService, RequesterConverter requesterConverter) {
+        this.tagMutationService = tagMutationService;
+        this.tagQueryService = tagQueryService;
         this.requesterConverter = requesterConverter;
     }
 
@@ -31,16 +32,16 @@ public class TagDataFetcher {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String name = dataFetchingEnvironment.getArgument("name");
-            String tagId = createTagService.createTag(name, requester);
+            String tagId = tagMutationService.createTag(name, requester);
 
-            return CreateTagResponse.builder().id(tagId).name(name).build();
+            return CreateResponse.builder().id(tagId).build();
         };
     }
 
     public DataFetcher famousTagDataFetcher() {
         return dataFetchingEnvironment -> {
 
-            List<TagEntity> results = findTagService.famousTags();
+            List<TagEntity> results = tagQueryService.famousTags();
             return results.stream()
                           .map(r -> TagResponseConverter.toTagResponseWithRelatedCount(r))
                           .collect(Collectors.toList());

@@ -14,16 +14,16 @@ import co.jp.wever.graphql.domain.repository.section.FindSectionRepository;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.section.LikedSectionEntity;
-import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryQueryRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryRepositoryImpl;
 
 @Service
 public class FindSectionService {
 
-    private final ArticleQueryQueryRepositoryImpl findArticleRepository;
+    private final ArticleQueryRepositoryImpl findArticleRepository;
     private final FindSectionRepository findSectionRepository;
 
     public FindSectionService(
-        FindSectionRepository findSectionRepository, ArticleQueryQueryRepositoryImpl findArticleRepository) {
+        FindSectionRepository findSectionRepository, ArticleQueryRepositoryImpl findArticleRepository) {
         this.findArticleRepository = findArticleRepository;
         this.findSectionRepository = findSectionRepository;
     }

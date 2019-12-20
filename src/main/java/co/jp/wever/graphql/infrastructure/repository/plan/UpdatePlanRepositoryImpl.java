@@ -39,7 +39,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .property(single, PlanVertexProperty.TITLE.getString(), title)
          .property(single, PlanVertexProperty.UPDATED_TIME.getString(), now)
          .next();
@@ -51,7 +51,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .property(single, PlanVertexProperty.IMAGE_URL.getString(), imageUrl)
          .property(single, PlanVertexProperty.UPDATED_TIME.getString(), now)
          .next();
@@ -63,7 +63,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .property(single, PlanVertexProperty.DESCRIPTION.getString(), description)
          .property(single, PlanVertexProperty.UPDATED_TIME.getString(), now)
          .next();
@@ -75,12 +75,12 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .property(single, PlanVertexProperty.UPDATED_TIME.getString(), now)
          .next();
 
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .outE(PlanToTagEdge.RELATED.getString())
          .where(inV().hasLabel(VertexLabel.TAG.getString()))
          .drop()
@@ -103,7 +103,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(publishPlan.getId())
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .property(single, PlanVertexProperty.TITLE.getString(), publishPlan.getTitle())
          .property(single, PlanVertexProperty.DESCRIPTION.getString(), publishPlan.getDescription())
          .property(single, PlanVertexProperty.IMAGE_URL.getString(), publishPlan.getImageUrl())
@@ -111,14 +111,14 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
          .next();
 
         g.V(publishPlan.getId())
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .outE(PlanToPlanElementEdge.INCLUDE.getString())
          .drop()
          .iterate();
 
         publishPlan.getElements().stream().forEach(e -> {
             g.V(publishPlan.getId())
-             .hasLabel(VertexLabel.PLAN.getString())
+             .hasLabel(VertexLabel.COURSE.getString())
              .addE(PlanToPlanElementEdge.INCLUDE.getString())
              .property(PlanToPlanElementProperty.NUMBER.getString(), e.getNumber())
              .property(PlanToPlanElementProperty.CREATED_TIME.getString(), now)
@@ -170,7 +170,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(draftPlan.getId())
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .property(single, PlanVertexProperty.TITLE.getString(), draftPlan.getTitle())
          .property(single, PlanVertexProperty.DESCRIPTION.getString(), draftPlan.getDescription())
          .property(single, PlanVertexProperty.IMAGE_URL.getString(), draftPlan.getImageUrl())
@@ -178,14 +178,14 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
          .next();
 
         g.V(draftPlan.getId())
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .outE(PlanToPlanElementEdge.INCLUDE.getString())
          .drop()
          .iterate();
 
         draftPlan.getElements().stream().forEach(e -> {
             g.V(draftPlan.getId())
-             .hasLabel(VertexLabel.PLAN.getString())
+             .hasLabel(VertexLabel.COURSE.getString())
              .addE(PlanToPlanElementEdge.INCLUDE.getString())
              .property(PlanToPlanElementProperty.NUMBER.getString(), e.getNumber())
              .property(PlanToPlanElementProperty.CREATED_TIME.getString(), now)
@@ -271,7 +271,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         long now = System.currentTimeMillis();
 
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .inE(UserToPlanEdge.LEARNED.getString())
          .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
          .drop()
@@ -299,7 +299,7 @@ public class UpdatePlanRepositoryImpl implements UpdatePlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
         g.V(planId)
-         .hasLabel(VertexLabel.PLAN.getString())
+         .hasLabel(VertexLabel.COURSE.getString())
          .inE(UserToPlanEdge.LEARNING.getString())
          .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
          .drop()

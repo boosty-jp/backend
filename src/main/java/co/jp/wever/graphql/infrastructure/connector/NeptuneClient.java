@@ -2,6 +2,7 @@ package co.jp.wever.graphql.infrastructure.connector;
 
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
+import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +63,7 @@ public class NeptuneClient implements AutoCloseable {
                              .minSimultaneousUsagePerConnection(minSimultaneousUsagePerConnection)
                              .keepAliveInterval(6000000)
                              .reconnectInterval(3000)
+                             .serializer(Serializers.GRAPHBINARY_V1D0)
                              .create();
 
 

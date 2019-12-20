@@ -4,7 +4,10 @@ public enum EdgeLabel {
     LIKE("like"),
     LEARN("learn"),
     TEACH("teach"),
+    INCLUDE("include"),
     PUBLISH("publish"),
+    LIMITED_PUBLISH("limitedPublish"),
+    SALE_PUBLISH("salePublish"),
     DRAFT("draft"),
     DELETE("delete"),
     RELATED_TO("related_to");

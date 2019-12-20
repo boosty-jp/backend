@@ -7,6 +7,6 @@ import java.util.List;
 import co.jp.wever.graphql.infrastructure.datamodel.tag.TagEntity;
 
 @Repository
-public interface FindTagRepository {
+public interface TagQueryRepository {
     List<TagEntity> famousTags();
 }

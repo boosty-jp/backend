@@ -11,17 +11,17 @@ import co.jp.wever.graphql.domain.domainmodel.user.UserId;
 import co.jp.wever.graphql.domain.factory.ArticleFactory;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.article.ArticleMutationRepositoryImpl;
-import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryQueryRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class ArticleMutationService {
-    private final ArticleQueryQueryRepositoryImpl articleQueryRepository;
+    private final ArticleQueryRepositoryImpl articleQueryRepository;
     private final ArticleMutationRepositoryImpl articleMutationRepository;
 
     public ArticleMutationService(
-        ArticleQueryQueryRepositoryImpl articleQueryRepository,
+        ArticleQueryRepositoryImpl articleQueryRepository,
         ArticleMutationRepositoryImpl articleMutationRepository) {
         this.articleQueryRepository = articleQueryRepository;
         this.articleMutationRepository = articleMutationRepository;

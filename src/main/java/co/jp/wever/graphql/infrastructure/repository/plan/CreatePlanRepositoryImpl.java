@@ -23,7 +23,7 @@ public class CreatePlanRepositoryImpl implements CreatePlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
 
-        String planId = g.addV(VertexLabel.PLAN.getString())
+        String planId = g.addV(VertexLabel.COURSE.getString())
                          .property(PlanVertexProperty.TITLE.getString(), "")
                          .property(PlanVertexProperty.DESCRIPTION.getString(), "")
                          .property(PlanVertexProperty.LIKED.getString(), 0)

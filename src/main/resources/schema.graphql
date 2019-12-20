@@ -45,12 +45,17 @@ type Account {
     setting: UserSetting
 }
 
+type ArticleBlocks {
+    type: String!
+    data: String!
+}
+
 type Article {
     id: ID!
     title: String!
     imageUrl: String!
+    blocks: [ArticleBlocks]!
     status: String!
-    textUrl: String!
     createDate: String!
     updateDate: String!
 
@@ -60,6 +65,7 @@ type Article {
     actionCount: ActionCount
     accountAction: AccountAction
 }
+
 
 type Articles {
     learned: [Article]

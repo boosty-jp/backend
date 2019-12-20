@@ -1,5 +1,6 @@
 package co.jp.wever.graphql.infrastructure.repository.article;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleBlockVertexProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.DateProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleSearchEntityConverter;
@@ -49,6 +51,9 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         clearSkills(g, articleId);
         addSkills(g, articleId, article, now);
 
+        clearBlocks(g, articleId, now);
+        addBlocks(g, articleId, article, now);
+
         clearStatus(g, articleId, userId);
         addStatus(g, articleId, userId, EdgeLabel.PUBLISH.getString(), now);
 
@@ -65,6 +70,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
 
         addTags(g, articleId, article, now);
         addSkills(g, articleId, article, now);
+        addBlocks(g, articleId, article, now);
         addStatus(g, articleId, EdgeLabel.PUBLISH.getString(), userId, now);
 
         algoliaClient.getArticleIndex()
@@ -86,6 +92,9 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         clearSkills(g, articleId);
         addSkills(g, articleId, article, now);
 
+        clearBlocks(g, articleId, now);
+        addBlocks(g, articleId, article, now);
+
         clearStatus(g, articleId, userId);
         addStatus(g, articleId, userId, EdgeLabel.DRAFT.getString(), now);
     }
@@ -99,6 +108,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
 
         addTags(g, articleId, article, now);
         addSkills(g, articleId, article, now);
+        addBlocks(g, articleId, article, now);
         addStatus(g, articleId, EdgeLabel.DRAFT.getString(), userId, now);
 
         return articleId;
@@ -148,7 +158,6 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
          .hasLabel(VertexLabel.ARTICLE.getString())
          .property(single, ArticleVertexProperty.TITLE.getString(), article.getBase().getTitle().getValue())
          .property(single, ArticleVertexProperty.IMAGE_URL.getString(), article.getBase().getImageUrl().getValue())
-         .property(single, ArticleVertexProperty.TEXT_URL.getString(), article.getTextUrl().getValue())
          .property(single, DateProperty.UPDATE_TIME.getString(), now)
          .next();
     }
@@ -157,7 +166,6 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         return g.addV(VertexLabel.ARTICLE.getString())
                 .property(ArticleVertexProperty.TITLE.getString(), article.getBase().getTitle().getValue())
                 .property(ArticleVertexProperty.IMAGE_URL.getString(), article.getBase().getImageUrl().getValue())
-                .property(ArticleVertexProperty.TEXT_URL.getString(), article.getTextUrl().getValue())
                 .property(DateProperty.CREATE_TIME.getString(), now)
                 .property(DateProperty.UPDATE_TIME.getString(), now)
                 .next()
@@ -240,5 +248,45 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
 
     private void clearAction(GraphTraversalSource g, String articleId, String action, String userId) {
         g.V(articleId).inE(action).hasId(EdgeIdCreator.createId(userId, articleId, action)).drop().iterate();
+    }
+
+    private void clearBlocks(GraphTraversalSource g, String articleId, long now) {
+        GraphTraversal t = g.V();
+        t.hasId(articleId)
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .out(EdgeLabel.INCLUDE.getString())
+         .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
+         .addE(EdgeLabel.DELETE.getString())
+         .property(DateProperty.CREATE_TIME.getString(), now)
+         .iterate();
+
+        t.hasId(articleId)
+         .hasLabel(VertexLabel.ARTICLE.getString())
+         .outE(EdgeLabel.INCLUDE.getString())
+         .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
+         .drop()
+         .iterate();
+    }
+
+    private void addBlocks(GraphTraversalSource g, String articleId, Article article, long now) {
+        GraphTraversal t = g.V();
+        t.addV(VertexLabel.ARTICLE_TEXT.getString())
+         .property(DateProperty.CREATE_TIME.getString(), now)
+         .as("articleText");
+        t.addE(EdgeLabel.INCLUDE.getString()).from(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()));
+        t.iterate();
+
+        article.getBlocks().getBlocks().forEach(b -> {
+            t.addV(VertexLabel.ARTICLE_BLOCK.getString())
+             .property(ArticleBlockVertexProperty.TYPE.getString(), b.getType().getValue())
+             .property(ArticleBlockVertexProperty.DATA.getString(), b.getData().getValue())
+             .property(DateProperty.CREATE_TIME.getString(), now)
+             .property(DateProperty.UPDATE_TIME.getString(), now)
+             .as(b.toString());
+            t.addE(EdgeLabel.INCLUDE.getString())
+             .property(DateProperty.CREATE_TIME.getString(), now)
+             .from("articleText");
+            t.iterate();
+        });
     }
 }

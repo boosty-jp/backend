@@ -11,22 +11,23 @@ import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
 public class Article {
     private ContentBase base;
-    private ArticleTextUrl textUrl;
+    private ArticleBlocks blocks;
     private ArticleSkills skills;
 
-    public Article(ContentBase base, ArticleTextUrl textUrl, ArticleSkills skills) {
+    private Article(
+        ContentBase base, ArticleBlocks blocks, ArticleSkills skills) {
         this.base = base;
-        this.textUrl = textUrl;
+        this.blocks = blocks;
         this.skills = skills;
     }
 
-    public static Article of(ContentBase base, ArticleTextUrl textUrl, ArticleSkills skills) {
-        if (Objects.isNull(base) || Objects.isNull(textUrl) || Objects.isNull(skills)) {
+    public static Article of(ContentBase base, ArticleBlocks blocks, ArticleSkills skills) {
+        if (Objects.isNull(base) || Objects.isNull(blocks) || Objects.isNull(skills)) {
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                              GraphQLErrorMessage.NULL_DATA.getString());
         }
 
-        return new Article(base, textUrl, skills);
+        return new Article(base, blocks, skills);
     }
 
     public boolean entry() {
@@ -34,22 +35,18 @@ public class Article {
     }
 
     public boolean canPublish() {
-        if (!base.valid()) {
-            return false;
-        }
-
-        return textUrl.valid();
+        return base.valid();
     }
 
     public ContentBase getBase() {
         return base;
     }
 
-    public ArticleTextUrl getTextUrl() {
-        return textUrl;
-    }
-
     public ArticleSkills getSkills() {
         return skills;
+    }
+
+    public ArticleBlocks getBlocks() {
+        return blocks;
     }
 }

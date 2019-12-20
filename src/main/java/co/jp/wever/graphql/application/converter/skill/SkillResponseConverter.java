@@ -20,4 +20,11 @@ public class SkillResponseConverter {
                             .level(skill.getLevel())
                             .build();
     }
+
+    public static SkillResponse toSkillResponseWithNoLevel(SkillEntity skill) {
+        return SkillResponse.builder()
+                            .id(skill.getId())
+                            .name(skill.getName())
+                            .build();
+    }
 }

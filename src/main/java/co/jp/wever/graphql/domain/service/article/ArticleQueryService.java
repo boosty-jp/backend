@@ -14,17 +14,17 @@ import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
-import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryQueryRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.user.FindUserRepositoryImpl;
 
 @Service
 public class ArticleQueryService {
 
-    private final ArticleQueryQueryRepositoryImpl findArticleRepository;
+    private final ArticleQueryRepositoryImpl findArticleRepository;
     private final FindUserRepositoryImpl findUserRepository;
 
     ArticleQueryService(
-        ArticleQueryQueryRepositoryImpl findArticleRepository, FindUserRepositoryImpl findUserRepository) {
+        ArticleQueryRepositoryImpl findArticleRepository, FindUserRepositoryImpl findUserRepository) {
         this.findArticleRepository = findArticleRepository;
         this.findUserRepository = findUserRepository;
     }

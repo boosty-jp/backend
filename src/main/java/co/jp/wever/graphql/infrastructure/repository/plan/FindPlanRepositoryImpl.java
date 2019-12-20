@@ -46,7 +46,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         Map<String, Object> result = g.V(planId)
-                                      .hasLabel(VertexLabel.PLAN.getString())
+                                      .hasLabel(VertexLabel.COURSE.getString())
                                       .project("base",
                                                "tags",
                                                "status",
@@ -116,7 +116,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                       .by(__.inE(UserToPlanEdge.DRAFTED.getString(),
                                                  UserToPlanEdge.PUBLISHED.getString()).label())
                                       .by(__.out(PlanToPlanElementEdge.INCLUDE.getString())
-                                            .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.PLAN.getString())
+                                            .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.COURSE.getString())
                                             .project("element", "edge")
                                             .by(__.valueMap().with(WithOptions.tokens))
                                             .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
@@ -168,7 +168,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                       .by(__.inE(UserToPlanEdge.DRAFTED.getString(),
                                                  UserToPlanEdge.PUBLISHED.getString()).label())
                                       .by(__.out(PlanToPlanElementEdge.INCLUDE.getString())
-                                            .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.PLAN.getString())
+                                            .hasLabel(VertexLabel.ARTICLE.getString(), VertexLabel.COURSE.getString())
                                             .project("element", "edge")
                                             .by(__.valueMap().with(WithOptions.tokens))
                                             .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
@@ -189,7 +189,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         List<Map<String, Object>> allResult = g.V(userId)
                                                .out(UserToPlanEdge.DRAFTED.getString(),
                                                     UserToPlanEdge.PUBLISHED.getString())
-                                               .hasLabel(VertexLabel.PLAN.getString())
+                                               .hasLabel(VertexLabel.COURSE.getString())
                                                .project("base",
                                                         "tags",
                                                         "status",
@@ -237,7 +237,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> allResult = g.V(userId)
                                                .out(UserToPlanEdge.PUBLISHED.getString())
-                                               .hasLabel(VertexLabel.PLAN.getString())
+                                               .hasLabel(VertexLabel.COURSE.getString())
                                                .project("base",
                                                         "tags",
                                                         "status",
@@ -285,7 +285,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId)
                                             .out(UserToPlanEdge.DRAFTED.getString())
-                                            .has("type", VertexLabel.PLAN.getString())
+                                            .has("type", VertexLabel.COURSE.getString())
                                             .valueMap()
                                             .with(WithOptions.tokens)
                                             .toList();
@@ -299,7 +299,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
 
         List<Map<String, Object>> results = g.V(userId)
                                              .out(UserToPlanEdge.LIKED.getString())
-                                             .hasLabel(VertexLabel.PLAN.getString())
+                                             .hasLabel(VertexLabel.COURSE.getString())
                                              .project("base",
                                                       "tags",
                                                       "author",
@@ -337,7 +337,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> results = g.V(userId)
                                              .out(UserToPlanEdge.LEARNING.getString())
-                                             .hasLabel(VertexLabel.PLAN.getString())
+                                             .hasLabel(VertexLabel.COURSE.getString())
                                              .project("base",
                                                       "allElements",
                                                       "learnedElements",
@@ -348,7 +348,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
                                              .by(__.out(PlanToPlanElementEdge.INCLUDE.getString()).label().fold())
                                              .by(__.out(PlanToPlanElementEdge.INCLUDE.getString())
                                                    .hasLabel(VertexLabel.ARTICLE.getString(),
-                                                             VertexLabel.PLAN.getString())
+                                                             VertexLabel.COURSE.getString())
                                                    .inE(UserToPlanEdge.LEARNED.getString())
                                                    .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
                                                    .label()
@@ -369,7 +369,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId)
                                             .out(UserToPlanEdge.LEARNED.getString())
-                                            .has("type", VertexLabel.PLAN.getString())
+                                            .has("type", VertexLabel.COURSE.getString())
                                             .valueMap()
                                             .with(WithOptions.tokens)
                                             .toList();
@@ -384,7 +384,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<Object, Object>> result = g.V(userId)
                                             .out(UserToPlanEdge.PUBLISHED.getString())
-                                            .has("type", VertexLabel.PLAN.getString())
+                                            .has("type", VertexLabel.COURSE.getString())
                                             .valueMap()
                                             .with(WithOptions.tokens)
                                             .toList();
@@ -397,7 +397,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         return g.V(planId)
                 .out(PlanToPlanElementEdge.INCLUDE.getString())
-                .hasLabel(VertexLabel.PLAN.getString(), VertexLabel.ARTICLE.getString())
+                .hasLabel(VertexLabel.COURSE.getString(), VertexLabel.ARTICLE.getString())
                 .id()
                 .toList()
                 .stream()
@@ -411,7 +411,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> results = g.V(planId)
                                              .out(PlanToPlanElementEdge.INCLUDE.getString())
-                                             .hasLabel(VertexLabel.PLAN.getString(), VertexLabel.ARTICLE.getString())
+                                             .hasLabel(VertexLabel.COURSE.getString(), VertexLabel.ARTICLE.getString())
                                              .project("base", "edge", "userLiked", "userLearned", "like", "learned")
                                              .by(__.valueMap().with(WithOptions.tokens))
                                              .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
@@ -441,7 +441,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> results = g.V(planId)
                                              .out(PlanToPlanElementEdge.INCLUDE.getString())
-                                             .hasLabel(VertexLabel.PLAN.getString(), VertexLabel.ARTICLE.getString())
+                                             .hasLabel(VertexLabel.COURSE.getString(), VertexLabel.ARTICLE.getString())
                                              .project("base", "edge", "like", "learned")
                                              .by(__.valueMap().with(WithOptions.tokens))
                                              .by(__.inE(PlanToPlanElementEdge.INCLUDE.getString())
@@ -470,7 +470,7 @@ public class FindPlanRepositoryImpl implements FindPlanRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<String, Object>> results = g.V()
-                                             .hasLabel(VertexLabel.PLAN.getString())
+                                             .hasLabel(VertexLabel.COURSE.getString())
                                              .filter(inE().hasLabel(UserToPlanEdge.PUBLISHED.getString()))
                                              .order()
                                              .by(values(PlanVertexProperty.LEARNING.getString(),

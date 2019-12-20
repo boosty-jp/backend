@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service;
 import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.repository.tag.CreateTagRepositoryImpl;
+import co.jp.wever.graphql.infrastructure.repository.tag.TagMutationRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class CreateTagService {
-    private final CreateTagRepositoryImpl createTagRepository;
+public class TagMutationService {
+    private final TagMutationRepositoryImpl createTagRepository;
 
-    public CreateTagService(CreateTagRepositoryImpl createTagRepository) {
+    public TagMutationService(TagMutationRepositoryImpl createTagRepository) {
         this.createTagRepository = createTagRepository;
     }
 

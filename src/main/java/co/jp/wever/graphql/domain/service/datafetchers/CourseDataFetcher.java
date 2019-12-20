@@ -25,7 +25,7 @@ import co.jp.wever.graphql.domain.service.course.UpdateCourseService;
 import graphql.schema.DataFetcher;
 
 @Component
-public class CourseDataFetchers {
+public class CourseDataFetcher {
 
     private final FindCourseService findCourseService;
     private final UpdateCourseService updateCourseService;
@@ -33,7 +33,7 @@ public class CourseDataFetchers {
     private final CreateCourseService createCourseService;
     private final RequesterConverter requesterConverter;
 
-    CourseDataFetchers(
+    CourseDataFetcher(
         FindCourseService findCourseService,
         UpdateCourseService updateCourseService,
         DeleteCourseService deleteCourseService,

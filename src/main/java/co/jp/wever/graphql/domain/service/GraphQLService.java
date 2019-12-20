@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.service.datafetchers.ArticleDataFetcher;
-import co.jp.wever.graphql.domain.service.datafetchers.CourseDataFetchers;
+import co.jp.wever.graphql.domain.service.datafetchers.CourseDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.TagDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.UserDataFetcher;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -32,7 +32,7 @@ public class GraphQLService {
     private GraphQL graphQL;
 
     @Autowired
-    private CourseDataFetchers courseDataFetchers;
+    private CourseDataFetcher courseDataFetcher;
 
     @Autowired
     private ArticleDataFetcher articleDataFetcher;
@@ -76,21 +76,21 @@ public class GraphQLService {
                                                                        articleDataFetcher.actionedArticlesBySelfDataFetcher())
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
-                                                          .dataFetcher("course", courseDataFetchers.courseDataFetcher())
+                                                          .dataFetcher("course", courseDataFetcher.courseDataFetcher())
                                                           .dataFetcher("allCourses",
-                                                                       courseDataFetchers.allCourseDataFetcher())
+                                                                       courseDataFetcher.allCourseDataFetcher())
                                                           .dataFetcher("allPublishedCourses",
-                                                                       courseDataFetchers.allPublishedCoursesDataFetcher())
+                                                                       courseDataFetcher.allPublishedCoursesDataFetcher())
                                                           .dataFetcher("allDraftedCourses",
-                                                                       courseDataFetchers.allDraftedCoursesDataFetcher())
+                                                                       courseDataFetcher.allDraftedCoursesDataFetcher())
                                                           .dataFetcher("allLikedCourses",
-                                                                       courseDataFetchers.allLikedCoursesDataFetcher())
+                                                                       courseDataFetcher.allLikedCoursesDataFetcher())
                                                           .dataFetcher("allLearningCourses",
-                                                                       courseDataFetchers.allLearningCoursesDataFetcher())
+                                                                       courseDataFetcher.allLearningCoursesDataFetcher())
                                                           .dataFetcher("allLearnedCourses",
-                                                                       courseDataFetchers.allLearnedCoursesDataFetcher())
+                                                                       courseDataFetcher.allLearnedCoursesDataFetcher())
                                                           .dataFetcher("famousCourses",
-                                                                       courseDataFetchers.famousCoursesDataFetcher())
+                                                                       courseDataFetcher.famousCoursesDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
                                                           .dataFetcher("account", userDataFetcher.accountDataFetcher())
                                                           .dataFetcher("famousTags",
@@ -113,19 +113,19 @@ public class GraphQLService {
                                                           .dataFetcher("clearLearnArticle",
                                                                        articleDataFetcher.clearLearnArticleDataFetcher())
                                                           .dataFetcher("publishCourse",
-                                                                       courseDataFetchers.publishCourseDataFetcher())
+                                                                       courseDataFetcher.publishCourseDataFetcher())
                                                           .dataFetcher("draftCourse",
-                                                                       courseDataFetchers.draftCourseDataFetcher())
+                                                                       courseDataFetcher.draftCourseDataFetcher())
                                                           .dataFetcher("deleteCourse",
-                                                                       courseDataFetchers.deleteCourseDataFetcher())
+                                                                       courseDataFetcher.deleteCourseDataFetcher())
                                                           .dataFetcher("likeCourse",
-                                                                       courseDataFetchers.likeCourseDataFetcher())
+                                                                       courseDataFetcher.likeCourseDataFetcher())
                                                           .dataFetcher("clearLikeCourse",
-                                                                       courseDataFetchers.deleteLikeCourseDataFetcher())
+                                                                       courseDataFetcher.deleteLikeCourseDataFetcher())
                                                           .dataFetcher("startCourse",
-                                                                       courseDataFetchers.startCourseDataFetcher())
+                                                                       courseDataFetcher.startCourseDataFetcher())
                                                           .dataFetcher("clearStartCourse",
-                                                                       courseDataFetchers.stopCourseDataFetcher())
+                                                                       courseDataFetcher.stopCourseDataFetcher())
                                                           .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",

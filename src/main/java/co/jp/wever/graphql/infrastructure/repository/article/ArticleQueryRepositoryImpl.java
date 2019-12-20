@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.domain.repository.article.ArticleQueryRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
-import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.article.aggregation.ArticleDetailEntity;
@@ -23,16 +23,15 @@ import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.const
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.valueMap;
-import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.select;
 
 @Component
-public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
+public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
 
     private final NeptuneClient neptuneClient;
 
-    public ArticleQueryQueryRepositoryImpl(NeptuneClient neptuneClient) {
+    public ArticleQueryRepositoryImpl(NeptuneClient neptuneClient) {
         this.neptuneClient = neptuneClient;
     }
 
@@ -51,12 +50,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                                   "liked",
                                                   "learned")
                                          .by(__.valueMap().with(WithOptions.tokens))
-                                         .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                         .by(__.out(EdgeLabel.RELATED_TO.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens)
                                                .fold())
-                                         .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                                         .by(__.outE(EdgeLabel.TEACH.getString())
                                                .hasLabel(VertexLabel.SKILL.getString())
                                                .as("teachEdge")
                                                .inV()
@@ -64,32 +63,32 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                                .select("teachEdge", "skillVertex")
                                                .by(valueMap())
                                                .fold())
-                                         .by(__.in(UserToArticleEdge.DRAFTED.getString(),
-                                                   UserToArticleEdge.DELETED.getString(),
-                                                   UserToArticleEdge.PUBLISHED.getString())
+                                         .by(__.in(EdgeLabel.DRAFT.getString(),
+                                                   EdgeLabel.DELETE.getString(),
+                                                   EdgeLabel.PUBLISH.getString())
                                                .hasLabel(VertexLabel.USER.getString())
                                                .project("base", "tags")
                                                .by(__.valueMap().with(WithOptions.tokens))
-                                               .by(__.out(UserToTagEdge.RELATED.getString())
+                                               .by(__.out(EdgeLabel.RELATED_TO.getString())
                                                      .hasLabel(VertexLabel.TAG.getString())
                                                      .valueMap()
                                                      .with(WithOptions.tokens)
                                                      .fold()))
-                                         .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
-                                                    UserToArticleEdge.DELETED.getString(),
-                                                    UserToArticleEdge.PUBLISHED.getString()).label())
-                                         .by(coalesce(__.inE(UserToArticleEdge.LIKED.getString())
+                                         .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                                    EdgeLabel.DELETE.getString(),
+                                                    EdgeLabel.PUBLISH.getString()).label())
+                                         .by(coalesce(__.inE(EdgeLabel.LIKE.getString())
                                                         .where(outV().hasId(userId)
                                                                      .hasLabel(VertexLabel.USER.getString()))
                                                         .limit(1)
                                                         .constant(true), constant(false)))
-                                         .by(coalesce(__.inE(UserToArticleEdge.LEARNED.getString())
+                                         .by(coalesce(__.inE(EdgeLabel.LEARN.getString())
                                                         .where(outV().hasId(userId)
                                                                      .hasLabel(VertexLabel.USER.getString()))
                                                         .limit(1)
                                                         .constant(true), constant(false)))
-                                         .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                                         .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                         .by(__.in(EdgeLabel.LIKE.getString()).count())
+                                         .by(__.in(EdgeLabel.LEARN.getString()).count())
                                          .next();
 
         return ArticleEntityConverter.toArticleEntity(allResult);
@@ -102,12 +101,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
         Map<String, Object> allResult = g.V(articleId)
                                          .project("base", "tags", "skills", "author", "status", "liked", "learned")
                                          .by(__.valueMap().with(WithOptions.tokens))
-                                         .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                         .by(__.out(EdgeLabel.RELATED_TO.getString())
                                                .hasLabel(VertexLabel.TAG.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens)
                                                .fold())
-                                         .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                                         .by(__.outE(EdgeLabel.TEACH.getString())
                                                .hasLabel(VertexLabel.SKILL.getString())
                                                .as("teachEdge")
                                                .inV()
@@ -115,17 +114,17 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                                .select("teachEdge", "skillVertex")
                                                .by(valueMap())
                                                .fold())
-                                         .by(__.in(UserToArticleEdge.DRAFTED.getString(),
-                                                   UserToArticleEdge.DELETED.getString(),
-                                                   UserToArticleEdge.PUBLISHED.getString())
+                                         .by(__.in(EdgeLabel.DRAFT.getString(),
+                                                   EdgeLabel.DELETE.getString(),
+                                                   EdgeLabel.PUBLISH.getString())
                                                .hasLabel(VertexLabel.USER.getString())
                                                .valueMap()
                                                .with(WithOptions.tokens))
-                                         .by(__.inE(UserToArticleEdge.DRAFTED.getString(),
-                                                    UserToArticleEdge.DELETED.getString(),
-                                                    UserToArticleEdge.PUBLISHED.getString()).label())
-                                         .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                                         .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                         .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                                    EdgeLabel.DELETE.getString(),
+                                                    EdgeLabel.PUBLISH.getString()).label())
+                                         .by(__.in(EdgeLabel.LIKE.getString()).count())
+                                         .by(__.in(EdgeLabel.LEARN.getString()).count())
                                          .next();
 
         return ArticleEntityConverter.toArticleEntityForGuest(allResult);
@@ -140,19 +139,19 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
             Order orderType = searchCondition.isAscend() ? Order.asc : Order.desc;
             if (searchCondition.vertexSort()) {
                 allResults = g.V(userId)
-                              .out(UserToArticleEdge.PUBLISHED.getString())
+                              .out(EdgeLabel.PUBLISH.getString())
                               .hasLabel(VertexLabel.ARTICLE.getString())
                               .order()
                               .by(searchCondition.getField(), orderType)
                               .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                               .project("base", "tags", "skills", "liked", "learned")
                               .by(__.valueMap().with(WithOptions.tokens))
-                              .by(__.out(ArticleToTagEdge.RELATED.getString())
+                              .by(__.out(EdgeLabel.RELATED_TO.getString())
                                     .hasLabel(VertexLabel.TAG.getString())
                                     .valueMap()
                                     .with(WithOptions.tokens)
                                     .fold())
-                              .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                              .by(__.outE(EdgeLabel.TEACH.getString())
                                     .hasLabel(VertexLabel.SKILL.getString())
                                     .as("teachEdge")
                                     .inV()
@@ -160,21 +159,21 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                     .select("teachEdge", "skillVertex")
                                     .by(valueMap())
                                     .fold())
-                              .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                              .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                              .by(__.in(EdgeLabel.LIKE.getString()).count())
+                              .by(__.in(EdgeLabel.LEARN.getString()).count())
                               .toList();
             } else {
                 allResults = g.V(userId)
-                              .out(UserToArticleEdge.PUBLISHED.getString())
+                              .out(EdgeLabel.PUBLISH.getString())
                               .hasLabel(VertexLabel.ARTICLE.getString())
                               .project("base", "tags", "skills", "liked", "learned", "sortEdge")
                               .by(__.valueMap().with(WithOptions.tokens))
-                              .by(__.out(ArticleToTagEdge.RELATED.getString())
+                              .by(__.out(EdgeLabel.RELATED_TO.getString())
                                     .hasLabel(VertexLabel.TAG.getString())
                                     .valueMap()
                                     .with(WithOptions.tokens)
                                     .fold())
-                              .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                              .by(__.outE(EdgeLabel.TEACH.getString())
                                     .hasLabel(VertexLabel.SKILL.getString())
                                     .as("teachEdge")
                                     .inV()
@@ -182,8 +181,8 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                     .select("teachEdge", "skillVertex")
                                     .by(valueMap())
                                     .fold())
-                              .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                              .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                              .by(__.in(EdgeLabel.LIKE.getString()).count())
+                              .by(__.in(EdgeLabel.LEARN.getString()).count())
                               .by(__.in(searchCondition.getField()).count())
                               .order()
                               .by(select("sortEdge"), orderType)
@@ -192,17 +191,17 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
             }
         } else {
             allResults = g.V(userId)
-                          .out(UserToArticleEdge.PUBLISHED.getString())
+                          .out(EdgeLabel.PUBLISH.getString())
                           .hasLabel(VertexLabel.ARTICLE.getString())
                           .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                           .project("base", "tags", "skills", "liked", "learned")
                           .by(__.valueMap().with(WithOptions.tokens))
-                          .by(__.out(ArticleToTagEdge.RELATED.getString())
+                          .by(__.out(EdgeLabel.RELATED_TO.getString())
                                 .hasLabel(VertexLabel.TAG.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens)
                                 .fold())
-                          .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                          .by(__.outE(EdgeLabel.TEACH.getString())
                                 .hasLabel(VertexLabel.SKILL.getString())
                                 .as("teachEdge")
                                 .inV()
@@ -210,8 +209,8 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                 .select("teachEdge", "skillVertex")
                                 .by(valueMap())
                                 .fold())
-                          .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                          .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
+                          .by(__.in(EdgeLabel.LEARN.getString()).count())
                           .toList();
         }
 
@@ -250,12 +249,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                         .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                         .project("base", "tags", "skills", "status", "liked", "learned")
                         .by(__.valueMap().with(WithOptions.tokens))
-                        .by(__.out(ArticleToTagEdge.RELATED.getString())
+                        .by(__.out(EdgeLabel.RELATED_TO.getString())
                               .hasLabel(VertexLabel.TAG.getString())
                               .valueMap()
                               .with(WithOptions.tokens)
                               .fold())
-                        .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                        .by(__.outE(EdgeLabel.TEACH.getString())
                               .hasLabel(VertexLabel.SKILL.getString())
                               .as("teachEdge")
                               .inV()
@@ -264,8 +263,8 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                               .by(valueMap())
                               .fold())
                         .by(__.inE(searchCondition.getFilter()).label())
-                        .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                        .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                        .by(__.in(EdgeLabel.LIKE.getString()).count())
+                        .by(__.in(EdgeLabel.LEARN.getString()).count())
                         .toList();
             } else {
                 return g.V(userId)
@@ -273,12 +272,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                         .hasLabel(VertexLabel.ARTICLE.getString())
                         .project("base", "tags", "skills", "status", "liked", "learned", "sortEdge")
                         .by(__.valueMap().with(WithOptions.tokens))
-                        .by(__.out(ArticleToTagEdge.RELATED.getString())
+                        .by(__.out(EdgeLabel.RELATED_TO.getString())
                               .hasLabel(VertexLabel.TAG.getString())
                               .valueMap()
                               .with(WithOptions.tokens)
                               .fold())
-                        .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                        .by(__.outE(EdgeLabel.TEACH.getString())
                               .hasLabel(VertexLabel.SKILL.getString())
                               .as("teachEdge")
                               .inV()
@@ -287,8 +286,8 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                               .by(valueMap())
                               .fold())
                         .by(__.inE(searchCondition.getFilter()).label())
-                        .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                        .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                        .by(__.in(EdgeLabel.LIKE.getString()).count())
+                        .by(__.in(EdgeLabel.LEARN.getString()).count())
                         .by(__.in(searchCondition.getField()).count())
                         .order()
                         .by(select("sortEdge"), orderType)
@@ -302,12 +301,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                     .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                     .project("base", "tags", "skills", "status", "liked", "learned")
                     .by(__.valueMap().with(WithOptions.tokens))
-                    .by(__.out(ArticleToTagEdge.RELATED.getString())
+                    .by(__.out(EdgeLabel.RELATED_TO.getString())
                           .hasLabel(VertexLabel.TAG.getString())
                           .valueMap()
                           .with(WithOptions.tokens)
                           .fold())
-                    .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                    .by(__.outE(EdgeLabel.TEACH.getString())
                           .hasLabel(VertexLabel.SKILL.getString())
                           .as("teachEdge")
                           .inV()
@@ -316,8 +315,8 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                           .by(valueMap())
                           .fold())
                     .by(__.inE(searchCondition.getFilter()).label())
-                    .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                    .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                    .by(__.in(EdgeLabel.LIKE.getString()).count())
+                    .by(__.in(EdgeLabel.LEARN.getString()).count())
                     .toList();
         }
     }
@@ -328,19 +327,19 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
             Order orderType = searchCondition.isAscend() ? Order.asc : Order.desc;
             if (searchCondition.vertexSort()) {
                 return g.V(userId)
-                        .out(UserToContentProperty.DRAFTED.getString(), UserToContentProperty.PUBLISHED.getString())
+                        .out(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
                         .hasLabel(VertexLabel.ARTICLE.getString())
                         .order()
                         .by(searchCondition.getField(), orderType)
                         .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                         .project("base", "tags", "skills", "status", "liked", "learned")
                         .by(__.valueMap().with(WithOptions.tokens))
-                        .by(__.out(ArticleToTagEdge.RELATED.getString())
+                        .by(__.out(EdgeLabel.RELATED_TO.getString())
                               .hasLabel(VertexLabel.TAG.getString())
                               .valueMap()
                               .with(WithOptions.tokens)
                               .fold())
-                        .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                        .by(__.outE(EdgeLabel.TEACH.getString())
                               .hasLabel(VertexLabel.SKILL.getString())
                               .as("teachEdge")
                               .inV()
@@ -348,23 +347,23 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                               .select("teachEdge", "skillVertex")
                               .by(valueMap())
                               .fold())
-                        .by(__.inE(UserToContentProperty.DRAFTED.getString(),
-                                   UserToContentProperty.PUBLISHED.getString()).label())
-                        .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                        .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                        .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                   EdgeLabel.PUBLISH.getString()).label())
+                        .by(__.in(EdgeLabel.LIKE.getString()).count())
+                        .by(__.in(EdgeLabel.LEARN.getString()).count())
                         .toList();
             } else {
                 return g.V(userId)
-                        .out(UserToContentProperty.DRAFTED.getString(), UserToContentProperty.PUBLISHED.getString())
+                        .out(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
                         .hasLabel(VertexLabel.ARTICLE.getString())
                         .project("base", "tags", "skills", "status", "liked", "learned", "sortEdge")
                         .by(__.valueMap().with(WithOptions.tokens))
-                        .by(__.out(ArticleToTagEdge.RELATED.getString())
+                        .by(__.out(EdgeLabel.RELATED_TO.getString())
                               .hasLabel(VertexLabel.TAG.getString())
                               .valueMap()
                               .with(WithOptions.tokens)
                               .fold())
-                        .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                        .by(__.outE(EdgeLabel.TEACH.getString())
                               .hasLabel(VertexLabel.SKILL.getString())
                               .as("teachEdge")
                               .inV()
@@ -372,10 +371,10 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                               .select("teachEdge", "skillVertex")
                               .by(valueMap())
                               .fold())
-                        .by(__.inE(UserToContentProperty.DRAFTED.getString(),
-                                   UserToContentProperty.PUBLISHED.getString()).label())
-                        .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                        .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                        .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                   EdgeLabel.PUBLISH.getString()).label())
+                        .by(__.in(EdgeLabel.LIKE.getString()).count())
+                        .by(__.in(EdgeLabel.LEARN.getString()).count())
                         .by(__.in(searchCondition.getField()).count())
                         .order()
                         .by(select("sortEdge"), orderType)
@@ -384,17 +383,17 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
             }
         } else {
             return g.V(userId)
-                    .out(UserToContentProperty.DRAFTED.getString(), UserToContentProperty.PUBLISHED.getString())
+                    .out(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
                     .hasLabel(VertexLabel.ARTICLE.getString())
                     .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                     .project("base", "tags", "skills", "status", "liked", "learned")
                     .by(__.valueMap().with(WithOptions.tokens))
-                    .by(__.out(ArticleToTagEdge.RELATED.getString())
+                    .by(__.out(EdgeLabel.RELATED_TO.getString())
                           .hasLabel(VertexLabel.TAG.getString())
                           .valueMap()
                           .with(WithOptions.tokens)
                           .fold())
-                    .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                    .by(__.outE(EdgeLabel.TEACH.getString())
                           .hasLabel(VertexLabel.SKILL.getString())
                           .as("teachEdge")
                           .inV()
@@ -402,10 +401,10 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                           .select("teachEdge", "skillVertex")
                           .by(valueMap())
                           .fold())
-                    .by(__.inE(UserToContentProperty.DRAFTED.getString(), UserToContentProperty.PUBLISHED.getString())
+                    .by(__.inE(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
                           .label())
-                    .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                    .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                    .by(__.in(EdgeLabel.LIKE.getString()).count())
+                    .by(__.in(EdgeLabel.LEARN.getString()).count())
                     .toList();
         }
     }
@@ -426,12 +425,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                               .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                               .project("base", "tags", "skills", "status", "liked", "learned")
                               .by(__.valueMap().with(WithOptions.tokens))
-                              .by(__.out(ArticleToTagEdge.RELATED.getString())
+                              .by(__.out(EdgeLabel.RELATED_TO.getString())
                                     .hasLabel(VertexLabel.TAG.getString())
                                     .valueMap()
                                     .with(WithOptions.tokens)
                                     .fold())
-                              .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                              .by(__.outE(EdgeLabel.TEACH.getString())
                                     .hasLabel(VertexLabel.SKILL.getString())
                                     .as("teachEdge")
                                     .inV()
@@ -439,11 +438,11 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                     .select("teachEdge", "skillVertex")
                                     .by(valueMap())
                                     .fold())
-                              .by(__.inE(UserToContentProperty.DRAFTED.getString(),
-                                         UserToContentProperty.PUBLISHED.getString(),
-                                         UserToContentProperty.DELETED.getString()).label())
-                              .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                              .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                              .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                         EdgeLabel.PUBLISH.getString(),
+                                         EdgeLabel.DELETE.getString()).label())
+                              .by(__.in(EdgeLabel.LIKE.getString()).count())
+                              .by(__.in(EdgeLabel.LEARN.getString()).count())
                               .toList();
             } else {
                 allResults = g.V(userId)
@@ -451,12 +450,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                               .hasLabel(VertexLabel.ARTICLE.getString())
                               .project("base", "tags", "skills", "status", "liked", "learned", "sortEdge")
                               .by(__.valueMap().with(WithOptions.tokens))
-                              .by(__.out(ArticleToTagEdge.RELATED.getString())
+                              .by(__.out(EdgeLabel.RELATED_TO.getString())
                                     .hasLabel(VertexLabel.TAG.getString())
                                     .valueMap()
                                     .with(WithOptions.tokens)
                                     .fold())
-                              .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                              .by(__.outE(EdgeLabel.TEACH.getString())
                                     .hasLabel(VertexLabel.SKILL.getString())
                                     .as("teachEdge")
                                     .inV()
@@ -464,11 +463,11 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                     .select("teachEdge", "skillVertex")
                                     .by(valueMap())
                                     .fold())
-                              .by(__.inE(UserToContentProperty.DRAFTED.getString(),
-                                         UserToContentProperty.PUBLISHED.getString(),
-                                         UserToContentProperty.DELETED.getString()).label())
-                              .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                              .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                              .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                         EdgeLabel.PUBLISH.getString(),
+                                         EdgeLabel.DELETE.getString()).label())
+                              .by(__.in(EdgeLabel.LIKE.getString()).count())
+                              .by(__.in(EdgeLabel.LEARN.getString()).count())
                               .by(__.in(searchCondition.getField()).count())
                               .order()
                               .by(select("sortEdge"), orderType)
@@ -482,12 +481,12 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                           .range(searchCondition.getRangeStart(), searchCondition.getRangeEnd())
                           .project("base", "tags", "skills", "status", "liked", "learned")
                           .by(__.valueMap().with(WithOptions.tokens))
-                          .by(__.out(ArticleToTagEdge.RELATED.getString())
+                          .by(__.out(EdgeLabel.RELATED_TO.getString())
                                 .hasLabel(VertexLabel.TAG.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens)
                                 .fold())
-                          .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                          .by(__.outE(EdgeLabel.TEACH.getString())
                                 .hasLabel(VertexLabel.SKILL.getString())
                                 .as("teachEdge")
                                 .inV()
@@ -495,11 +494,11 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                 .select("teachEdge", "skillVertex")
                                 .by(valueMap())
                                 .fold())
-                          .by(__.inE(UserToContentProperty.DRAFTED.getString(),
-                                     UserToContentProperty.PUBLISHED.getString(),
-                                     UserToContentProperty.DELETED.getString()).label())
-                          .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                          .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                          .by(__.inE(EdgeLabel.DRAFT.getString(),
+                                     EdgeLabel.PUBLISH.getString(),
+                                     EdgeLabel.DELETE.getString()).label())
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
+                          .by(__.in(EdgeLabel.LEARN.getString()).count())
                           .toList();
         }
 
@@ -513,23 +512,19 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> allResults = g.V()
                                                 .hasLabel(VertexLabel.ARTICLE.getString())
-                                                .filter(inE().hasLabel(UserToArticleEdge.PUBLISHED.getString()))
-                                                .order()
-                                                .by(values(ArticleVertexProperty.LIKED.getString(),
-                                                           ArticleVertexProperty.LEARNED.getString()).sum(), Order.desc)
-                                                .limit(10)
+                                                .filter(inE().hasLabel(EdgeLabel.PUBLISH.getString()))
                                                 .project("base", "tags", "author", "skills", "liked", "learned")
                                                 .by(__.valueMap().with(WithOptions.tokens))
-                                                .by(__.out(ArticleToTagEdge.RELATED.getString())
+                                                .by(__.out(EdgeLabel.RELATED_TO.getString())
                                                       .hasLabel(VertexLabel.TAG.getString())
                                                       .valueMap()
                                                       .with(WithOptions.tokens)
                                                       .fold())
-                                                .by(__.in(UserToArticleEdge.PUBLISHED.getString())
+                                                .by(__.in(EdgeLabel.PUBLISH.getString())
                                                       .hasLabel(VertexLabel.USER.getString())
                                                       .valueMap()
                                                       .with(WithOptions.tokens))
-                                                .by(__.outE(ArticleToSkillEdge.TEACH.getString())
+                                                .by(__.outE(EdgeLabel.TEACH.getString())
                                                       .hasLabel(VertexLabel.SKILL.getString())
                                                       .as("teachEdge")
                                                       .inV()
@@ -537,8 +532,11 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
                                                       .select("teachEdge", "skillVertex")
                                                       .by(valueMap())
                                                       .fold())
-                                                .by(__.in(UserToArticleEdge.LIKED.getString()).count())
-                                                .by(__.in(UserToArticleEdge.LEARNED.getString()).count())
+                                                .by(__.in(EdgeLabel.LIKE.getString()).count())
+                                                .by(__.in(EdgeLabel.LEARN.getString()).count())
+                                                .order()
+                                                .by(select("learned"), Order.desc) //TODO: learnedとlikedの合計にしたい
+                                                .limit(10)
                                                 .toList();
 
         return allResults.stream()
@@ -555,7 +553,7 @@ public class ArticleQueryQueryRepositoryImpl implements ArticleQueryRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         return (String) g.V(articleId)
                          .hasLabel(VertexLabel.ARTICLE.getString())
-                         .in(UserToArticleEdge.PUBLISHED.getString(), UserToArticleEdge.DRAFTED.getString())
+                         .in(EdgeLabel.PUBLISH.getString(), EdgeLabel.DRAFT.getString())
                          .id()
                          .next();
     }

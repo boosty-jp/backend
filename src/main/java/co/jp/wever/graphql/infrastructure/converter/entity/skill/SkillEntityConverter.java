@@ -14,4 +14,12 @@ public class SkillEntityConverter {
                           .teachCount(0)
                           .build();
     }
+
+    public static SkillEntity toSkillEntity(Map<Object, Object> skillVertex) {
+        return SkillEntity.builder()
+                          .id(VertexConverter.toId(skillVertex))
+                          .name(VertexConverter.toString("name", skillVertex))
+                          .teachCount(0)
+                          .build();
+    }
 }

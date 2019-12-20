@@ -37,6 +37,8 @@ public enum GraphQLErrorMessage {
     INVALID_SNS_ID("正しいIDを指定してください"),
     FORBIDDEN_REQUEST("権限のないリクエストです"),
     INVALID_PLAN_ELEMENT_ID("下書きまたは削除済みの要素が含まれています"),
+    INVALID_ARTICLE_BLOCK("記事に無効な内容が含まれています"),
+    TOO_LONG_ARTICLE_BLOCK("記事のデータが大きすぎます"),
     TAG_DUPLICATED("タグが重複しています"),
     INVALID_IMAGE_URL("不正な画像URLです"),
     INVALID_USER_URL("URLが長すぎます"),

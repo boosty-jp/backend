@@ -18,11 +18,14 @@ public class ArticleInputConverter {
             Map<String, Object> article = request.getArgument("article");
 
             List<Map<String, Object>> skills = (List<Map<String, Object>>) article.get("skills");
+            List<Map<String, Object>> blocks = (List<Map<String, Object>>) article.get("blocks");
             return ArticleInput.builder()
                                .id(article.get("id").toString())
                                .title(article.get("title").toString())
                                .imageUrl(article.get("imageUrl").toString())
-                               .textUrl(article.get("textUrl").toString())
+                               .blocks(blocks.stream()
+                                             .map(b -> ArticleBlockInputConverter.toArticleBlockInput(b))
+                                             .collect(Collectors.toList()))
                                .tagIds((List<String>) article.get("tagsIds"))
                                .skills(skills.stream()
                                              .map(s -> SkillInputConverter.toSkillInput(s))
