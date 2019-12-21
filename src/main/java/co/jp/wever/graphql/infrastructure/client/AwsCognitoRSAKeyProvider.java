@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.domainmodel;
+package co.jp.wever.graphql.infrastructure.client;
 
 import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkProvider;

@@ -3,9 +3,9 @@ package co.jp.wever.graphql.domain.service.user;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.application.datamodel.request.UserInput;
-import co.jp.wever.graphql.application.datamodel.request.UserSettingInput;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
+import co.jp.wever.graphql.application.datamodel.request.user.UserInput;
+import co.jp.wever.graphql.application.datamodel.request.user.UserSettingInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.user.UserConverter;
 import co.jp.wever.graphql.domain.domainmodel.user.User;

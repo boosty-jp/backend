@@ -2,7 +2,6 @@ package co.jp.wever.graphql.domain.domainmodel.plan;
 
 import java.util.List;
 
-import co.jp.wever.graphql.application.datamodel.request.Requester;
 import co.jp.wever.graphql.domain.domainmodel.plan.action.PlanUserAction;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanBase;
 import co.jp.wever.graphql.domain.domainmodel.plan.base.PlanStatus;

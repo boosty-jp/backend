@@ -1,10 +1,10 @@
-package co.jp.wever.graphql.application.converter;
+package co.jp.wever.graphql.application.converter.search;
 
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
-import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
+import co.jp.wever.graphql.application.datamodel.request.search.SearchConditionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import graphql.schema.DataFetchingEnvironment;

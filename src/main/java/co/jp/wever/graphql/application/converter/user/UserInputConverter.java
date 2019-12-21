@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
-import co.jp.wever.graphql.application.datamodel.request.UserInput;
+import co.jp.wever.graphql.application.datamodel.request.user.UserInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 

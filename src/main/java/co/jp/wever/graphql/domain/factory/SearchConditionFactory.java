@@ -1,6 +1,6 @@
 package co.jp.wever.graphql.domain.factory;
 
-import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
+import co.jp.wever.graphql.application.datamodel.request.search.SearchConditionInput;
 import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 

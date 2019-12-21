@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.domain.domainmodel;
+package co.jp.wever.graphql.infrastructure.client;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.datamodel.request.ContentInput;
-import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.application.datamodel.request.course.ContentInput;
+import co.jp.wever.graphql.application.datamodel.request.course.SectionInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 

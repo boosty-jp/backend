@@ -2,7 +2,7 @@ package co.jp.wever.graphql.domain.repository.user;
 
 import org.springframework.stereotype.Repository;
 
-import co.jp.wever.graphql.application.datamodel.request.UserSettingInput;
+import co.jp.wever.graphql.application.datamodel.request.user.UserSettingInput;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
 @Repository

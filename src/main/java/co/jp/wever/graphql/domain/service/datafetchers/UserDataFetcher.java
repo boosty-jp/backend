@@ -9,7 +9,7 @@ import co.jp.wever.graphql.application.converter.user.AccountResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserInputConverter;
 import co.jp.wever.graphql.application.converter.user.UserResponseConverter;
 import co.jp.wever.graphql.application.converter.user.UserSettingInputConverter;
-import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.domain.service.user.UserMutationService;
 import co.jp.wever.graphql.domain.service.user.UserQueryService;

@@ -1,5 +1,4 @@
-package co.jp.wever.graphql.application.datamodel.request;
-
+package co.jp.wever.graphql.application.datamodel.request.course;
 
 import java.util.List;
 
@@ -8,11 +7,12 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ArticleInput {
+public class CourseInput {
     private String id;
     private String title;
     private String imageUrl;
-    private List<ArticleBlockInput>blocks;
+    private String description;
+
     private List<String> tagIds;
-    private List<SkillInput> skills;
+    private List<SectionInput> sections;
 }

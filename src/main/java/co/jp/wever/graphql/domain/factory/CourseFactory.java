@@ -1,6 +1,6 @@
 package co.jp.wever.graphql.domain.factory;
 
-import co.jp.wever.graphql.application.datamodel.request.CourseInput;
+import co.jp.wever.graphql.application.datamodel.request.course.CourseInput;
 import co.jp.wever.graphql.domain.converter.course.CourseSectionsConverter;
 import co.jp.wever.graphql.domain.domainmodel.content.ContentBase;
 import co.jp.wever.graphql.domain.domainmodel.course.Course;

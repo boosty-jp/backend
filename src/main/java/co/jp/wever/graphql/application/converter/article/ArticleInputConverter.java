@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.skill.SkillInputConverter;
-import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
+import co.jp.wever.graphql.application.datamodel.request.article.ArticleInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import graphql.schema.DataFetchingEnvironment;

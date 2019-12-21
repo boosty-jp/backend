@@ -1,6 +1,6 @@
 package co.jp.wever.graphql.domain.converter.user;
 
-import co.jp.wever.graphql.application.datamodel.request.UserInput;
+import co.jp.wever.graphql.application.datamodel.request.user.UserInput;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.domainmodel.user.UserDescription;
 import co.jp.wever.graphql.domain.domainmodel.user.UserDisplayName;

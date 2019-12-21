@@ -4,7 +4,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
-import co.jp.wever.graphql.application.datamodel.request.UserSettingInput;
+import co.jp.wever.graphql.application.datamodel.request.user.UserSettingInput;
 import co.jp.wever.graphql.domain.repository.user.UserMutationRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;

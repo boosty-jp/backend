@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.converter.SearchConditionConverter;
+import co.jp.wever.graphql.application.converter.search.SearchConditionConverter;
 import co.jp.wever.graphql.application.converter.article.ArticleInputConverter;
 import co.jp.wever.graphql.application.converter.article.ArticleResponseConverter;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
-import co.jp.wever.graphql.application.datamodel.request.ArticleInput;
-import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.application.datamodel.request.SearchConditionInput;
+import co.jp.wever.graphql.application.datamodel.request.article.ArticleInput;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
+import co.jp.wever.graphql.application.datamodel.request.search.SearchConditionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.domain.service.article.ArticleMutationService;
 import co.jp.wever.graphql.domain.service.article.ArticleQueryService;

@@ -3,8 +3,8 @@ package co.jp.wever.graphql.domain.service.course;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import co.jp.wever.graphql.application.datamodel.request.CourseInput;
-import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.course.CourseInput;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.domainmodel.course.Course;
 import co.jp.wever.graphql.domain.domainmodel.user.UserId;

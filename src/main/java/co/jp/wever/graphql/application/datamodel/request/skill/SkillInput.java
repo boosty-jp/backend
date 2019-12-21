@@ -1,4 +1,4 @@
-package co.jp.wever.graphql.application.datamodel.request;
+package co.jp.wever.graphql.application.datamodel.request.skill;
 
 import lombok.Builder;
 import lombok.Data;

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
 import co.jp.wever.graphql.application.converter.tag.TagResponseConverter;
-import co.jp.wever.graphql.application.datamodel.request.Requester;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
 import co.jp.wever.graphql.domain.service.tag.TagMutationService;
 import co.jp.wever.graphql.domain.service.tag.TagQueryService;

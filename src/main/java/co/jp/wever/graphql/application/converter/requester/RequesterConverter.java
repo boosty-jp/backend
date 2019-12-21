@@ -2,8 +2,8 @@ package co.jp.wever.graphql.application.converter.requester;
 
 import org.springframework.stereotype.Component;
 
-import co.jp.wever.graphql.application.datamodel.request.Requester;
-import co.jp.wever.graphql.domain.domainmodel.TokenVerifier;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
+import co.jp.wever.graphql.infrastructure.client.TokenVerifier;
 import graphql.schema.DataFetchingEnvironment;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;

@@ -3,7 +3,7 @@ package co.jp.wever.graphql.domain.converter.course;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.datamodel.request.SectionInput;
+import co.jp.wever.graphql.application.datamodel.request.course.SectionInput;
 import co.jp.wever.graphql.domain.domainmodel.course.section.CourseSections;
 
 public class CourseSectionsConverter {
