@@ -15,7 +15,7 @@ public enum PlanElementType {
 
     public static PlanElementType fromString(String value) {
         for (PlanElementType s : PlanElementType.values()) {
-            if (s.value.equalsIgnoreCase(value)) {
+            if (s.value.equals(value)) {
                 return s;
             }
         }

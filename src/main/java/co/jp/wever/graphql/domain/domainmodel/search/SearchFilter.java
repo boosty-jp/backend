@@ -1,6 +1,7 @@
 package co.jp.wever.graphql.domain.domainmodel.search;
 
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
+import io.netty.util.internal.StringUtil;
 
 public class SearchFilter {
     private String value;
@@ -15,6 +16,10 @@ public class SearchFilter {
     }
 
     public static SearchFilter of(String value) {
+        if(StringUtil.isNullOrEmpty(value)){
+            return new SearchFilter(ALL);
+        }
+
         if (value.equals(DRAFTED) || value.equals(PUBLISHED) || value.equals(LIKED) || value.equals(LEARNED)
             || value.equals(ALL)) {
             return new SearchFilter(value);
