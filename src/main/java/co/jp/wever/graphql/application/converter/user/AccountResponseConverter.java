@@ -6,6 +6,7 @@ import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 public class AccountResponseConverter {
     public static AccountResponse toAccountResponse(UserEntity userEntity) {
         return AccountResponse.builder()
+                              .user(UserResponseConverter.toUserResponse(userEntity))
                               .setting(UserSettingResponseConverter.toUserSettingResponse(userEntity))
                               .build();
     }

@@ -55,8 +55,10 @@ public class UserDataFetcher {
         return dataFetchingEnvironment -> {
             Map<String, Object> userInputMap = dataFetchingEnvironment.getArgument("user");
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String displayName = dataFetchingEnvironment.getArgument("displayName");
+            String imageUrl= dataFetchingEnvironment.getArgument("imageUrl");
 
-            userMutationService.createUser(UserInputConverter.toUserInput(userInputMap), requester);
+            userMutationService.createUser(displayName, imageUrl,requester);
             return CreateResponse.builder().id(requester.getUserId()).build();
         };
     }

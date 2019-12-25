@@ -3,6 +3,8 @@ package co.jp.wever.graphql.domain.service.user;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
@@ -25,7 +27,15 @@ public class UserQueryService {
                                              GraphQLErrorMessage.USER_ID_EMPTY.getString());
         }
 
-        UserEntity userEntity = userQueryRepository.findOne(userId);
+                UserEntity userEntity;
+//        UserEntity userEntity = userQueryRepository.findOne(userId);
+        try {
+            userEntity = userQueryRepository.findOne(userId);
+        } catch (NoSuchElementException e){
+            throw new GraphQLCustomException(HttpStatus.NOT_FOUND.value(),
+                                             GraphQLErrorMessage.USER_NOT_FOUND.getString());
+        }
+
         if(userEntity.getDeleted()){
             throw new GraphQLCustomException(HttpStatus.NOT_FOUND.value(),
                                              GraphQLErrorMessage.USER_NOT_FOUND.getString());

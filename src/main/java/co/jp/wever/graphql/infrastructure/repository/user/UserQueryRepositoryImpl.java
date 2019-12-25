@@ -9,6 +9,7 @@ import java.util.Map;
 import co.jp.wever.graphql.domain.repository.user.UserQueryRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
+import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
@@ -27,7 +28,7 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
     public UserEntity findOne(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        Map<Object, Object> allResult = g.V(userId).valueMap().with(WithOptions.tokens).next();
+        Map<Object, Object> allResult = g.V(userId).hasLabel(VertexLabel.USER.getString()).valueMap().with(WithOptions.tokens).next();
 
         return UserEntityConverter.toUserEntityFromVertex(allResult);
     }

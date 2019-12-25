@@ -1,5 +1,8 @@
 package co.jp.wever.graphql.domain.service.user;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +12,9 @@ import co.jp.wever.graphql.application.datamodel.request.user.UserSettingInput;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.converter.user.UserConverter;
 import co.jp.wever.graphql.domain.domainmodel.user.User;
+import co.jp.wever.graphql.domain.domainmodel.user.UserDisplayName;
+import co.jp.wever.graphql.domain.domainmodel.user.UserImageUrl;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
-import co.jp.wever.graphql.infrastructure.converter.entity.user.UserEntityConverter;
 import co.jp.wever.graphql.infrastructure.repository.user.UserMutationRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,14 +27,15 @@ public class UserMutationService {
         this.userMutationRepository = userMutationRepository;
     }
 
-    public String createUser(UserInput userInput, Requester requester) {
-        log.info("create user: {}", userInput);
-        if(requester.isGuest()){
+    public String createUser(String displayName, String imageUrl, Requester requester) {
+        log.info("create user: {}", requester.getUserId());
+        if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        User user = UserConverter.toUser(userInput, requester.getUserId());
-        return userMutationRepository.createOne(UserEntityConverter.toUserEntity(user));
+        UserDisplayName name = UserDisplayName.of(displayName);
+        UserImageUrl url = UserImageUrl.of(imageUrl);
+        return userMutationRepository.createOne(name.getValue(), url.getValue(), requester.getUserId());
     }
 
     public void updateUser(UserInput userInput, Requester requester) {
@@ -46,7 +51,7 @@ public class UserMutationService {
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
         }
 
-        userMutationRepository.updateOne(UserEntityConverter.toUserEntity(user));
+        userMutationRepository.updateOne(user);
     }
 
     public void updateUserSetting(UserSettingInput userSettingInput, Requester requester) {
@@ -63,6 +68,13 @@ public class UserMutationService {
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        try {
+            FirebaseAuth.getInstance().deleteUser(requester.getUserId());
+        } catch (FirebaseAuthException e) {
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
         userMutationRepository.deleteUser(requester.getUserId());

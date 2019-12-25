@@ -5,13 +5,13 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import co.jp.wever.graphql.application.datamodel.request.user.UserSettingInput;
+import co.jp.wever.graphql.domain.domainmodel.user.User;
 import co.jp.wever.graphql.domain.repository.user.UserMutationRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.UserVertexProperty;
 import co.jp.wever.graphql.infrastructure.datamodel.algolia.UserSearchEntity;
-import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold;
 import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
@@ -28,18 +28,18 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
     }
 
     @Override
-    public String createOne(UserEntity userEntity) {
+    public String createOne(String displayName, String imageUrl, String uid) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         long now = System.currentTimeMillis();
 
-        String userId = g.V(userEntity.getUserId())
+        String userId = g.V(uid)
                          .fold()
                          .coalesce(unfold(),
                                    g.addV(VertexLabel.USER.getString())
-                                    .property(T.id, userEntity.getUserId())
-                                    .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
-                                    .property(UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
+                                    .property(T.id, uid)
+                                    .property(UserVertexProperty.DISPLAY_NAME.getString(), displayName)
+                                    .property(UserVertexProperty.IMAGE_URL.getString(), imageUrl)
                                     .property(UserVertexProperty.DESCRIPTION.getString(), "")
                                     .property(UserVertexProperty.URL.getString(), "")
                                     .property(UserVertexProperty.TWITTER_ID.getString(), "")
@@ -57,8 +57,8 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
         algoliaClient.getUserIndex()
                      .saveObjectAsync(UserSearchEntity.builder()
                                                       .objectID(userId)
-                                                      .displayName(userEntity.getDisplayName())
-                                                      .imageUrl(userEntity.getImageUrl())
+                                                      .displayName(displayName)
+                                                      .imageUrl(imageUrl)
                                                       .description("")
                                                       .build());
 
@@ -66,30 +66,31 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
     }
 
 
-    public void updateOne(UserEntity userEntity) {
+    public void updateOne(User user) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         long now = System.currentTimeMillis();
 
         // サインアップ時にユーザー作成に失敗している可能性もあるので、アップサートにする
         g.V()
-         .has(VertexLabel.USER.getString(), "id", userEntity.getUserId())
+         .hasId(user.getUserId().getValue())
+         .hasLabel(VertexLabel.USER.getString())
          .fold()
-         .coalesce(unfold().V(userEntity.getUserId())
-                           .property(single, UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
-                           .property(single, UserVertexProperty.DESCRIPTION.getString(), userEntity.getDescription())
-                           .property(single, UserVertexProperty.URL.getString(), userEntity.getUrl())
-                           .property(single, UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
-                           .property(single, UserVertexProperty.TWITTER_ID.getString(), userEntity.getTwitterId())
-                           .property(single, UserVertexProperty.FACEBOOK_ID.getString(), userEntity.getFacebookId())
+         .coalesce(unfold().V(user.getUserId().getValue())
+                           .property(single, UserVertexProperty.DISPLAY_NAME.getString(), user.getDisplayName().getValue())
+                           .property(single, UserVertexProperty.DESCRIPTION.getString(), user.getDescription().getValue())
+                           .property(single, UserVertexProperty.URL.getString(), user.getUrl().getValue())
+                           .property(single, UserVertexProperty.IMAGE_URL.getString(), user.getImageUrl().getValue())
+                           .property(single, UserVertexProperty.TWITTER_ID.getString(), user.getTwitterId().getValue())
+                           .property(single, UserVertexProperty.FACEBOOK_ID.getString(), user.getFacebookId().getValue())
                            .property(single, UserVertexProperty.UPDATED_TIME.getString(), now),
-                   g.addV(VertexLabel.USER.getString()).property("id", userEntity.getUserId()))
-         .property(UserVertexProperty.DISPLAY_NAME.getString(), userEntity.getDisplayName())
-         .property(UserVertexProperty.DESCRIPTION.getString(), userEntity.getDescription())
-         .property(UserVertexProperty.URL.getString(), userEntity.getUrl())
-         .property(UserVertexProperty.IMAGE_URL.getString(), userEntity.getImageUrl())
-         .property(UserVertexProperty.TWITTER_ID.getString(), userEntity.getTwitterId())
-         .property(UserVertexProperty.FACEBOOK_ID.getString(), userEntity.getFacebookId())
+                   g.addV(VertexLabel.USER.getString()).property("id", user.getUserId().getValue()))
+         .property(UserVertexProperty.DISPLAY_NAME.getString(), user.getDisplayName().getValue())
+         .property(UserVertexProperty.DESCRIPTION.getString(), user.getDescription().getValue())
+         .property(UserVertexProperty.URL.getString(), user.getUrl().getValue())
+         .property(UserVertexProperty.IMAGE_URL.getString(), user.getImageUrl().getValue())
+         .property(UserVertexProperty.TWITTER_ID.getString(), user.getTwitterId().getValue())
+         .property(UserVertexProperty.FACEBOOK_ID.getString(), user.getFacebookId().getValue())
          .property(UserVertexProperty.LEARN_PUBLIC.getString(), true)
          .property(UserVertexProperty.LIKE_PUBLIC.getString(), true)
          .property(UserVertexProperty.SKILL_PUBLIC.getString(), true)
@@ -99,9 +100,9 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
 
         algoliaClient.getUserIndex()
                      .saveObjectAsync(UserSearchEntity.builder()
-                                                      .objectID(userEntity.getUserId())
-                                                      .description(userEntity.getDescription())
-                                                      .displayName(userEntity.getDisplayName())
+                                                      .objectID(user.getUserId().getValue())
+                                                      .description(user.getDescription().getValue())
+                                                      .displayName(user.getDisplayName().getValue())
                                                       .build());
     }
 
@@ -126,5 +127,7 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
          .property(single, UserVertexProperty.DELETED.getString(), true)
          .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
          .next();
+
+        System.out.println(g.V(userId).valueMap().toList());
     }
 }

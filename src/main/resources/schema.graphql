@@ -189,7 +189,7 @@ input ContentInput {
 }
 
 input UserInput{
-    displayName: String!
+    displayName: String
     description: String
     imageUrl: String
     url: String
@@ -222,7 +222,7 @@ type Mutation {
     startCourse(courseId: ID!): Boolean
     clearStartCourse(courseId: ID!): Boolean
 
-    createUser(user: UserInput!): Boolean
+    createUser(displayName: String! imageUrl: String!): CreateResponse
     updateUser(user: UserInput!): Boolean
     updateUserSetting(setting: UserSettingInput): Boolean
     deleteUser: Boolean
