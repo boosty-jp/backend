@@ -7,7 +7,7 @@ public class SearchOrder {
     private final static String UNSORTED = "unsorted";
 
     private SearchOrder(String value) {
-        new SearchOrder(value);
+       this.value = value;
     }
 
     public static SearchOrder of(String value) {

@@ -13,9 +13,11 @@ import co.jp.wever.graphql.application.datamodel.request.article.ArticleInput;
 import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.application.datamodel.request.search.SearchConditionInput;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.article.ArticleListResponse;
 import co.jp.wever.graphql.domain.service.article.ArticleMutationService;
 import co.jp.wever.graphql.domain.service.article.ArticleQueryService;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleListEntity;
 import graphql.schema.DataFetcher;
 
 @Component
@@ -53,10 +55,14 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = articleQueryService.findCreatedArticles(userId, searchConditionInput);
-            return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForPublishedList(r))
-                          .collect(Collectors.toList());
+            ArticleListEntity result = articleQueryService.findCreatedArticles(userId, searchConditionInput);
+
+            return ArticleListResponse.builder()
+                                      .articles(result.getArticles()
+                                                      .stream()
+                                                      .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                                                      .collect(Collectors.toList()))
+                                      .sumCount(result.getSumCount());
         };
     }
 
@@ -66,11 +72,14 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results =
-                articleQueryService.findCreatedArticlesBySelf(requester, searchConditionInput);
-            return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
-                          .collect(Collectors.toList());
+            ArticleListEntity result = articleQueryService.findCreatedArticlesBySelf(requester, searchConditionInput);
+
+            return ArticleListResponse.builder()
+                                      .articles(result.getArticles()
+                                                      .stream()
+                                                      .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                                                      .collect(Collectors.toList()))
+                                      .sumCount(result.getSumCount());
         };
     }
 
@@ -80,10 +89,14 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results = articleQueryService.findActionedArticles(userId, searchConditionInput);
-            return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForPublishedList(r))
-                          .collect(Collectors.toList());
+            ArticleListEntity result = articleQueryService.findActionedArticles(userId, searchConditionInput);
+
+            return ArticleListResponse.builder()
+                                      .articles(result.getArticles()
+                                                      .stream()
+                                                      .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                                                      .collect(Collectors.toList()))
+                                      .sumCount(result.getSumCount());
         };
     }
 
@@ -93,11 +106,14 @@ public class ArticleDataFetcher {
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<ArticleEntity> results =
-                articleQueryService.findActionedArticlesBySelf(requester, searchConditionInput);
-            return results.stream()
-                          .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
-                          .collect(Collectors.toList());
+            ArticleListEntity result = articleQueryService.findActionedArticlesBySelf(requester, searchConditionInput);
+
+            return ArticleListResponse.builder()
+                                      .articles(result.getArticles()
+                                                      .stream()
+                                                      .map(r -> ArticleResponseConverter.toArticleResponseForList(r))
+                                                      .collect(Collectors.toList()))
+                                      .sumCount(result.getSumCount());
         };
     }
 

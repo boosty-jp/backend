@@ -13,6 +13,7 @@ import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleListEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.repository.article.ArticleQueryRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.user.UserQueryRepositoryImpl;
@@ -45,13 +46,13 @@ public class ArticleQueryService {
         return articleEntity;
     }
 
-    public List<ArticleEntity> findCreatedArticles(String userId, SearchConditionInput searchConditionInput) {
+    public ArticleListEntity findCreatedArticles(String userId, SearchConditionInput searchConditionInput) {
         SearchCondition searchCondition = SearchConditionFactory.makeFilteredPublished(searchConditionInput);
 
         return articleQueryRepository.findCreated(userId, searchCondition);
     }
 
-    public List<ArticleEntity> findCreatedArticlesBySelf(
+    public ArticleListEntity findCreatedArticlesBySelf(
         Requester requester, SearchConditionInput searchConditionInput) {
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 
@@ -60,10 +61,11 @@ public class ArticleQueryService {
                                              GraphQLErrorMessage.INVALID_SEARCH_CONDITION.getString());
         }
 
+
         return articleQueryRepository.findCreatedBySelf(requester.getUserId(), searchCondition);
     }
 
-    public List<ArticleEntity> findActionedArticles(String userId, SearchConditionInput searchConditionInput) {
+    public ArticleListEntity findActionedArticles(String userId, SearchConditionInput searchConditionInput) {
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 
         if (!searchCondition.validActionedFilter()) {
@@ -81,7 +83,7 @@ public class ArticleQueryService {
         return articleQueryRepository.findActioned(userId, searchCondition);
     }
 
-    public List<ArticleEntity> findActionedArticlesBySelf(
+    public ArticleListEntity findActionedArticlesBySelf(
         Requester requester, SearchConditionInput searchConditionInput) {
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 

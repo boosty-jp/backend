@@ -26,7 +26,7 @@ public class ArticleInputConverter {
                                .blocks(blocks.stream()
                                              .map(b -> ArticleBlockInputConverter.toArticleBlockInput(b))
                                              .collect(Collectors.toList()))
-                               .tagIds((List<String>) article.get("tagsIds"))
+                               .tagIds((List<String>) article.get("tagIds"))
                                .skills(skills.stream()
                                              .map(s -> SkillInputConverter.toSkillInput(s))
                                              .collect(Collectors.toList()))

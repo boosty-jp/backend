@@ -1,11 +1,11 @@
 package co.jp.wever.graphql.infrastructure.repository.article;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.domainmodel.article.Article;
@@ -14,6 +14,7 @@ import co.jp.wever.graphql.domain.repository.article.ArticleMutationRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.IncludeEdgeProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleBlockVertexProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.property.ArticleVertexProperty;
@@ -55,7 +56,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         addBlocks(g, articleId, article, now);
 
         clearStatus(g, articleId, userId);
-        addStatus(g, articleId, userId, EdgeLabel.PUBLISH.getString(), now);
+        addStatus(g, articleId, EdgeLabel.PUBLISH.getString(), userId, now);
 
         algoliaClient.getArticleIndex()
                      .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(articleId, article, now));
@@ -65,6 +66,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
     public String publishByEntry(Article article, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
+        long now2 = System.nanoTime();
 
         String articleId = createArticleVertex(g, article, now);
 
@@ -73,9 +75,11 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         addBlocks(g, articleId, article, now);
         addStatus(g, articleId, EdgeLabel.PUBLISH.getString(), userId, now);
 
-        algoliaClient.getArticleIndex()
-                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(articleId, article, now));
+        //        algoliaClient.getArticleIndex()
+        //                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(articleId, article, now));
 
+        long now3 = System.nanoTime();
+        System.out.println((now3 - now2) / 1000000);
         return articleId;
     }
 
@@ -96,7 +100,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         addBlocks(g, articleId, article, now);
 
         clearStatus(g, articleId, userId);
-        addStatus(g, articleId, userId, EdgeLabel.DRAFT.getString(), now);
+        addStatus(g, articleId,EdgeLabel.DRAFT.getString(), userId, now);
 
         algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
     }
@@ -216,7 +220,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
                               .property("level", s.getLevel().getValue())
                               .property(DateProperty.CREATE_TIME.getString(), now)
                               .to(g.V(s.getId().getValue()).hasLabel(VertexLabel.SKILL.getString()))
-                              .iterate());
+                              .next());
     }
 
     private void clearStatus(GraphTraversalSource g, String articleId, String authorId) {
@@ -233,8 +237,8 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
          .hasLabel(VertexLabel.ARTICLE.getString())
          .addE(status)
          .property(T.id, EdgeIdCreator.createId(authorId, articleId, status))
-         .from(g.V(authorId))
          .property(DateProperty.CREATE_TIME.getString(), now)
+         .from(g.V(authorId).hasLabel(VertexLabel.USER.getString()))
          .next();
     }
 
@@ -262,8 +266,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
     }
 
     private void clearBlocks(GraphTraversalSource g, String articleId, long now) {
-        GraphTraversal t = g.V();
-        t.hasId(articleId)
+        g.V(articleId)
          .hasLabel(VertexLabel.ARTICLE.getString())
          .out(EdgeLabel.INCLUDE.getString())
          .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
@@ -271,7 +274,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
          .property(DateProperty.CREATE_TIME.getString(), now)
          .iterate();
 
-        t.hasId(articleId)
+        g.V(articleId)
          .hasLabel(VertexLabel.ARTICLE.getString())
          .outE(EdgeLabel.INCLUDE.getString())
          .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
@@ -280,24 +283,32 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
     }
 
     private void addBlocks(GraphTraversalSource g, String articleId, Article article, long now) {
-        GraphTraversal t = g.V();
-        t.addV(VertexLabel.ARTICLE_TEXT.getString())
-         .property(DateProperty.CREATE_TIME.getString(), now)
-         .as("articleText");
-        t.addE(EdgeLabel.INCLUDE.getString()).from(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()));
-        t.iterate();
+        String textId = g.addV(VertexLabel.ARTICLE_TEXT.getString())
+                         .property(DateProperty.CREATE_TIME.getString(), now)
+                         .id()
+                         .next()
+                         .toString();
 
+        g.V(textId)
+         .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
+         .addE(EdgeLabel.INCLUDE.getString())
+         .from(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString()))
+         .next();
+
+        AtomicInteger idx = new AtomicInteger();
         article.getBlocks().getBlocks().forEach(b -> {
-            t.addV(VertexLabel.ARTICLE_BLOCK.getString())
+            g.addV(VertexLabel.ARTICLE_BLOCK.getString())
              .property(ArticleBlockVertexProperty.TYPE.getString(), b.getType().getValue())
              .property(ArticleBlockVertexProperty.DATA.getString(), b.getData().getValue())
              .property(DateProperty.CREATE_TIME.getString(), now)
              .property(DateProperty.UPDATE_TIME.getString(), now)
-             .as(b.toString());
-            t.addE(EdgeLabel.INCLUDE.getString())
+             .addE(EdgeLabel.INCLUDE.getString())
+             .property(IncludeEdgeProperty.NUMBER.getString(), idx.get())
              .property(DateProperty.CREATE_TIME.getString(), now)
-             .from("articleText");
-            t.iterate();
+             .from(g.V(textId).hasLabel(VertexLabel.ARTICLE_TEXT.getString()))
+             .next();
+            idx.getAndIncrement();
         });
+
     }
 }

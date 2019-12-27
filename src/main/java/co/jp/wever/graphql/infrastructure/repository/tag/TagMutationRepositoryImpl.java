@@ -3,6 +3,7 @@ package co.jp.wever.graphql.infrastructure.repository.tag;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.springframework.stereotype.Component;
 
+import co.jp.wever.graphql.domain.domainmodel.tag.TagName;
 import co.jp.wever.graphql.domain.repository.tag.TagMutationRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
@@ -25,25 +26,26 @@ public class TagMutationRepositoryImpl implements TagMutationRepository {
     }
 
     @Override
-    public String createTag(String name) {
+    public String createTag(TagName name) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
 
         String tagId = g.V()
                         .hasLabel(VertexLabel.TAG.getString())
-                        .has(TagVertexProperty.NAME.getString(), name)
+                        .has(TagVertexProperty.NAME.getString(), name.getValue())
                         .fold()
                         .coalesce(unfold(),
                                   g.addV(VertexLabel.TAG.getString())
-                                   .property(TagVertexProperty.NAME.getString(), name)
+                                   .property(TagVertexProperty.NAME.getString(), name.getValue())
                                    .property(DateProperty.CREATE_TIME.getString(), now)
                                    .property(DateProperty.UPDATE_TIME.getString(), now))
                         .next()
                         .id()
                         .toString();
 
+        System.out.println(g.V().hasLabel(VertexLabel.TAG.getString()).values("name").toList());
         algoliaClient.getTagIndex()
-                     .saveObjectAsync(TagSearchEntity.builder().objectID(tagId).name(name).relatedCount(0).build());
+                     .saveObjectAsync(TagSearchEntity.builder().objectID(tagId).name(name.getValue()).relatedCount(0).build());
         return tagId;
     }
 }

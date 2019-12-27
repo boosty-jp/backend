@@ -25,13 +25,17 @@ public class ContentTagIds {
                                              GraphQLErrorMessage.NULL_DATA.getString());
         }
 
+        if (tagsIds.isEmpty()) {
+            return new ContentTagIds(tagsIds.stream().map(t -> TagId.of(t)).collect(Collectors.toList()));
+        }
+
         if (tagsIds.size() > MAX_TAG_SIZE) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.INVALID_TAG_COUNT.getString());
         }
 
 
-        boolean duplicated = (tagsIds.size() == new HashSet<>(tagsIds).size());
+        boolean duplicated = (tagsIds.size() != new HashSet<>(tagsIds).size());
 
         if (duplicated) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),

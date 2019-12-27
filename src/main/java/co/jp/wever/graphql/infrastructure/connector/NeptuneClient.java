@@ -66,7 +66,6 @@ public class NeptuneClient implements AutoCloseable {
                              .serializer(Serializers.GRAPHBINARY_V1D0)
                              .create();
 
-
             g = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 
         } catch (Exception e) {

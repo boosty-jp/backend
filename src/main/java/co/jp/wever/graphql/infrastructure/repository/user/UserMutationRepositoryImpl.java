@@ -77,12 +77,18 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
          .hasLabel(VertexLabel.USER.getString())
          .fold()
          .coalesce(unfold().V(user.getUserId().getValue())
-                           .property(single, UserVertexProperty.DISPLAY_NAME.getString(), user.getDisplayName().getValue())
-                           .property(single, UserVertexProperty.DESCRIPTION.getString(), user.getDescription().getValue())
+                           .property(single,
+                                     UserVertexProperty.DISPLAY_NAME.getString(),
+                                     user.getDisplayName().getValue())
+                           .property(single,
+                                     UserVertexProperty.DESCRIPTION.getString(),
+                                     user.getDescription().getValue())
                            .property(single, UserVertexProperty.URL.getString(), user.getUrl().getValue())
                            .property(single, UserVertexProperty.IMAGE_URL.getString(), user.getImageUrl().getValue())
                            .property(single, UserVertexProperty.TWITTER_ID.getString(), user.getTwitterId().getValue())
-                           .property(single, UserVertexProperty.FACEBOOK_ID.getString(), user.getFacebookId().getValue())
+                           .property(single,
+                                     UserVertexProperty.FACEBOOK_ID.getString(),
+                                     user.getFacebookId().getValue())
                            .property(single, UserVertexProperty.UPDATED_TIME.getString(), now),
                    g.addV(VertexLabel.USER.getString()).property("id", user.getUserId().getValue()))
          .property(UserVertexProperty.DISPLAY_NAME.getString(), user.getDisplayName().getValue())

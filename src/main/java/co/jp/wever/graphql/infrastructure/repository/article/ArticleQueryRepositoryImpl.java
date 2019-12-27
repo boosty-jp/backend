@@ -4,6 +4,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.Order;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,13 +15,19 @@ import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.domain.repository.article.ArticleQueryRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
+import co.jp.wever.graphql.infrastructure.constant.edge.property.IncludeEdgeProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
+import co.jp.wever.graphql.infrastructure.constant.vertex.property.DateProperty;
 import co.jp.wever.graphql.infrastructure.converter.entity.article.ArticleEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.article.ArticleListEntity;
+import co.jp.wever.graphql.infrastructure.util.EdgeIdCreator;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.unfold;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.valueMap;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.select;
@@ -37,6 +44,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
     @Override
     public ArticleEntity findOne(String articleId, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
+        long now = System.currentTimeMillis();
 
         Map<String, Object> allResult = g.V(articleId)
                                          .hasLabel(VertexLabel.ARTICLE.getString())
@@ -55,6 +63,9 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                                                .hasLabel(VertexLabel.ARTICLE_TEXT.getString())
                                                .out(EdgeLabel.INCLUDE.getString())
                                                .hasLabel(VertexLabel.ARTICLE_BLOCK.getString())
+                                               .order()
+                                               .by(__.inE(EdgeLabel.INCLUDE.getString())
+                                                     .values(IncludeEdgeProperty.NUMBER.getString()), Order.asc)
                                                .valueMap()
                                                .fold())
                                          .by(__.out(EdgeLabel.RELATED_TO.getString())
@@ -63,7 +74,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                                                .with(WithOptions.tokens)
                                                .fold())
                                          .by(__.outE(EdgeLabel.TEACH.getString())
-                                               .hasLabel(VertexLabel.SKILL.getString())
+                                               .where(inV().hasLabel(VertexLabel.SKILL.getString()))
                                                .as("teachEdge")
                                                .inV()
                                                .as("skillVertex")
@@ -74,13 +85,8 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                                                    EdgeLabel.DELETE.getString(),
                                                    EdgeLabel.PUBLISH.getString())
                                                .hasLabel(VertexLabel.USER.getString())
-                                               .project("base", "tags")
-                                               .by(__.valueMap().with(WithOptions.tokens))
-                                               .by(__.out(EdgeLabel.RELATED_TO.getString())
-                                                     .hasLabel(VertexLabel.TAG.getString())
-                                                     .valueMap()
-                                                     .with(WithOptions.tokens)
-                                                     .fold()))
+                                               .valueMap()
+                                               .with(WithOptions.tokens))
                                          .by(__.inE(EdgeLabel.DRAFT.getString(),
                                                     EdgeLabel.DELETE.getString(),
                                                     EdgeLabel.PUBLISH.getString()).label())
@@ -97,6 +103,25 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                                          .by(__.in(EdgeLabel.LEARN.getString()).count())
                                          .next();
+
+        g.E(EdgeIdCreator.createId(userId, articleId, EdgeLabel.VIEW.getString()))
+         .hasLabel(EdgeLabel.VIEW.getString())
+         .fold()
+         .coalesce(unfold(),
+                   g.V(userId)
+                    .hasLabel(VertexLabel.USER.getString())
+                    .addE(EdgeLabel.VIEW.getString())
+                    .property(T.id, EdgeIdCreator.createId(userId, articleId, EdgeLabel.VIEW.getString()))
+                    .property(DateProperty.CREATE_TIME.getString(), now)
+                    .property(DateProperty.UPDATE_TIME.getString(), now)
+                    .to(g.V(articleId).hasLabel(VertexLabel.ARTICLE.getString())))
+         .next();
+
+        //TODO: ↑のクエリに合わせる
+        g.E(EdgeIdCreator.createId(userId, articleId, EdgeLabel.VIEW.getString()))
+         .hasLabel(EdgeLabel.VIEW.getString())
+         .property(DateProperty.UPDATE_TIME.getString(), now)
+         .next();
 
         return ArticleEntityConverter.toArticleEntity(allResult);
     }
@@ -151,10 +176,11 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
     }
 
     @Override
-    public List<ArticleEntity> findCreated(String userId, SearchCondition searchCondition) {
+    public ArticleListEntity findCreated(String userId, SearchCondition searchCondition) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<String, Object>> allResults;
+        long sumCount = findPublishedSumCount(g, userId);
         if (searchCondition.shouldSort()) {
             Order orderType = searchCondition.isAscend() ? Order.asc : Order.desc;
             if (searchCondition.vertexSort()) {
@@ -234,25 +260,50 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                           .toList();
         }
 
-        return allResults.stream()
-                         .map(r -> ArticleEntityConverter.toArticleEntityForList(r))
-                         .collect(Collectors.toList());
+        return ArticleListEntity.builder()
+                                .articles(allResults.stream()
+                                                    .map(r -> ArticleEntityConverter.toArticleEntityForList(r))
+                                                    .collect(Collectors.toList()))
+                                .sumCount(sumCount)
+                                .build();
     }
 
     @Override
-    public List<ArticleEntity> findCreatedBySelf(String userId, SearchCondition searchCondition) {
+    public ArticleListEntity findCreatedBySelf(String userId, SearchCondition searchCondition) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<String, Object>> allResults;
+        long sumCount = 0;
         if (searchCondition.shouldFilter()) {
             allResults = findCreatedBySelfWithFilter(g, userId, searchCondition);
+            sumCount = findSumCountWithFilter(g, userId, searchCondition);
         } else {
             allResults = findCreatedBySelfWithoutFilter(g, userId, searchCondition);
+            sumCount = findSumCountWithoutFilter(g, userId);
         }
 
-        return allResults.stream()
-                         .map(r -> ArticleEntityConverter.toArticleEntityForListWithStatus(r))
-                         .collect(Collectors.toList());
+        return ArticleListEntity.builder()
+                                .articles(allResults.stream()
+                                                    .map(r -> ArticleEntityConverter.toArticleEntityForListWithStatus(r))
+                                                    .collect(Collectors.toList()))
+                                .sumCount(sumCount)
+                                .build();
+    }
+
+    private long findSumCountWithFilter(GraphTraversalSource g, String userId, SearchCondition searchCondition) {
+        return g.V(userId).out(searchCondition.getFilter()).hasLabel(VertexLabel.ARTICLE.getString()).count().next();
+    }
+
+    private long findSumCountWithoutFilter(GraphTraversalSource g, String userId) {
+        return g.V(userId)
+                .out(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
+                .hasLabel(VertexLabel.ARTICLE.getString())
+                .count()
+                .next();
+    }
+
+    private long findPublishedSumCount(GraphTraversalSource g, String userId) {
+        return g.V(userId).out(EdgeLabel.PUBLISH.getString()).hasLabel(VertexLabel.ARTICLE.getString()).count().next();
     }
 
     private List<Map<String, Object>> findCreatedBySelfWithFilter(
@@ -427,10 +478,11 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
     }
 
     @Override
-    public List<ArticleEntity> findActioned(String userId, SearchCondition searchCondition) {
+    public ArticleListEntity findActioned(String userId, SearchCondition searchCondition) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<String, Object>> allResults;
+        long sumCount = findSumCountWithFilter(g, userId, searchCondition);
         if (searchCondition.shouldSort()) {
             Order orderType = searchCondition.isAscend() ? Order.asc : Order.desc;
             if (searchCondition.vertexSort()) {
@@ -519,9 +571,12 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                           .toList();
         }
 
-        return allResults.stream()
-                         .map(r -> ArticleEntityConverter.toArticleEntityForListWithStatus(r))
-                         .collect(Collectors.toList());
+        return ArticleListEntity.builder()
+                                .articles(allResults.stream()
+                                                    .map(r -> ArticleEntityConverter.toArticleEntityForListWithStatus(r))
+                                                    .collect(Collectors.toList()))
+                                .sumCount(sumCount)
+                                .build();
     }
 
     @Override
@@ -564,11 +619,13 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
     @Override
     public String findAuthorId(String articleId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
-        return (String) g.V(articleId)
-                         .hasLabel(VertexLabel.ARTICLE.getString())
-                         .in(EdgeLabel.PUBLISH.getString(), EdgeLabel.DRAFT.getString())
-                         .id()
-                         .next();
+        return g.V(articleId)
+                .hasLabel(VertexLabel.ARTICLE.getString())
+                .in(EdgeLabel.PUBLISH.getString(), EdgeLabel.DRAFT.getString())
+                .hasLabel(VertexLabel.USER.getString())
+                .id()
+                .next()
+                .toString();
     }
 
     @Override

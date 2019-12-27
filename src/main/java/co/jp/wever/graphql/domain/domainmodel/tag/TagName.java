@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
+import co.jp.wever.graphql.infrastructure.util.AbuseWordDetector;
 import io.netty.util.internal.StringUtil;
 
 public class TagName {
@@ -18,6 +19,11 @@ public class TagName {
         if (StringUtil.isNullOrEmpty(value)) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.TAG_NAME_EMPTY.getString());
+        }
+
+        if (AbuseWordDetector.isAbuseWord(value)) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.INVALID_TAG_NAME.getString());
         }
 
         return new TagName(value);

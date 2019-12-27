@@ -33,11 +33,11 @@ public class SearchFilter {
     }
 
     public boolean shouldFilter() {
-        return value.equals(ALL);
+        return !value.equals(ALL);
     }
 
     public boolean createdFilter() {
-        return value.equals(DRAFTED) || value.equals(PUBLISHED);
+        return value.equals(DRAFTED) || value.equals(PUBLISHED) || value.equals(ALL);
     }
 
     public boolean validActionedFilter() {

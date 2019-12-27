@@ -2,8 +2,8 @@ package co.jp.wever.graphql.domain.domainmodel.search;
 
 public class SearchResultCount {
     private int value;
-    private final static int MIN_RESULT_COUNT = 20;
-    private final static int MAX_RESULT_COUNT = 100;
+    private final static int MIN_RESULT_COUNT = 10;
+    private final static int MAX_RESULT_COUNT = 50;
 
     private SearchResultCount(int value) {
         this.value = value;

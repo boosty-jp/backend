@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.domain.GraphQLCustomException;
+import co.jp.wever.graphql.domain.domainmodel.skill.SkillName;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.repository.skill.SkillMutationRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class SkillMutationService {
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
-        return skillMutationRepository.createSkill(name);
+        SkillName skillName = SkillName.of(name);
+        return skillMutationRepository.createSkill(skillName);
     }
 }

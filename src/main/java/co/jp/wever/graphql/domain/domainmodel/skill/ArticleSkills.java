@@ -18,12 +18,16 @@ public class ArticleSkills {
     }
 
     public static ArticleSkills of(List<ArticleSkill> skills) {
+        if(skills.isEmpty()){
+            return new ArticleSkills(skills);
+        }
+
         if (skills.size() > MAX_SKILL_COUNT) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.ARTICLE_SKILL_COUNT_OVER.getString());
         }
 
-        boolean duplicated = (skills.size() == new HashSet<>(skills.stream()
+        boolean duplicated = (skills.size() != new HashSet<>(skills.stream()
                                                                    .map(ArticleSkill::getId)
                                                                    .collect(Collectors.toList())).size());
 

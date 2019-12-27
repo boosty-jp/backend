@@ -3,6 +3,7 @@ package co.jp.wever.graphql.infrastructure.repository.skill;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.springframework.stereotype.Component;
 
+import co.jp.wever.graphql.domain.domainmodel.skill.SkillName;
 import co.jp.wever.graphql.domain.repository.skill.SkillMutationRepository;
 import co.jp.wever.graphql.infrastructure.connector.AlgoliaClient;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
@@ -25,17 +26,17 @@ public class SkillMutationRepositoryImpl implements SkillMutationRepository {
     }
 
     @Override
-    public String createSkill(String name) {
+    public String createSkill(SkillName name) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
 
         String skillId = g.V()
                           .hasLabel(VertexLabel.SKILL.getString())
-                          .has(SkillVertexProperty.NAME.getString(), name)
+                          .has(SkillVertexProperty.NAME.getString(), name.getValue())
                           .fold()
                           .coalesce(unfold(),
-                                    g.addV(VertexLabel.TAG.getString())
-                                     .property(SkillVertexProperty.NAME.getString(), name)
+                                    g.addV(VertexLabel.SKILL.getString())
+                                     .property(SkillVertexProperty.NAME.getString(), name.getValue())
                                      .property(DateProperty.CREATE_TIME.getString(), now)
                                      .property(DateProperty.UPDATE_TIME.getString(), now))
                           .next()
@@ -43,7 +44,7 @@ public class SkillMutationRepositoryImpl implements SkillMutationRepository {
                           .toString();
 
         algoliaClient.getSkillIndex()
-                     .saveObjectAsync(SkillSearchEntity.builder().objectID(skillId).name(name).relatedCount(0).build());
+                     .saveObjectAsync(SkillSearchEntity.builder().objectID(skillId).name(name.getValue()).relatedCount(0).build());
 
         return skillId;
     }

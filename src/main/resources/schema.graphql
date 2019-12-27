@@ -1,7 +1,7 @@
 type Query {
     article(articleId: ID!): Article!
     createdArticles(userId: ID! ,condition: SearchCondition): [Article]!
-    createdArticlesBySelf(condition: SearchCondition): [Article]!
+    createdArticlesBySelf(condition: SearchCondition): ArticleList!
     actionedArticles(userId: ID! ,condition: SearchCondition): [Article]!
     actionedArticlesBySelf(condition: SearchCondition): [Article]!
     famousArticles: [Article]!
@@ -48,6 +48,10 @@ type ArticleBlock {
     data: String!
 }
 
+type ArticleList {
+    articles: [Article]
+    sumCount: Int
+}
 type Article {
     id: ID!
     title: String!
@@ -126,7 +130,7 @@ type Skill {
 
 type ActionCount {
     likeCount: Int
-    learedCount: Int
+    learnedCount: Int
 }
 
 type AccountAction {
@@ -204,8 +208,8 @@ input UserSettingInput {
 }
 
 type Mutation {
-    publishArticle(article: ArticleInput!): Boolean
-    draftArticle(article: ArticleInput!): Boolean
+    publishArticle(article: ArticleInput!): CreateResponse
+    draftArticle(article: ArticleInput!): CreateResponse
     deleteArticle(articleId: ID!): Boolean
 
     likeArticle(articleId: ID!): Boolean
