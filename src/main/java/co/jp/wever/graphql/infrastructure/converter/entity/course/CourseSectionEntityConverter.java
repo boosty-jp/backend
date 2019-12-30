@@ -16,7 +16,7 @@ public class CourseSectionEntityConverter {
         return CourseSectionEntity.builder()
                                   .id(VertexConverter.toId(baseResult))
                                   .title(VertexConverter.toString(CourseVertexProperty.TITLE.getString(), baseResult))
-                                  .number((long) result.get("sectionNumber"))
+                                  .number((int) result.get("sectionNumber"))
                                   .courseSectionContents(sectionContentResults.stream()
                                                                               .map(s -> CourseSectionContentEntityConverter
                                                                                   .toCourseSectionContentEntity(s))
@@ -32,7 +32,7 @@ public class CourseSectionEntityConverter {
         return CourseSectionEntity.builder()
                                   .id(VertexConverter.toId(baseResult))
                                   .title(VertexConverter.toString(CourseVertexProperty.TITLE.getString(), baseResult))
-                                  .number((long) result.get("sectionNumber"))
+                                  .number((int) result.get("sectionNumber"))
                                   .courseSectionContents(sectionContentResults.stream()
                                                                               .map(s -> CourseSectionContentEntityConverter
                                                                                   .toCourseSectionContentEntityForGuest(s))

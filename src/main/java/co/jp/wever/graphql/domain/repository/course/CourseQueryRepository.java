@@ -6,6 +6,7 @@ import java.util.List;
 
 import co.jp.wever.graphql.domain.domainmodel.search.SearchCondition;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseListEntity;
 
 @Repository
 public interface CourseQueryRepository {
@@ -19,7 +20,7 @@ public interface CourseQueryRepository {
 
     List<CourseEntity> findCreated(String userId, SearchCondition searchCondition);
 
-    List<CourseEntity> findCreatedBySelf(String userId, SearchCondition searchCondition);
+    CourseListEntity findCreatedBySelf(String userId, SearchCondition searchCondition);
 
     List<CourseEntity> findActioned(String userId, SearchCondition searchCondition);
 

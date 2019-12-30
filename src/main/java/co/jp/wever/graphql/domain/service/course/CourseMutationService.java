@@ -48,7 +48,7 @@ public class CourseMutationService {
 
         if (!course.valid()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
-                                             GraphQLErrorMessage.INVALID_COURSE_DATA.getString());
+                                             GraphQLErrorMessage.DUPLICATE_CONTENTS_DATA.getString());
         }
 
         if (course.getArticleIds().size() != articleQueryRepository.publishedArticleCount(course.getArticleIds())) {

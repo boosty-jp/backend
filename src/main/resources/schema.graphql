@@ -1,16 +1,16 @@
 type Query {
     article(articleId: ID!): Article!
-    createdArticles(userId: ID! ,condition: SearchCondition): [Article]!
+    createdArticles(userId: ID! ,condition: SearchCondition): ArticleList!
     createdArticlesBySelf(condition: SearchCondition): ArticleList!
-    actionedArticles(userId: ID! ,condition: SearchCondition): [Article]!
-    actionedArticlesBySelf(condition: SearchCondition): [Article]!
+    actionedArticles(userId: ID! ,condition: SearchCondition): ArticleList!
+    actionedArticlesBySelf(condition: SearchCondition): ArticleList!
     famousArticles: [Article]!
 
     course(courseId: ID!): Course!
-    createdCourses(userId: ID! ,condition: SearchCondition): [Article]!
-    createdCoursesBySelf(condition: SearchCondition): [Article]!
-    actionedCourses(userId: ID! ,condition: SearchCondition): [Article]!
-    actionedCoursesBySelf(condition: SearchCondition): [Article]!
+    createdCourses(userId: ID! ,condition: SearchCondition): CourseList!
+    createdCoursesBySelf(condition: SearchCondition): CourseList!
+    actionedCourses(userId: ID! ,condition: SearchCondition): CourseList!
+    actionedCoursesBySelf(condition: SearchCondition): CourseList!
     famousCourses: [Course]!
 
     user(userId: ID!): User!
@@ -52,6 +52,7 @@ type ArticleList {
     articles: [Article]
     sumCount: Int
 }
+
 type Article {
     id: ID!
     title: String!
@@ -68,7 +69,6 @@ type Article {
     accountAction: AccountAction
 }
 
-
 type Articles {
     learned: [Article]
     liked: [Article]
@@ -78,7 +78,10 @@ type Articles {
 
 type Content {
     id: ID!
+    title: String!
     number: Int!
+    skills: [Skill]
+    learned: Boolean
 }
 
 type Section {
@@ -88,6 +91,11 @@ type Section {
     contents: [Content]
     createDate: String
     updateDate: String
+}
+
+type CourseList {
+    courses: [Course]
+    sumCount: Int
 }
 
 type Course {
@@ -217,14 +225,16 @@ type Mutation {
     learnArticle(articleId: ID!): Boolean
     clearLearnArticle(articleId: ID!): Boolean
 
-    publishCourse(course: CourseInput!): Boolean
-    draftCourse(course: CourseInput!): Boolean
+    publishCourse(course: CourseInput!):CreateResponse
+    draftCourse(course: CourseInput!): CreateResponse
     deleteCourse(courseId: ID!): Boolean
 
     likeCourse(courseId: ID!): Boolean
     clearLikeCourse(courseId: ID!): Boolean
     startCourse(courseId: ID!): Boolean
     clearStartCourse(courseId: ID!): Boolean
+    learnCourse(courseId: ID!): Boolean
+    cleaerlearnCourse(courseId: ID!): Boolean
 
     createUser(displayName: String! imageUrl: String!): CreateResponse
     updateUser(user: UserInput!): Boolean

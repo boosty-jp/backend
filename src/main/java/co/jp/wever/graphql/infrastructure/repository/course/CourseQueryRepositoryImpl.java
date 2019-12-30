@@ -15,13 +15,14 @@ import co.jp.wever.graphql.domain.repository.course.CourseQueryRepository;
 import co.jp.wever.graphql.infrastructure.connector.NeptuneClient;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.constant.edge.property.IncludeEdgeProperty;
-import co.jp.wever.graphql.infrastructure.constant.edge.property.TeachEdgeProperty;
 import co.jp.wever.graphql.infrastructure.constant.vertex.label.VertexLabel;
 import co.jp.wever.graphql.infrastructure.converter.entity.course.CourseEntityConverter;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseListEntity;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.constant;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.valueMap;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.coalesce;
@@ -67,10 +68,13 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                                                      .by(__.valueMap().with(WithOptions.tokens))
                                                      .by(__.inE(EdgeLabel.INCLUDE.getString())
                                                            .values(IncludeEdgeProperty.NUMBER.getString()))
-                                                     .by(__.out(EdgeLabel.TEACH.getString())
-                                                           .project("contentSkillLevel", "contentSkillBase")
-                                                           .by(__.values(TeachEdgeProperty.LEVEL.getString()))
-                                                           .by(__.valueMap().with(WithOptions.tokens))
+                                                     .by(__.outE(EdgeLabel.TEACH.getString())
+                                                           .where(inV().hasLabel(VertexLabel.SKILL.getString()))
+                                                           .as("teachEdge")
+                                                           .inV()
+                                                           .as("skillVertex")
+                                                           .select("teachEdge", "skillVertex")
+                                                           .by(valueMap().with(WithOptions.tokens))
                                                            .fold())
                                                      .by(coalesce(__.inE(EdgeLabel.LEARN.getString())
                                                                     .where(outV().hasId(userId)
@@ -88,13 +92,8 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                                                    EdgeLabel.DELETE.getString(),
                                                    EdgeLabel.PUBLISH.getString())
                                                .hasLabel(VertexLabel.USER.getString())
-                                               .project("base", "tags")
-                                               .by(__.valueMap().with(WithOptions.tokens))
-                                               .by(__.out(EdgeLabel.RELATED_TO.getString())
-                                                     .hasLabel(VertexLabel.TAG.getString())
-                                                     .valueMap()
-                                                     .with(WithOptions.tokens)
-                                                     .fold()))
+                                               .valueMap()
+                                               .with(WithOptions.tokens))
                                          .by(__.inE(EdgeLabel.DRAFT.getString(),
                                                     EdgeLabel.DELETE.getString(),
                                                     EdgeLabel.PUBLISH.getString()).label())
@@ -135,10 +134,13 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                                                      .by(__.valueMap().with(WithOptions.tokens))
                                                      .by(__.inE(EdgeLabel.INCLUDE.getString())
                                                            .values(IncludeEdgeProperty.NUMBER.getString()))
-                                                     .by(__.out(EdgeLabel.TEACH.getString())
-                                                           .project("contentSkillLevel", "contentSkillBase")
-                                                           .by(__.values(TeachEdgeProperty.LEVEL.getString()))
-                                                           .by(__.valueMap().with(WithOptions.tokens))
+                                                     .by(__.outE(EdgeLabel.TEACH.getString())
+                                                           .where(inV().hasLabel(VertexLabel.SKILL.getString()))
+                                                           .as("teachEdge")
+                                                           .inV()
+                                                           .as("skillVertex")
+                                                           .select("teachEdge", "skillVertex")
+                                                           .by(valueMap())
                                                            .fold())
                                                      .fold())
                                                .fold())
@@ -242,19 +244,37 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
     }
 
     @Override
-    public List<CourseEntity> findCreatedBySelf(String userId, SearchCondition searchCondition) {
+    public CourseListEntity findCreatedBySelf(String userId, SearchCondition searchCondition) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
         List<Map<String, Object>> allResults;
+        long sumCount = 0;
         if (searchCondition.shouldFilter()) {
             allResults = findCreatedBySelfWithFilter(g, userId, searchCondition);
+            sumCount = findSumCountWithFilter(g, userId, searchCondition);
         } else {
             allResults = findCreatedBySelfWithoutFilter(g, userId, searchCondition);
+            sumCount = findSumCountWithoutFilter(g, userId);
         }
 
-        return allResults.stream()
-                         .map(r -> CourseEntityConverter.toCourseEntityForListWithStatus(r))
-                         .collect(Collectors.toList());
+        return CourseListEntity.builder()
+                               .courses(allResults.stream()
+                                                  .map(r -> CourseEntityConverter.toCourseEntityForListWithStatus(r))
+                                                  .collect(Collectors.toList()))
+                               .sumCount(sumCount)
+                               .build();
+    }
+
+    private long findSumCountWithFilter(GraphTraversalSource g, String userId, SearchCondition searchCondition) {
+        return g.V(userId).out(searchCondition.getFilter()).hasLabel(VertexLabel.COURSE.getString()).count().next();
+    }
+
+    private long findSumCountWithoutFilter(GraphTraversalSource g, String userId) {
+        return g.V(userId)
+                .out(EdgeLabel.DRAFT.getString(), EdgeLabel.PUBLISH.getString())
+                .hasLabel(VertexLabel.COURSE.getString())
+                .count()
+                .next();
     }
 
     private List<Map<String, Object>> findCreatedBySelfWithFilter(

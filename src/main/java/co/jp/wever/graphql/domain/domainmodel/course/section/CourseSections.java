@@ -38,14 +38,14 @@ public class CourseSections {
 
     private boolean duplicatedSectionNumber() {
         return sections.stream().map(s -> s.getNumber().getValue()).collect(Collectors.toSet()).size()
-            == sections.size();
+            != sections.size();
     }
 
     private boolean duplicatedContentId() {
         List<CourseSectionContent> contents =
             sections.stream().flatMap(s -> s.getContents().getContents().stream()).collect(Collectors.toList());
 
-        return contents.stream().map(c -> c.getId().getValue()).collect(Collectors.toSet()).size() == contents.size();
+        return contents.stream().map(c -> c.getId().getValue()).collect(Collectors.toSet()).size() != contents.size();
     }
 
     public boolean valid() {
@@ -53,6 +53,6 @@ public class CourseSections {
             return false;
         }
 
-        return duplicatedContentId();
+        return !duplicatedContentId();
     }
 }

@@ -23,6 +23,7 @@ public enum GraphQLErrorMessage {
     USER_DESCRIPTION_OVER("説明文は200文字以内にしてください"),
     NOT_PUBLISHED_ARTICLE("公開されていない記事が含まれています"),
     INVALID_COURSE_DATA("無効なコースデータです"),
+    DUPLICATE_CONTENTS_DATA("重複したコンテンツが含まれいています"),
     SECTION_NUMBER_INVALID("正しいセクション番号を指定してください"),
     SECTION_SIZE_OVER("投稿できるセクションの数は10までです"),
     SECTION_NULL("セクションを入力してください"),

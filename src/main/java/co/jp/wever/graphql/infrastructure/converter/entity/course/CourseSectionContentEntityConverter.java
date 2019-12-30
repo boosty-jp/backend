@@ -14,14 +14,13 @@ public class CourseSectionContentEntityConverter {
     public static CourseSectionContentEntity toCourseSectionContentEntity(Map<String, Object> result) {
         Map<Object, Object> baseResult = (Map<Object, Object>) result.get("contentBase");
         List<Map<String, Object>> skillResult = (List<Map<String, Object>>) result.get("contentSkills");
-        long number = (long) result.get("contentNumber");
+        int number = (int) result.get("contentNumber");
         boolean learned = (boolean) result.get("contentLearned");
 
-        List<SkillEntity> skills = skillResult.stream().map(s -> {
-            Map<Object, Object> skillLevel = (Map<Object, Object>) s.get("contentSkillLevel");
-            Map<Object, Object> skillBase = (Map<Object, Object>) s.get("contentSkillLevel");
-            return SkillEntityConverter.toSkillEntity(skillLevel, skillBase);
-        }).collect(Collectors.toList());
+        List<SkillEntity> skills = skillResult.stream()
+                                              .map(s -> SkillEntityConverter.toSkillEntity((Map<Object, Object>) s.get(
+                                                  "skillVertex"), (Map<Object, Object>) s.get("teachEdge")))
+                                              .collect(Collectors.toList());
 
         return CourseSectionContentEntity.builder()
                                          .id(VertexConverter.toId(baseResult))
@@ -36,7 +35,7 @@ public class CourseSectionContentEntityConverter {
     public static CourseSectionContentEntity toCourseSectionContentEntityForGuest(Map<String, Object> result) {
         Map<Object, Object> baseResult = (Map<Object, Object>) result.get("contentBase");
         List<Map<String, Object>> skillResult = (List<Map<String, Object>>) result.get("contentSkills");
-        long number = (long) result.get("contentNumber");
+        int number = (int) result.get("contentNumber");
 
         List<SkillEntity> skills = skillResult.stream().map(s -> {
             Map<Object, Object> skillLevel = (Map<Object, Object>) s.get("contentSkillLevel");

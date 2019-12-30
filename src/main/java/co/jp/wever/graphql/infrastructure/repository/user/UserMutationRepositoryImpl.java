@@ -133,7 +133,5 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
          .property(single, UserVertexProperty.DELETED.getString(), true)
          .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
          .next();
-
-        System.out.println(g.V(userId).valueMap().toList());
     }
 }

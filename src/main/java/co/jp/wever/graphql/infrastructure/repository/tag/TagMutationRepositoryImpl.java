@@ -43,7 +43,6 @@ public class TagMutationRepositoryImpl implements TagMutationRepository {
                         .id()
                         .toString();
 
-        System.out.println(g.V().hasLabel(VertexLabel.TAG.getString()).values("name").toList());
         algoliaClient.getTagIndex()
                      .saveObjectAsync(TagSearchEntity.builder().objectID(tagId).name(name.getValue()).relatedCount(0).build());
         return tagId;

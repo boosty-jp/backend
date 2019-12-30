@@ -75,8 +75,8 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         addBlocks(g, articleId, article, now);
         addStatus(g, articleId, EdgeLabel.PUBLISH.getString(), userId, now);
 
-        //        algoliaClient.getArticleIndex()
-        //                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(articleId, article, now));
+        algoliaClient.getArticleIndex()
+                     .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(articleId, article, now));
 
         long now3 = System.nanoTime();
         System.out.println((now3 - now2) / 1000000);
@@ -100,7 +100,7 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         addBlocks(g, articleId, article, now);
 
         clearStatus(g, articleId, userId);
-        addStatus(g, articleId,EdgeLabel.DRAFT.getString(), userId, now);
+        addStatus(g, articleId, EdgeLabel.DRAFT.getString(), userId, now);
 
         algoliaClient.getArticleIndex().deleteObjectAsync(articleId);
     }

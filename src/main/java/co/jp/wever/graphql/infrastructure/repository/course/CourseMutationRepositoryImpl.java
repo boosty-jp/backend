@@ -1,6 +1,5 @@
 package co.jp.wever.graphql.infrastructure.repository.course;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.stereotype.Component;
@@ -54,7 +53,7 @@ public class CourseMutationRepositoryImpl implements CourseMutationRepository {
         addSections(g, courseId, course, now);
 
         clearStatus(g, courseId, userId);
-        addStatus(g, courseId, userId, EdgeLabel.PUBLISH.getString(), now);
+        addStatus(g, courseId, EdgeLabel.PUBLISH.getString(), userId, now);
 
         algoliaClient.getCourseIndex()
                      .saveObjectAsync(CourseSearchEntityConverter.toCourseSearchEntity(courseId, course, userId, now));
@@ -69,7 +68,7 @@ public class CourseMutationRepositoryImpl implements CourseMutationRepository {
 
         addTags(g, courseId, course, now);
         addSections(g, courseId, course, now);
-        addStatus(g, courseId, userId, EdgeLabel.PUBLISH.getString(), now);
+        addStatus(g, courseId, EdgeLabel.PUBLISH.getString(), userId, now);
 
         algoliaClient.getCourseIndex()
                      .saveObjectAsync(CourseSearchEntityConverter.toCourseSearchEntity(courseId, course, userId, now));
@@ -91,7 +90,7 @@ public class CourseMutationRepositoryImpl implements CourseMutationRepository {
         addSections(g, courseId, course, now);
 
         clearStatus(g, courseId, userId);
-        addStatus(g, courseId, userId, EdgeLabel.DRAFT.getString(), now);
+        addStatus(g, courseId, EdgeLabel.DRAFT.getString(), userId, now);
 
         algoliaClient.getCourseIndex().deleteObjectAsync(courseId);
     }
@@ -105,7 +104,7 @@ public class CourseMutationRepositoryImpl implements CourseMutationRepository {
 
         addTags(g, courseId, course, now);
         addSections(g, courseId, course, now);
-        addStatus(g, courseId, userId, EdgeLabel.DRAFT.getString(), now);
+        addStatus(g, courseId, EdgeLabel.DRAFT.getString(), userId, now);
 
         algoliaClient.getCourseIndex().deleteObjectAsync(courseId);
 
@@ -226,34 +225,35 @@ public class CourseMutationRepositoryImpl implements CourseMutationRepository {
     }
 
     private void addSections(GraphTraversalSource g, String courseId, Course course, long now) {
-        GraphTraversal t = g.V();
         List<CourseSection> sections = course.getSections().getSections();
 
         for (int i = 0; i < sections.size(); ++i) {
-            String stepLabel = "s-" + i;
             CourseSection s = sections.get(i);
 
-            t.addV(VertexLabel.COURSE_SECTION.getString())
-             .property(SectionVertexProperty.TITLE.getString(), s.getTitle().getValue())
-             .property(DateProperty.CREATE_TIME.getString(), now)
-             .as(stepLabel);
+            String sectionId = g.addV(VertexLabel.COURSE_SECTION.getString())
+                                .property(SectionVertexProperty.TITLE.getString(), s.getTitle().getValue())
+                                .property(DateProperty.CREATE_TIME.getString(), now)
+                                .property(DateProperty.UPDATE_TIME.getString(), now)
+                                .next()
+                                .id()
+                                .toString();
 
-            t.hasId(courseId)
-             .hasLabel(VertexLabel.COURSE.getString())
+            g.V(sectionId)
+             .hasLabel(VertexLabel.COURSE_SECTION.getString())
              .addE(EdgeLabel.INCLUDE.getString())
              .property(IncludeEdgeProperty.NUMBER.getString(), s.getNumber().getValue())
-             .to(stepLabel);
+             .from(g.V(courseId).hasLabel(VertexLabel.COURSE.getString()))
+             .next();
 
             sections.get(i)
                     .getContents()
                     .getContents()
-                    .forEach(c -> t.hasId(c.getId().getValue())
+                    .forEach(c -> g.V(c.getId().getValue())
                                    .hasLabel(VertexLabel.ARTICLE.getString())
                                    .addE(EdgeLabel.INCLUDE.getString())
                                    .property(IncludeEdgeProperty.NUMBER.getString(), c.getNumber().getValue())
-                                   .from(stepLabel));
-
-            t.iterate();
+                                   .from(g.V(sectionId).hasLabel(VertexLabel.COURSE_SECTION.getString()))
+                                   .next());
         }
     }
 
@@ -271,8 +271,8 @@ public class CourseMutationRepositoryImpl implements CourseMutationRepository {
          .hasLabel(VertexLabel.COURSE.getString())
          .addE(status)
          .property(T.id, EdgeIdCreator.createId(authorId, courseId, status))
-         .from(g.V(authorId))
          .property(DateProperty.CREATE_TIME.getString(), now)
+         .from(g.V(authorId).hasLabel(VertexLabel.USER.getString()))
          .next();
     }
 

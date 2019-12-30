@@ -10,7 +10,7 @@ import lombok.Data;
 @Builder
 public class CourseSectionContentEntity {
     private String id;
-    private long number;
+    private int number;
     private String title;
     private List<SkillEntity> skills;
     private boolean learned;

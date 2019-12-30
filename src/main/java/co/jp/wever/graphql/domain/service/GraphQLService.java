@@ -82,9 +82,9 @@ public class GraphQLService {
                                                                        articleDataFetcher.famousArticlesDataFetcher())
                                                           .dataFetcher("course", courseDataFetcher.courseDataFetcher())
                                                           .dataFetcher("createdCourses", courseDataFetcher.createdCoursesDataFetcher())
-                                                          .dataFetcher("createdCoursesBySelf", courseDataFetcher.createdArticlesBySelfDataFetcher())
-                                                          .dataFetcher("actionedCourses", courseDataFetcher.actionedArticlesDataFetcher())
-                                                          .dataFetcher("actionedCoursesBySelf", courseDataFetcher.actionedArticlesBySelfDataFetcher())
+                                                          .dataFetcher("createdCoursesBySelf", courseDataFetcher.createdCoursesBySelfDataFetcher())
+                                                          .dataFetcher("actionedCourses", courseDataFetcher.actionedCoursesDataFetcher())
+                                                          .dataFetcher("actionedCoursesBySelf", courseDataFetcher.actionedCoursesBySelfDataFetcher())
                                                          .dataFetcher("user", userDataFetcher.userDataFetcher())
                                                           .dataFetcher("account", userDataFetcher.accountDataFetcher())
                                                           .dataFetcher("famousTags",

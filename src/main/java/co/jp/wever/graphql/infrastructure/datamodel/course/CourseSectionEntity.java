@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class CourseSectionEntity {
     private String id;
-    private long number;
+    private int number;
     private String title;
     private List<CourseSectionContentEntity> courseSectionContents;
     private long createdDate;

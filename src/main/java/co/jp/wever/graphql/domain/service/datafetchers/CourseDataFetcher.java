@@ -5,17 +5,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import co.jp.wever.graphql.application.converter.search.SearchConditionConverter;
 import co.jp.wever.graphql.application.converter.course.CourseInputConverter;
 import co.jp.wever.graphql.application.converter.course.CourseResponseConverter;
 import co.jp.wever.graphql.application.converter.requester.RequesterConverter;
+import co.jp.wever.graphql.application.converter.search.SearchConditionConverter;
 import co.jp.wever.graphql.application.datamodel.request.course.CourseInput;
-import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.application.datamodel.request.search.SearchConditionInput;
+import co.jp.wever.graphql.application.datamodel.request.user.Requester;
 import co.jp.wever.graphql.application.datamodel.response.mutation.CreateResponse;
+import co.jp.wever.graphql.application.datamodel.response.query.course.CourseListResponse;
 import co.jp.wever.graphql.domain.service.course.CourseMutationService;
 import co.jp.wever.graphql.domain.service.course.CourseQueryService;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseListEntity;
 import graphql.schema.DataFetcher;
 
 @Component
@@ -57,20 +59,24 @@ public class CourseDataFetcher {
         };
     }
 
-    public DataFetcher createdArticlesBySelfDataFetcher() {
+    public DataFetcher createdCoursesBySelfDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             SearchConditionInput searchConditionInput =
                 SearchConditionConverter.toSearchCondition(dataFetchingEnvironment);
 
-            List<CourseEntity> results = courseQueryService.findCreatedCoursesBySelf(requester, searchConditionInput);
-            return results.stream()
-                          .map(r -> CourseResponseConverter.toCourseResponseForList(r))
-                          .collect(Collectors.toList());
+            CourseListEntity result = courseQueryService.findCreatedCoursesBySelf(requester, searchConditionInput);
+
+            return CourseListResponse.builder()
+                                     .courses(result.getCourses()
+                                                    .stream()
+                                                    .map(r -> CourseResponseConverter.toCourseResponseForList(r))
+                                                    .collect(Collectors.toList()))
+                                     .sumCount(result.getSumCount());
         };
     }
 
-    public DataFetcher actionedArticlesDataFetcher() {
+    public DataFetcher actionedCoursesDataFetcher() {
         return dataFetchingEnvironment -> {
             String userId = dataFetchingEnvironment.getArgument("userId");
             SearchConditionInput searchConditionInput =
@@ -83,7 +89,7 @@ public class CourseDataFetcher {
         };
     }
 
-    public DataFetcher actionedArticlesBySelfDataFetcher() {
+    public DataFetcher actionedCoursesBySelfDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             SearchConditionInput searchConditionInput =

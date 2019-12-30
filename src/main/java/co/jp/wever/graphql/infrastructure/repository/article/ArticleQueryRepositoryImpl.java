@@ -79,7 +79,7 @@ public class ArticleQueryRepositoryImpl implements ArticleQueryRepository {
                                                .inV()
                                                .as("skillVertex")
                                                .select("teachEdge", "skillVertex")
-                                               .by(valueMap())
+                                               .by(valueMap().with(WithOptions.tokens))
                                                .fold())
                                          .by(__.in(EdgeLabel.DRAFT.getString(),
                                                    EdgeLabel.DELETE.getString(),

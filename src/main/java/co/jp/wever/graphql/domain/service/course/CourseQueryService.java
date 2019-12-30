@@ -13,6 +13,7 @@ import co.jp.wever.graphql.domain.factory.SearchConditionFactory;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import co.jp.wever.graphql.infrastructure.constant.edge.EdgeLabel;
 import co.jp.wever.graphql.infrastructure.datamodel.course.CourseEntity;
+import co.jp.wever.graphql.infrastructure.datamodel.course.CourseListEntity;
 import co.jp.wever.graphql.infrastructure.datamodel.user.UserEntity;
 import co.jp.wever.graphql.infrastructure.repository.course.CourseQueryRepositoryImpl;
 import co.jp.wever.graphql.infrastructure.repository.user.UserQueryRepositoryImpl;
@@ -52,7 +53,7 @@ public class CourseQueryService {
         return courseQueryRepository.findCreated(userId, searchCondition);
     }
 
-    public List<CourseEntity> findCreatedCoursesBySelf(
+    public CourseListEntity findCreatedCoursesBySelf(
         Requester requester, SearchConditionInput searchConditionInput) {
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 
