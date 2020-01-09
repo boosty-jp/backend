@@ -16,6 +16,7 @@ public enum GraphQLErrorMessage {
     PLAN_ELEMENT_ID_EMPTY("プランの要素を指定してください"),
     USER_ID_EMPTY("ユーザIDを指定してください"),
     PLAN_ID_EMPTY("プランIDを指定してください"),
+    INVALID_QUESTION_ANSWER_TYPE("正しい問題の解答形式を選択してください"),
     TAG_ID_EMPTY("タグIDを指定してください"),
     TAG_NAME_EMPTY("タグ名を指定してください"),
     INVALID_TAG_NAME("このタグ名は作成できません"),
