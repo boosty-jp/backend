@@ -10,6 +10,7 @@ public class ArticleBlockEntityConverter {
     public static ArticleBlockEntity toArticleBlockEntity(
         Map<Object, Object> blockVertex) {
         return ArticleBlockEntity.builder()
+                                 .id(VertexConverter.toId(blockVertex))
                                  .type(VertexConverter.toString(ArticleBlockVertexProperty.TYPE.getString(),
                                                                 blockVertex))
                                  .data(VertexConverter.toString(ArticleBlockVertexProperty.DATA.getString(),

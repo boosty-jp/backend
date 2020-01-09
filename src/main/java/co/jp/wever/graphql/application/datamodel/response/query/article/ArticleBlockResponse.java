@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ArticleBlockResponse {
+    private String id;
     private String type;
     private String data;
 }

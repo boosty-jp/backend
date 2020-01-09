@@ -24,6 +24,7 @@ public class ArticleResponseConverter {
                               .blocks(article.getBlocks()
                                              .stream()
                                              .map(a -> ArticleBlockResponse.builder()
+                                                                           .id(a.getId())
                                                                            .type(a.getType())
                                                                            .data(a.getData())
                                                                            .build())
