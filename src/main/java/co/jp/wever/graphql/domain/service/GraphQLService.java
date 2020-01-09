@@ -18,6 +18,7 @@ import co.jp.wever.graphql.domain.service.datafetchers.ArticleDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.CourseDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.SkillDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.TagDataFetcher;
+import co.jp.wever.graphql.domain.service.datafetchers.TestDataFetcher;
 import co.jp.wever.graphql.domain.service.datafetchers.UserDataFetcher;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 import graphql.GraphQL;
@@ -42,7 +43,11 @@ public class GraphQLService {
     private UserDataFetcher userDataFetcher;
 
     @Autowired
+    private TestDataFetcher testDataFetcher;
+
+    @Autowired
     private TagDataFetcher tagDataFetcher;
+
 
     @Autowired
     private SkillDataFetcher skillDataFetcher;
@@ -120,6 +125,12 @@ public class GraphQLService {
                                                                        courseDataFetcher.startCourseDataFetcher())
                                                           .dataFetcher("clearStartCourse",
                                                                        courseDataFetcher.clearStartCourseDataFetcher())
+                                                          .dataFetcher("publishTest",
+                                                                       testDataFetcher.publishTestDataFetcher())
+                                                          .dataFetcher("draftTest",
+                                                                       testDataFetcher.draftTestDataFetcher())
+                                                          .dataFetcher("deleteTest",
+                                                                       testDataFetcher.deleteTestDataFetcher())
                                                           .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",

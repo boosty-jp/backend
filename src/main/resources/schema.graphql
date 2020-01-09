@@ -201,6 +201,37 @@ input ContentInput {
     number: Int
 }
 
+input TestInput {
+    id: ID
+    title: String!
+    description: String!
+    referenceCourseId: ID!
+    questions: [QuestionInput]!
+}
+
+input QuestionInput {
+    questionText: String!
+    type: String!
+    textAnswer: TextAnswerInput
+    selectAnswers: [SelectAnswerInput]
+    explanations: [ExplanationInput]!
+}
+
+input TextAnswerInput {
+    answer: String!
+    showCount: Boolean!
+}
+
+input SelectAnswerInput {
+    text: String!
+    answer: Boolean!
+}
+
+input ExplanationInput {
+    text: String!
+    referenceIds: [String]!
+}
+
 input UserInput{
     displayName: String
     description: String
@@ -236,6 +267,10 @@ type Mutation {
     clearStartCourse(courseId: ID!): Boolean
     learnCourse(courseId: ID!): Boolean
     cleaerlearnCourse(courseId: ID!): Boolean
+
+    publishTest(test: TestInput): CreateResponse
+    draftTest(test: TestInput): CreateResponse
+    deleteTest(testId: ID!): CreateResponse
 
     createUser(displayName: String! imageUrl: String!): CreateResponse
     updateUser(user: UserInput!): Boolean
