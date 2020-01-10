@@ -35,12 +35,12 @@ public class QuestionInputConverter {
                                                               .collect(Collectors.toList()))
                                     .build();
             } else if (type.equals(TEXT_ANSWER)) {
-                Map<String, Object> textAnswers = (Map<String, Object>) questionRequest.get("textAnswers");
+                Map<String, Object> textAnswers = (Map<String, Object>) questionRequest.get("textAnswer");
 
                 return QuestionInput.builder()
                                     .questionText(questionRequest.get("questionText").toString())
                                     .type(type)
-                                    .textAnswers(TextAnswerInputConverter.toTextAnswerInput(textAnswers))
+                                    .textAnswer(TextAnswerInputConverter.toTextAnswerInput(textAnswers))
                                     .explanations(explanations.stream()
                                                               .map(e -> ExplanationInputConverter.toExplanationInput(e))
                                                               .collect(Collectors.toList()))

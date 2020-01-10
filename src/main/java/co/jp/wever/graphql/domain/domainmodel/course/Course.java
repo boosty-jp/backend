@@ -8,22 +8,23 @@ import java.util.stream.Collectors;
 
 import co.jp.wever.graphql.domain.GraphQLCustomException;
 import co.jp.wever.graphql.domain.domainmodel.content.ContentBase;
+import co.jp.wever.graphql.domain.domainmodel.content.ContentDescription;
 import co.jp.wever.graphql.domain.domainmodel.course.section.CourseSections;
 import co.jp.wever.graphql.infrastructure.constant.GraphQLErrorMessage;
 
 public class Course {
     private ContentBase base;
-    private CourseDescription description; //TODO: baseに合わせた方がよさそう
+    private ContentDescription description; //TODO: baseに合わせた方がよさそう
     private CourseSections sections;
 
     private Course(
-        ContentBase base, CourseDescription description, CourseSections sections) {
+        ContentBase base, ContentDescription description, CourseSections sections) {
         this.base = base;
         this.description = description;
         this.sections = sections;
     }
 
-    public static Course of(ContentBase base, CourseDescription description, CourseSections sections) {
+    public static Course of(ContentBase base, ContentDescription description, CourseSections sections) {
         if (Objects.isNull(base) || Objects.isNull(description) || Objects.isNull(sections)) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.INVALID_COURSE_DATA.getString());
@@ -36,7 +37,7 @@ public class Course {
         return base;
     }
 
-    public CourseDescription getDescription() {
+    public ContentDescription getDescription() {
         return description;
     }
 

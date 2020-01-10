@@ -66,7 +66,6 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
     public String publishByEntry(Article article, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
-        long now2 = System.nanoTime();
 
         String articleId = createArticleVertex(g, article, now);
 
@@ -78,8 +77,6 @@ public class ArticleMutationRepositoryImpl implements ArticleMutationRepository 
         algoliaClient.getArticleIndex()
                      .saveObjectAsync(ArticleSearchEntityConverter.toArticleSearchEntity(articleId, article, now));
 
-        long now3 = System.nanoTime();
-        System.out.println((now3 - now2) / 1000000);
         return articleId;
     }
 

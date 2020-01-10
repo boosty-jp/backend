@@ -29,6 +29,15 @@ public class TestDataFetcher {
     ///////////////////////////////
     //////////// Query ////////////
     ///////////////////////////////
+    public DataFetcher testDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String testId = dataFetchingEnvironment.getArgument("testId");
+
+            testQueryService.findTest(testId, requester);
+            return null;
+        };
+    }
 
 
     ///////////////////////////////
@@ -48,7 +57,8 @@ public class TestDataFetcher {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             TestInput testInput = TestInputConverter.toTestInput(dataFetchingEnvironment);
-            return CreateResponse.builder().id("").build();
+            String testId = testMutationService.publish(testInput, requester);
+            return CreateResponse.builder().id(testId).build();
         };
     }
 
@@ -57,7 +67,7 @@ public class TestDataFetcher {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             TestInput testInput = TestInputConverter.toTestInput(dataFetchingEnvironment);
 
-            return CreateResponse.builder().id("").build();
+            return CreateResponse.builder().id("ss").build();
         };
     }
 }

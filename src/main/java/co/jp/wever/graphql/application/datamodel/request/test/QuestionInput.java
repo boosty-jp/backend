@@ -10,7 +10,7 @@ import lombok.Data;
 public class QuestionInput {
     private String questionText;
     private String type;
-    private TextAnswerInput textAnswers;
+    private TextAnswerInput textAnswer;
     private List<SelectAnswerInput> selectAnswers;
     private List<ExplanationInput> explanations;
 }

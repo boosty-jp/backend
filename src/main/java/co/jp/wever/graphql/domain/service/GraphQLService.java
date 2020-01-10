@@ -86,11 +86,16 @@ public class GraphQLService {
                                                           .dataFetcher("famousArticles",
                                                                        articleDataFetcher.famousArticlesDataFetcher())
                                                           .dataFetcher("course", courseDataFetcher.courseDataFetcher())
-                                                          .dataFetcher("createdCourses", courseDataFetcher.createdCoursesDataFetcher())
-                                                          .dataFetcher("createdCoursesBySelf", courseDataFetcher.createdCoursesBySelfDataFetcher())
-                                                          .dataFetcher("actionedCourses", courseDataFetcher.actionedCoursesDataFetcher())
-                                                          .dataFetcher("actionedCoursesBySelf", courseDataFetcher.actionedCoursesBySelfDataFetcher())
-                                                         .dataFetcher("user", userDataFetcher.userDataFetcher())
+                                                          .dataFetcher("createdCourses",
+                                                                       courseDataFetcher.createdCoursesDataFetcher())
+                                                          .dataFetcher("createdCoursesBySelf",
+                                                                       courseDataFetcher.createdCoursesBySelfDataFetcher())
+                                                          .dataFetcher("actionedCourses",
+                                                                       courseDataFetcher.actionedCoursesDataFetcher())
+                                                          .dataFetcher("actionedCoursesBySelf",
+                                                                       courseDataFetcher.actionedCoursesBySelfDataFetcher())
+                                                          .dataFetcher("test", testDataFetcher.testDataFetcher())
+                                                          .dataFetcher("user", userDataFetcher.userDataFetcher())
                                                           .dataFetcher("account", userDataFetcher.accountDataFetcher())
                                                           .dataFetcher("famousTags",
                                                                        tagDataFetcher.famousTagDataFetcher())

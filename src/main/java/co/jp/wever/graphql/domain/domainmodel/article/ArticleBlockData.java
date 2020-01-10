@@ -8,8 +8,8 @@ import io.netty.util.internal.StringUtil;
 
 public class ArticleBlockData {
     private String value;
-    // 1ブロック10000文字入れられる+文字の装飾を考慮し1.3倍まで許容する
-    private final static int MAX_SIZE = 13000;
+    // 1ブロック10000文字入れられる+文字の装飾を考慮し3倍まで許容する
+    private final static int MAX_SIZE = 30000;
 
     private ArticleBlockData(String value) {
         this.value = value;

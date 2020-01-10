@@ -7,6 +7,12 @@ public enum VertexLabel {
     ARTICLE("article"),
     ARTICLE_TEXT("articleText"),
     ARTICLE_BLOCK("articleBlock"),
+    TEST("test"),
+    QUESTIONS("questions"),
+    TEXT_QUESTION("textQuestion"),
+    SELECT_QUESTION("selectQuestion"),
+    SELECT_ANSWER("selectAnswer"),
+    EXPLANATION("explanation"),
     USER("user"),
     TAG("tag"),
     SKILL("skill");

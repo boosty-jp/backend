@@ -3,8 +3,8 @@ package co.jp.wever.graphql.domain.factory;
 import co.jp.wever.graphql.application.datamodel.request.course.CourseInput;
 import co.jp.wever.graphql.domain.converter.course.CourseSectionsConverter;
 import co.jp.wever.graphql.domain.domainmodel.content.ContentBase;
+import co.jp.wever.graphql.domain.domainmodel.content.ContentDescription;
 import co.jp.wever.graphql.domain.domainmodel.course.Course;
-import co.jp.wever.graphql.domain.domainmodel.course.CourseDescription;
 import co.jp.wever.graphql.domain.domainmodel.course.section.CourseSections;
 import io.netty.util.internal.StringUtil;
 
@@ -17,7 +17,7 @@ public class CourseFactory {
         }
 
         ContentBase base = ContentBase.of(input.getTitle(), input.getImageUrl(), input.getTagIds(), entry);
-        CourseDescription description = CourseDescription.of(input.getDescription());
+        ContentDescription description = ContentDescription.of(input.getDescription());
         CourseSections sections = CourseSectionsConverter.toCourseSections(input.getSections());
 
         return Course.of(base, description, sections);
