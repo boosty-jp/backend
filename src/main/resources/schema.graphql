@@ -1,291 +1,250 @@
 type Query {
-    allSectionOnArticle(articleId: ID!): [Section]!
-    allLikedSections(userId: ID!): [LikedSection]!
-    allBookmarkedSections(userId: ID!): [Section]!
+    page(pageId: ID!, bookId: ID!): Page!
+    pageToEdit(pageId: ID!): Page!
+    likedPages(page: Int!): LikedPages
 
-    article(articleId: ID!): ArticleDetail!
-    allArticles: [ArticleDetail]!
-    allPublishedArticles(userId: ID!): [ArticleDetail]!
-    allDraftedArticles: [ArticleDetail]!
-    allLikedArticles(userId: ID!): [ArticleDetail]!
-    allLearnedArticles(userId: ID!): [ArticleDetail]!
-    famousArticles: [ArticleDetail]!
+    book(bookId: ID!): Book!
+    editBook(bookId: ID!): Book!
+    pageIdToRead(bookId: ID!): ID!
+    searchedBooks(query: String!, page: Int!): BookList!
+    createdBooks(userId: ID!, condition: SearchCondition): BookList!
+    createdBooksBySelf(condition: SearchCondition): BookList!
+    actionedBooks(userId: ID!, condition: SearchCondition): BookList!
+    actionedBooksBySelf(condition: SearchCondition): BookList!
+    ownBooks(page: Int!): BookList!
+    recentlyViewedBooks: BookList!
+    newBooks(page: Int!): BookList!
+    famousBooks(page: Int!): BookList!
+    famousFreeBooks(page: Int!): BookList!
+    paymentIntent(bookId: ID!): PaymentIntent
 
-    plan(planId: ID!): PlanListItem!
-    planDetail(planId: ID!): PlanDetail!
-    allPlans: [PlanListItem]!
-    allPublishedPlans(userId: ID!): [PlanDetail]!
-    allDraftedPlans: [PlanDetail]!
-    allLikedPlans: [PlanItem]!
-    allLearningPlans(userId: ID!): [LearningPlanItem]!
-    allLearnedPlans(userId: ID!): [PlanDetail]!
-    famousPlans: [PlanItem]!
-    allPlanElementDetails(planId: ID!): [ElementDetail]!
-
-    user(userId: ID!): User
-    profile: User
-    famousTags: [TagStatistic]!
+    user(userId: ID!): User!
+    account: Account!
+    canSale: Boolean!
+    salesLink: SalesLink!
+    orderHistories(page: Int!): OrderHistories
 }
 
-type PlanListItem{
-    base: PlanBase
-    tags: [Tag]
-    action: PlanAction
-    statistics: PlanStatistics
-}
-
-type PlanItem {
-    base: PlanBase
-    tags: [Tag]
-    author: User
-    elementCount: Int
-    statistics: PlanStatistics
-}
-
-type LearningPlanItem{
-    base: PlanBase
-    action: PlanAction
-    statistics: PlanStatistics
-}
-
-type PlanDetail {
-    base: PlanBase
-    author: User
-    tags: [Tag]
-    elements: [Element]
-    statistics: PlanStatistics,
-    action: PlanAction
-}
-
-type PlanBase{
+type User {
     id: ID!
+    displayName: String
+    imageUrl: String
+    description: String
+    url: String
+    twitterId: String
+    githubId: String
+}
+
+type Account {
+    user: User
+}
+
+type SalesLink {
+    url: String!
+}
+
+type PaymentIntent {
+    price: Int!
+    secret: String!
+}
+
+type Page {
+    id: ID!
+    number: Int!
     title: String!
-    description: String!
-    imageUrl: String!
-    status: String!
+    text: String!
+    liked: Boolean
+    likeCount: Int
+    canPreview: Boolean
     createDate: String!
     updateDate: String!
 }
 
-type PlanStatistics {
-    like: Int!
-    learning: Int!
-    learned: Int!
-}
-
-type PlanAction {
-    liked: Boolean!
-    learning: Boolean!
-    learned: Boolean!
-    learnedElementCount: Int!
-    allElementCount: Int!
-}
-
-type Element {
-    id: ID!
-    title: String
-    imageUrl: String
-    type: String!
-    number: Int!
-}
-
-type ElementDetail {
-    id: ID!
-    title: String
-    imageUrl: String
-    type: String!
-    number: Int!
-    action: PlanElementAction!
-    statistics: PlanElementStatistics!
-}
-
-type PlanElementAction {
-    liked: Boolean!
-    learned: Boolean!
-}
-
-type PlanElementStatistics{
-    like: Int!
-    learned: Int!
-}
-
-type ArticleDetail {
-    base: ArticleBase
-    tags: [Tag]
-    author: User
-    statistics: ArticleStatistics
-    action: ArticleAction
-}
-
-type ArticleBase {
+type LikedPage {
     id: ID!
     title: String!
-    imageUrl: String!
-    status: String!
-    createDate: String!
-    updateDate: String!
+    bookId: ID!
+    bookTitle: String!
+    bookImage: String!
 }
 
-type ArticleStatistics {
-    like: Int!
-    learned: Int!
-}
-
-type ArticleAction {
-    liked: Boolean!
-    learned: Boolean!
-}
-
-type LikedSection {
-    articleId: String!
-    section: Section
+type LikedPages {
+    pages: [LikedPage]
+    sumCount: Int!
 }
 
 type Section {
     id: ID!
-    title: String!
-    text: String!
     number: Int!
-    authorId: String!
-    statistics: SectionStatistics
-    liked: Boolean!
+    title: String!
+    pages: [Page]
+    createDate: String
+    updateDate: String
 }
 
-type SectionStatistics{
-    like: Int!
+type BookList {
+    books: [Book]
+    sumCount: Int
 }
 
-type User{
+type Book {
     id: ID!
-    displayName: String!
-    imageUrl: String!
-    description: String!
-    url: String!
+    title: String
+    imageUrl: String
+    description: String
+    price: Int
+    canSale: Boolean
+    features: [String]
+    targets: BookTarget
+    status: String
+    lastViewedPageId: ID
+
+    purchased: Boolean
+    purchasedCount: Int
+
     tags: [Tag]
+    sections: [Section]
+    author: User
+
+    createDate: String
+    updateDate: String
 }
 
-type Tag{
+type OrderHistories {
+    orderHistories : [OrderHistory]!
+    sumCount: Int!
+}
+
+type OrderHistory {
+    bookId: ID!
+    title: String!
+    imageUrl: String!
+    author: User
+    price: Int!
+    purchaseDate: String!
+}
+
+type BookTarget {
+    levelStart: Int
+    levelEnd: Int
+    targetDescriptions: [String]
+}
+
+type Books {
+    learned: [Book]
+    liked: [Book]
+    published: [Book]
+    drafted: [Book]
+}
+
+type ReferenceBook {
+    id: ID!
+    title: String!
+    imageUrl: String!
+}
+
+type Tag {
     id: ID!
     name: String!
+    relatedCount: Int
 }
 
-type TagStatistic{
-    id: ID!
-    name: String!
-    related: Int!
+input SearchCondition {
+    filter: String
+    sortField: String
+    sortOrder: String
+    page: Int
+    resultCount: Int
 }
 
-input CreateSectionInput{
+input PageInput {
     title: String!
     text: String!
-    number: Int!
 }
 
-input UpdateSectionInput{
-    id: ID!
-    title: String!
-    text: String!
-    number: Int!
-}
-
-input ArticleInput {
-    id: ID!
+input BookInput {
+    id: ID
     title: String!
     imageUrl: String
-    tags: [String]!
+    description: String
+
+    tagIds: [String]!
+    sections: [SectionInput]!
 }
 
-input PlanBaseInput {
-    id: ID!
+input SectionInput {
     title: String!
-    description: String!
-    tags: [String]!
-    imageUrl: String!
+    number: Int
+    articles: [ContentInput]
 }
 
-input PlanElementInput{
-    id: ID!
-    number: Int!
+input ContentInput {
+    articleId: ID!
+    number: Int
 }
 
 input UserInput{
-    displayName: String!
+    displayName: String
     description: String
-    url: String
     imageUrl: String
-    tags: [String]
+    url: String
+    twitterId: String
+    githubId: String
 }
 
+input BookBaseInput {
+    title: String!
+    price: Int!
+    description: String!
+}
+
+input BookTargetsInput {
+    levelStart: Int!
+    levelEnd: Int!
+    targetsDescriptions: [String]!
+}
+
+input UserSettingInput {
+    skillPublic: Boolean!
+    learnPublic: Boolean!
+    likePublic: Boolean!
+}
 
 type Mutation {
-    createSection(articleId: ID!, section: CreateSectionInput!): CreateResponse
-    updateSection(sectionId: ID!, section: UpdateSectionInput!): UpdateResponse
-    deleteSection(articleId: ID!, sectionId: ID! ): UpdateResponse
-    likeSection(sectionId: ID!): UpdateResponse
-    deleteLikeSection(sectionId: ID!): UpdateResponse
+    createPage(bookId: ID!, sectionId: ID!): CreateResponse
+    savePage(bookId: ID!, pageId: ID!, page: PageInput!): Boolean
+    deletePage(pageId: ID!): Boolean
+    reorderPages(bookId: ID!, sectionId: ID!, pageIds: [String]!): Boolean
+    updatePageTrialRead(pageId: ID!, canPreview: Boolean): Boolean
+    likePage(pageId: ID!): Boolean
+    unLikePage(pageId: ID!): Boolean
 
-    initArticle: CreateResponse
-    # updateArticle(articleId: ID!, article: ArticleInput): UpdateResponse
-    updateArticleTitle(articleId: ID!, title: String!): UpdateResponse
-    updateArticleImageUrl(articleId: ID!, url: String!): UpdateImageResponse
-    updateArticleTags(articleId: ID!, tags: [String]!): UpdateResponse
-    deleteArticle(articleId: ID!): UpdateResponse
-    #    publishArticle(articleId: ID!): UpdateResponse
-    #    draftArticle(articleId: ID!): UpdateResponse
-    publishArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
-    draftArticle(article: ArticleInput!, sections: [UpdateSectionInput]!): UpdateResponse
+    createBook: CreateResponse
+    updateBookCoverImage(bookId: ID!, imageUrl: String!): Boolean
+    updateBookBase(bookId: ID!, bookBase: BookBaseInput!): Boolean
+    updateBookFeatures(bookId: ID!, features: [String]!): Boolean
+    updateBookTargets(bookId: ID!, targets: BookTargetsInput!): Boolean
+    updateBookTags(bookId: ID!, tags: [String]!): Boolean
 
-    likeArticle(articleId: ID!): UpdateResponse
-    deleteLikeArticle(articleId: ID!): UpdateResponse
-    finishArticle(articleId: ID!): UpdateResponse
-    deleteFinishArticle(articleId: ID!): UpdateResponse
+    publishBook(bookId: ID!): Boolean
+    suspendBook(bookId: ID!): Boolean
+    deleteBook(bookId: ID!): Boolean
 
-    initPlan: CreateResponse
-    updatePlanTitle(planId: ID!, title: String!): UpdateResponse
-    updatePlanImageUrl(planId: ID!, url: String!): UpdateImageResponse
-    updatePlanTags(planId: ID!, tags: [String]!): UpdateResponse
-    updatePlanDescription(planId: ID!, description: String!): UpdateResponse
+    purchaseBook(paymentIntentId: ID!): Boolean
+    addBookShelf(bookId: ID!): Boolean
 
-    deletePlan(planId: ID!): UpdateResponse
-    publishPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
-    draftPlan(base: PlanBaseInput!, elements: [PlanElementInput]!): UpdateResponse
-    likePlan(planId: ID!): UpdateResponse
-    deleteLikePlan(planId: ID!): UpdateResponse
-    startPlan(planId: ID!): UpdateResponse
-    stopPlan(planId: ID!): UpdateResponse
-    finishPlan(planId: ID!): UpdateResponse
+    addSection(bookId: ID!, title: String!): CreateResponse
+    updateSectionTitle(bookId: ID!, sectionId: ID!, title: String!): Boolean
+    deleteSection(bookId: ID!, sectionId: ID!): Boolean
+    reorderSections(bookId: ID!, sectionIds: [String]!): Boolean
 
-    createUser(user: UserInput!): UpdateResponse
-    updateUser(user: UserInput!): UpdateResponse
-    updateUserTags(tags: [String]!): UpdateResponse
-    updateUserImageUrl(url: String!):UpdateImageResponse
-    deleteUser: UpdateResponse
-
-    createTag(name: String!): CreateTagResponse
+    createUser(displayName: String! imageUrl: String!): CreateResponse
+    updateUser(user: UserInput!): Boolean
+    updateUserSetting(setting: UserSettingInput): Boolean
+    deleteUser: Boolean
+    registerStripe(userId: String!, code: String!): Boolean
 }
 
 type CreateResponse {
     id: ID!,
-    error: Error
-}
-
-type CreateTagResponse {
-    id: ID!,
-    name: String!
-    error: Error
-}
-
-type UpdateResponse {
-    error: Error
-}
-
-type UpdateImageResponse {
-    url: String
-    error: Error
-}
-
-
-type Error{
-    errorCode: String
-    errorMessage: String
 }

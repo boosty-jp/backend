@@ -1,6 +1,6 @@
 <included>
   <property name="LOG_FORMAT" value="%d [%p] %c{36} [%X{ip}] [%X{logId}] - %m%n"/>
-  <property name="LOG_PATH" value="/var/log/wever/"/>
+  <property name="LOG_PATH" value="/var/log/boosty/"/>
   <property name="LOG_FILE" value="content-"/>
 
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
