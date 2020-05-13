@@ -1,7 +1,4 @@
 aws:
-  cognito:
-    region: ${AWS_COGNITO_REGION}
-    userPoolId: ${AWS_COGNITO_USERPOOL_ID}
   neptune:
     endpoint: ${AWS_NEPTUNE_ENDPOINT}
     certificateFilePath: ${AWS_NEPTUNE_CERTIFICATE_PATH}
@@ -18,3 +15,5 @@ algolia:
   adminKey: ${ALGOLIA_ADMIN_KEY}
 firebase:
   databaseUrl: ${FIREBASE_DATABASE_URL}
+stripe:
+  apiKey: ${STRIPE_API_KEY}

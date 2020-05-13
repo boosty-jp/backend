@@ -1,24 +1,28 @@
 type Query {
-    article(articleId: ID!): Article!
-    createdArticles(userId: ID! ,condition: SearchCondition): ArticleList!
-    createdArticlesBySelf(condition: SearchCondition): ArticleList!
-    actionedArticles(userId: ID! ,condition: SearchCondition): ArticleList!
-    actionedArticlesBySelf(condition: SearchCondition): ArticleList!
-    famousArticles: [Article]!
+    page(pageId: ID!, bookId: ID!): Page!
+    pageToEdit(pageId: ID!): Page!
+    likedPages(page: Int!): LikedPages
 
-    course(courseId: ID!): Course!
-    createdCourses(userId: ID! ,condition: SearchCondition): CourseList!
-    createdCoursesBySelf(condition: SearchCondition): CourseList!
-    actionedCourses(userId: ID! ,condition: SearchCondition): CourseList!
-    actionedCoursesBySelf(condition: SearchCondition): CourseList!
-    famousCourses: [Course]!
-
-    test(testId: ID!): Test!
+    book(bookId: ID!): Book!
+    editBook(bookId: ID!): Book!
+    pageIdToRead(bookId: ID!): ID!
+    searchedBooks(query: String!, page: Int!): BookList!
+    createdBooks(userId: ID!, condition: SearchCondition): BookList!
+    createdBooksBySelf(condition: SearchCondition): BookList!
+    actionedBooks(userId: ID!, condition: SearchCondition): BookList!
+    actionedBooksBySelf(condition: SearchCondition): BookList!
+    ownBooks(page: Int!): BookList!
+    recentlyViewedBooks: BookList!
+    newBooks(page: Int!): BookList!
+    famousBooks(page: Int!): BookList!
+    famousFreeBooks(page: Int!): BookList!
+    paymentIntent(bookId: ID!): PaymentIntent
 
     user(userId: ID!): User!
     account: Account!
-    famousTags: [Tag]!
-    famousSkills: [Skill]!
+    canSale: Boolean!
+    salesLink: SalesLink!
+    orderHistories(page: Int!): OrderHistories
 }
 
 type User {
@@ -28,150 +32,121 @@ type User {
     description: String
     url: String
     twitterId: String
-    facebookId: String
-
-    articles: Articles
-    courses: Courses
-}
-
-type UserSetting {
-    skillPublic: Boolean!
-    learnPublic: Boolean!
-    likePublic: Boolean!
+    githubId: String
 }
 
 type Account {
     user: User
-    setting: UserSetting
 }
 
-type ArticleBlock {
+type SalesLink {
+    url: String!
+}
+
+type PaymentIntent {
+    price: Int!
+    secret: String!
+}
+
+type Page {
     id: ID!
-    type: String!
-    data: String!
-}
-
-type ArticleList {
-    articles: [Article]
-    sumCount: Int
-}
-
-type Article {
-    id: ID!
+    number: Int!
     title: String!
-    imageUrl: String!
-    blocks: [ArticleBlock]!
-    status: String!
+    text: String!
+    liked: Boolean
+    likeCount: Int
+    canPreview: Boolean
     createDate: String!
     updateDate: String!
-
-    tags: [Tag]
-    author: User
-    skills: [Skill]
-    actionCount: ActionCount
-    accountAction: AccountAction
 }
 
-type Articles {
-    learned: [Article]
-    liked: [Article]
-    published: [Article]
-    drafted: [Article]
-}
-
-type Content {
+type LikedPage {
     id: ID!
     title: String!
-    number: Int!
-    skills: [Skill]
-    learned: Boolean
+    bookId: ID!
+    bookTitle: String!
+    bookImage: String!
+}
+
+type LikedPages {
+    pages: [LikedPage]
+    sumCount: Int!
 }
 
 type Section {
     id: ID!
     number: Int!
     title: String!
-    contents: [Content]
+    pages: [Page]
     createDate: String
     updateDate: String
 }
 
-type CourseList {
-    courses: [Course]
+type BookList {
+    books: [Book]
     sumCount: Int
 }
 
-type Course {
+type Book {
     id: ID!
     title: String
-    description: String
     imageUrl: String
+    description: String
+    price: Int
+    canSale: Boolean
+    features: [String]
+    targets: BookTarget
     status: String
-    createDate: String
-    updateDate: String
+    lastViewedPageId: ID
+
+    purchased: Boolean
+    purchasedCount: Int
 
     tags: [Tag]
     sections: [Section]
     author: User
 
-    actionCount: ActionCount
-    accountAction: AccountAction
-    learnStatus: LearnStatus
+    createDate: String
+    updateDate: String
 }
 
-type Courses {
-    learned: [Course]
-    liked: [Course]
-    published: [Course]
-    drafted: [Course]
+type OrderHistories {
+    orderHistories : [OrderHistory]!
+    sumCount: Int!
 }
 
-type Test {
+type OrderHistory {
+    bookId: ID!
+    title: String!
+    imageUrl: String!
+    author: User
+    price: Int!
+    purchaseDate: String!
+}
+
+type BookTarget {
+    levelStart: Int
+    levelEnd: Int
+    targetDescriptions: [String]
+}
+
+type Books {
+    learned: [Book]
+    liked: [Book]
+    published: [Book]
+    drafted: [Book]
+}
+
+type ReferenceBook {
     id: ID!
     title: String!
-    description: String!
-    status: String!
-    createDate: String!
-    updateDate: String!
-
-    questions: [Question]!
-    author: User
-}
-
-type Question {
-    id: ID!
-    text: String!
-    type: String!
-    showCount: Boolean
-    candidates: [String]
+    imageUrl: String!
 }
 
 type Tag {
     id: ID!
     name: String!
     relatedCount: Int
-}
-
-type Skill {
-    id: ID!
-    name: String!
-    relatedCount: Int
-    level: Int
-}
-
-type ActionCount {
-    likeCount: Int
-    learnedCount: Int
-}
-
-type AccountAction {
-    liked: Boolean
-    learned: Boolean
-}
-
-type LearnStatus {
-    progress: Int
-    status: String
 }
 
 input SearchCondition {
@@ -182,27 +157,12 @@ input SearchCondition {
     resultCount: Int
 }
 
-input ArticleBlockInput {
-    type: String!
-    data: String!
-}
-
-input ArticleInput {
-    id: ID
+input PageInput {
     title: String!
-    imageUrl: String
-    blocks: [ArticleBlockInput]
-
-    tagIds: [String]!
-    skills: [SkillInput]!
+    text: String!
 }
 
-input SkillInput {
-    id: ID!
-    level: Int
-}
-
-input CourseInput {
+input BookInput {
     id: ID
     title: String!
     imageUrl: String
@@ -215,43 +175,12 @@ input CourseInput {
 input SectionInput {
     title: String!
     number: Int
-    contents: [ContentInput]
+    articles: [ContentInput]
 }
 
 input ContentInput {
     articleId: ID!
     number: Int
-}
-
-input TestInput {
-    id: ID
-    title: String!
-    description: String!
-    referenceCourseId: ID!
-    questions: [QuestionInput]!
-}
-
-input QuestionInput {
-    questionText: String!
-    type: String!
-    textAnswer: TextAnswerInput
-    selectAnswers: [SelectAnswerInput]
-    explanations: [ExplanationInput]!
-}
-
-input TextAnswerInput {
-    answer: String!
-    showCount: Boolean!
-}
-
-input SelectAnswerInput {
-    text: String!
-    answer: Boolean!
-}
-
-input ExplanationInput {
-    text: String!
-    referenceIds: [String]!
 }
 
 input UserInput{
@@ -260,7 +189,19 @@ input UserInput{
     imageUrl: String
     url: String
     twitterId: String
-    facebookId: String
+    githubId: String
+}
+
+input BookBaseInput {
+    title: String!
+    price: Int!
+    description: String!
+}
+
+input BookTargetsInput {
+    levelStart: Int!
+    levelEnd: Int!
+    targetsDescriptions: [String]!
 }
 
 input UserSettingInput {
@@ -270,37 +211,38 @@ input UserSettingInput {
 }
 
 type Mutation {
-    publishArticle(article: ArticleInput!): CreateResponse
-    draftArticle(article: ArticleInput!): CreateResponse
-    deleteArticle(articleId: ID!): Boolean
+    createPage(bookId: ID!, sectionId: ID!): CreateResponse
+    savePage(bookId: ID!, pageId: ID!, page: PageInput!): Boolean
+    deletePage(pageId: ID!): Boolean
+    reorderPages(bookId: ID!, sectionId: ID!, pageIds: [String]!): Boolean
+    updatePageTrialRead(pageId: ID!, canPreview: Boolean): Boolean
+    likePage(pageId: ID!): Boolean
+    unLikePage(pageId: ID!): Boolean
 
-    likeArticle(articleId: ID!): Boolean
-    clearLikeArticle(articleId: ID!): Boolean
-    learnArticle(articleId: ID!): Boolean
-    clearLearnArticle(articleId: ID!): Boolean
+    createBook: CreateResponse
+    updateBookCoverImage(bookId: ID!, imageUrl: String!): Boolean
+    updateBookBase(bookId: ID!, bookBase: BookBaseInput!): Boolean
+    updateBookFeatures(bookId: ID!, features: [String]!): Boolean
+    updateBookTargets(bookId: ID!, targets: BookTargetsInput!): Boolean
+    updateBookTags(bookId: ID!, tags: [String]!): Boolean
 
-    publishCourse(course: CourseInput!):CreateResponse
-    draftCourse(course: CourseInput!): CreateResponse
-    deleteCourse(courseId: ID!): Boolean
+    publishBook(bookId: ID!): Boolean
+    suspendBook(bookId: ID!): Boolean
+    deleteBook(bookId: ID!): Boolean
 
-    likeCourse(courseId: ID!): Boolean
-    clearLikeCourse(courseId: ID!): Boolean
-    startCourse(courseId: ID!): Boolean
-    clearStartCourse(courseId: ID!): Boolean
-    learnCourse(courseId: ID!): Boolean
-    cleaerlearnCourse(courseId: ID!): Boolean
+    purchaseBook(paymentIntentId: ID!): Boolean
+    addBookShelf(bookId: ID!): Boolean
 
-    publishTest(test: TestInput): CreateResponse
-    draftTest(test: TestInput): CreateResponse
-    deleteTest(testId: ID!): CreateResponse
+    addSection(bookId: ID!, title: String!): CreateResponse
+    updateSectionTitle(bookId: ID!, sectionId: ID!, title: String!): Boolean
+    deleteSection(bookId: ID!, sectionId: ID!): Boolean
+    reorderSections(bookId: ID!, sectionIds: [String]!): Boolean
 
     createUser(displayName: String! imageUrl: String!): CreateResponse
     updateUser(user: UserInput!): Boolean
     updateUserSetting(setting: UserSettingInput): Boolean
     deleteUser: Boolean
-
-    createTag(name: String!): CreateResponse
-    createSkill(name: String!): CreateResponse
+    registerStripe(userId: String!, code: String!): Boolean
 }
 
 type CreateResponse {

@@ -1,1 +1,1 @@
-service wever-content stop
+service boosty stop
