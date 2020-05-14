@@ -11,14 +11,14 @@ jobs:
     steps:
       - checkout # ソースコードを引っ張ってくる
       - restore_cache: # `build.gradle` が変更されている場合に、保存されているキャッシュを復元
-          key: graphql-{{ checksum "build.gradle" }}
+          key: backend-{{ checksum "build.gradle" }}
       - run:
           name: Build
           command: ./gradlew assemble
       - save_cache: # 依存関係のキャッシュ
           paths:
             - ~/.gradle
-          key: graphql-{{ checksum "build.gradle" }}
+          key: backend-{{ checksum "build.gradle" }}
       - store_artifacts: # アーティファクトへの保存
           path: build/libs
       - persist_to_workspace: # 他のジョブと共有するパス
@@ -30,7 +30,7 @@ jobs:
           failure_message: 'Build Job Failed.'
           webhook: '${SLACK_WEBHOOK}'
   upload:
-    working_directory: ~/graphql
+    working_directory: ~/backend
     steps:
       - attach_workspace: # persist_to_workspaceで共有したパスを適用する
             at: .
@@ -46,7 +46,7 @@ jobs:
           failure_message: 'Upload Job Failed.'
           webhook: '${SLACK_WEBHOOK}'
   deploy:
-    working_directory: ~/graphql
+    working_directory: ~/backend
     steps:
       - aws-s3/sync: # jarをs3にアップロードする
           from: build/libs
