@@ -10,11 +10,13 @@
     </rollingPolicy>
 
     <encoder>
+      <charset>UTF-8</charset>
       <pattern>${LOG_FORMAT}</pattern>
     </encoder>
   </appender>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
+      <charset>UTF-8</charset>
       <pattern>${LOG_FORMAT}</pattern>
     </encoder>
   </appender>
