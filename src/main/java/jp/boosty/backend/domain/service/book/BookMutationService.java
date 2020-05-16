@@ -88,7 +88,6 @@ public class BookMutationService {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
         }
-
         bookMutationRepository.suspend(bookId, requester.getUserId());
     }
 
@@ -124,7 +123,6 @@ public class BookMutationService {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.ALREADY_PURCHASED.getString());
         }
-
         bookMutationRepository.purchase(paymentEntity, requester.getUserId(), paymentIntentId);
     }
 
@@ -136,6 +134,7 @@ public class BookMutationService {
         }
 
         int price = bookQueryRepository.findPrice(bookId);
+
         if (price > 0) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_PURCHASE.getString());
@@ -157,6 +156,7 @@ public class BookMutationService {
         }
 
         return bookMutationRepository.create(requester.getUserId());
+
     }
 
     public void updateBase(String bookId, BookBaseInput bookBaseInput, Requester requester) {

@@ -49,7 +49,6 @@ public class ApplicationController {
             ExecutionInput.newExecutionInput().query(queryString).variables(variables).context(token).build();
 
         ExecutionResult execute = graphQLService.getGraphQL().execute(executionInput);
-
         return new ResponseEntity<>(execute, HttpStatus.OK);
     }
 }
