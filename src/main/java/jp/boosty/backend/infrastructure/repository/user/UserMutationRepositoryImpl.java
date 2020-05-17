@@ -126,18 +126,18 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();
 
-        try{
-        g.V(userId)
-         .property(single, UserVertexProperty.DELETED.getString(), true)
-         .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
-         .next();
+        try {
+            g.V(userId)
+             .property(single, UserVertexProperty.DELETED.getString(), true)
+             .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
+             .next();
 
-        g.V(userId)
-         .hasLabel(VertexLabel.USER.getString())
-         .outE(EdgeLabel.PUBLISH.getString())
-         .hasLabel(VertexLabel.BOOK.getString())
-         .drop()
-         .iterate();
+            g.V(userId)
+             .hasLabel(VertexLabel.USER.getString())
+             .outE(EdgeLabel.PUBLISH.getString())
+             .hasLabel(VertexLabel.BOOK.getString())
+             .drop()
+             .iterate();
         } catch (Exception e) {
             log.error("deleteUser error: {} {}", userId, e.getMessage());
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
