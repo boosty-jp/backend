@@ -80,7 +80,7 @@ public class PageQueryRepositoryImpl implements PageQueryRepository {
              .to(g.V(bookId).hasLabel(VertexLabel.BOOK.getString()))
              .next();
         } catch (Exception e) {
-            log.error("findOne error: {} {}", bookId, userId, pageId e.getMessage()); throw new GraphQLCustomException(
+            log.error("findOne error: {} {} {} {}", bookId, userId, pageId, e.getMessage()); throw new GraphQLCustomException(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
