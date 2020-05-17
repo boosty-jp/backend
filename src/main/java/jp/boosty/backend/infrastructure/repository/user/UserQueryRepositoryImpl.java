@@ -1,5 +1,7 @@
 package jp.boosty.backend.infrastructure.repository.user;
 
+import jp.boosty.backend.domain.GraphQLCustomException;
+import jp.boosty.backend.infrastructure.constant.GraphQLErrorMessage;
 import jp.boosty.backend.infrastructure.constant.edge.EdgeLabel;
 import jp.boosty.backend.infrastructure.constant.vertex.property.DateProperty;
 
@@ -7,6 +9,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.Order;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.WithOptions;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,10 +24,13 @@ import jp.boosty.backend.infrastructure.converter.entity.user.UserEntityConverte
 import jp.boosty.backend.infrastructure.datamodel.user.OrderHistoriesEntity;
 import jp.boosty.backend.infrastructure.datamodel.user.UserEntity;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.coalesce;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
 
+@Slf4j
 @Component
 public class UserQueryRepositoryImpl implements UserQueryRepository {
     private final NeptuneClient neptuneClient;
@@ -37,9 +43,14 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
     public UserEntity findOne(String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        Map<Object, Object> allResult =
-            g.V(userId).hasLabel(VertexLabel.USER.getString()).valueMap().with(WithOptions.tokens).next();
-
+        Map<Object, Object> allResult;
+        try {
+            allResult = g.V(userId).hasLabel(VertexLabel.USER.getString()).valueMap().with(WithOptions.tokens).next();
+        } catch (Exception e) {
+            log.error("findOne error: {} {}", userId, e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
         return UserEntityConverter.toUserEntityFromVertex(allResult);
     }
 
@@ -47,28 +58,35 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
     public OrderHistoriesEntity findOrderHistories(int page, String userId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 
-        List<Map<String, Object>> allResult = g.V(userId)
-                                               .hasLabel(VertexLabel.USER.getString())
-                                               .out(EdgeLabel.PURCHASE.getString())
-                                               .hasLabel(VertexLabel.BOOK.getString())
-                                               .order()
-                                               .by(coalesce(inE(EdgeLabel.PURCHASE.getString()).values(DateProperty.CREATE_TIME
-                                                                                                           .getString()),
-                                                            values(DateProperty.CREATE_TIME.getString())), Order.desc)
-                                               .range(24 * (page - 1), 24 * page)
-                                               .project("base", "edge", "author")
-                                               .by(__.valueMap().with(WithOptions.tokens))
-                                               .by(__.inE(EdgeLabel.PURCHASE.getString()).valueMap())
-                                               .by(__.in(EdgeLabel.PUBLISH.getString(),
-                                                         EdgeLabel.SUSPEND.getString(),
-                                                         EdgeLabel.DRAFT.getString())
-                                                     .hasLabel(VertexLabel.USER.getString())
-                                                     .valueMap()
-                                                     .with(WithOptions.tokens))
-                                               .toList();
+        List<Map<String, Object>> allResult;
+        long sumCount;
+        try {
+            allResult = g.V(userId)
+                         .hasLabel(VertexLabel.USER.getString())
+                         .out(EdgeLabel.PURCHASE.getString())
+                         .hasLabel(VertexLabel.BOOK.getString())
+                         .order()
+                         .by(coalesce(inE(EdgeLabel.PURCHASE.getString()).values(DateProperty.CREATE_TIME.getString()),
+                                      values(DateProperty.CREATE_TIME.getString())), Order.desc)
+                         .range(24 * (page - 1), 24 * page)
+                         .project("base", "edge", "author")
+                         .by(__.valueMap().with(WithOptions.tokens))
+                         .by(__.inE(EdgeLabel.PURCHASE.getString()).valueMap())
+                         .by(__.in(EdgeLabel.PUBLISH.getString(),
+                                   EdgeLabel.SUSPEND.getString(),
+                                   EdgeLabel.DRAFT.getString())
+                               .hasLabel(VertexLabel.USER.getString())
+                               .valueMap()
+                               .with(WithOptions.tokens))
+                         .toList();
 
-        long sumCount =
-            g.V(userId).hasLabel(VertexLabel.USER.getString()).outE(EdgeLabel.PURCHASE.getString()).count().next();
+            sumCount =
+                g.V(userId).hasLabel(VertexLabel.USER.getString()).outE(EdgeLabel.PURCHASE.getString()).count().next();
+        } catch (Exception e) {
+            log.error("findOrderHistories error: {} {} {}", page, userId, e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
 
         return OrderHistoriesEntity.builder()
                                    .orderHistoryEntityList(allResult.stream()
