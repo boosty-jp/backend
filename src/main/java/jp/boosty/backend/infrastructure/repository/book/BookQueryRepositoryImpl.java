@@ -787,6 +787,25 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
     }
 
     @Override
+    public boolean isPublished(String bookId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        try {
+            return g.V(bookId)
+                    .hasLabel(VertexLabel.BOOK.getString())
+                    .coalesce(__.inE(EdgeLabel.PUBLISH.getString())
+                                .where(outV().hasLabel(VertexLabel.USER.getString()))
+                                .limit(1)
+                                .constant(true), constant(false))
+                    .next();
+        } catch (Exception e) {
+            log.error("isPurchased error: {} {}", bookId, e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+    }
+
+    @Override
     public int findPrice(String bookId) {
         GraphTraversalSource g = neptuneClient.newTraversal();
 

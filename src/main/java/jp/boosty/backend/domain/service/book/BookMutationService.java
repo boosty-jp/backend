@@ -145,6 +145,11 @@ public class BookMutationService {
                                              GraphQLErrorMessage.ALREADY_PURCHASED.getString());
         }
 
+        if (!bookQueryRepository.isPublished(bookId)) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NOT_ON_SALE.getString());
+        }
+
         bookMutationRepository.addBookShelf(bookId, requester.getUserId());
     }
 

@@ -119,7 +119,7 @@ public class PageQueryService {
                                                  GraphQLErrorMessage.NEED_PURCHASE.getString());
             }
         } else if (status.equals(EdgeLabel.DRAFT.getString())) {
-            if (!isAuthor(bookId, requester)) {
+            if (!isAuthor(pageId, requester)) {
                 throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                                  GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
             }

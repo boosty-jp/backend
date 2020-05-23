@@ -45,6 +45,8 @@ public interface BookQueryRepository {
 
     boolean isPurchased(String bookId, String userId);
 
+    boolean isPublished(String bookId);
+
     int findPrice(String bookId);
 
     String findStatus(String bookId);
