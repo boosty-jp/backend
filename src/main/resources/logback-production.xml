@@ -1,5 +1,5 @@
 <included>
-  <property name="LOG_FORMAT" value="%d [%p] %c{36} [%X{ip}] [%X{logId}] - %m%n"/>
+  <property name="LOG_FORMAT" value="%d [%p] %c{36} [%X{ip}] [%X{logId}] - %replace(%msg){'\n','\\\\n'}\t%replace(%replace(%xEx){'\n','\\\\n'}){'\t','    '}%nopex%n"/>
   <property name="LOG_PATH" value="/var/log/boosty/"/>
   <property name="LOG_FILE" value="boosty-"/>
 
