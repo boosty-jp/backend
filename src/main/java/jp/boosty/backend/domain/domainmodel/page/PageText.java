@@ -8,7 +8,7 @@ import io.netty.util.internal.StringUtil;
 
 public class PageText {
     private String value;
-    private final static int MAX_WORD_COUNT = 1000000;
+    private final static int MAX_WORD_COUNT = 30000;
 
     private PageText(String value) {
         this.value = value;

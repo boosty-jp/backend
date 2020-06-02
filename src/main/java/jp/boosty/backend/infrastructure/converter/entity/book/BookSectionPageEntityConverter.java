@@ -9,8 +9,8 @@ import jp.boosty.backend.infrastructure.datamodel.book.BookSectionPageEntity;
 
 public class BookSectionPageEntityConverter {
     public static BookSectionPageEntity toBookSectionPageEntity(Map<String, Object> result) {
-        Map<Object, Object> baseResult = (Map<Object, Object>) result.get("contentBase");
-        int number = (int) result.get("contentNumber");
+        Map<Object, Object> baseResult = (Map<Object, Object>) result.get("pageBase");
+        int number = (int) result.get("pageNumber");
 
         return BookSectionPageEntity.builder()
                                     .id(VertexConverter.toId(baseResult))

@@ -11,6 +11,7 @@ import jp.boosty.backend.infrastructure.constant.edge.property.ViewEdgeProperty;
 import jp.boosty.backend.infrastructure.constant.vertex.label.VertexLabel;
 import jp.boosty.backend.infrastructure.constant.vertex.property.BookVertexProperty;
 import jp.boosty.backend.infrastructure.constant.vertex.property.DateProperty;
+import jp.boosty.backend.infrastructure.constant.vertex.property.PageVertexProperty;
 import jp.boosty.backend.infrastructure.converter.entity.book.BookEntityConverter;
 import jp.boosty.backend.infrastructure.datamodel.book.BookEntity;
 import jp.boosty.backend.infrastructure.datamodel.book.BookListEntity;
@@ -81,8 +82,8 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                .by(__.inE(EdgeLabel.INCLUDE.getString()).values(IncludeEdgeProperty.NUMBER.getString()))
                                .by(__.out(EdgeLabel.INCLUDE.getString())
                                      .hasLabel(VertexLabel.PAGE.getString())
-                                     .project("contentBase", "contentNumber")
-                                     .by(__.valueMap().with(WithOptions.tokens))
+                                     .project("pageBase", "pageNumber")
+                                     .by(__.valueMap(PageVertexProperty.TITLE.getString(),PageVertexProperty.CAN_PREVIEW.getString()).with(WithOptions.tokens))
                                      .by(__.inE(EdgeLabel.INCLUDE.getString())
                                            .values(IncludeEdgeProperty.NUMBER.getString()))
                                      .fold())
@@ -146,7 +147,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                .by(__.out(EdgeLabel.INCLUDE.getString())
                                      .hasLabel(VertexLabel.PAGE.getString())
                                      .project("pageBase", "pageNumber")
-                                     .by(__.valueMap().with(WithOptions.tokens))
+                                     .by(__.valueMap(PageVertexProperty.TITLE.getString(),PageVertexProperty.CAN_PREVIEW.getString()).with(WithOptions.tokens))
                                      .by(__.inE(EdgeLabel.INCLUDE.getString())
                                            .values(IncludeEdgeProperty.NUMBER.getString()))
                                      .fold())

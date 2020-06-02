@@ -94,7 +94,7 @@ public enum GraphQLErrorMessage {
     INVALID_SEARCH_CONDITION("無効な検索条件です。"),
     INVALID_SNS_ID("正しいIDを指定してください"),
     INVALID_ARTICLE_BLOCK("記事に無効な内容が含まれています"),
-    TOO_LONG_PAGE_CONTENT("記事のデータが大きすぎます"),
+    TOO_LONG_PAGE_CONTENT("ページのデータが大きすぎます"),
     INVALID_IMAGE_URL("無効な画像URLです"),
     INVALID_USER_URL("URLが長すぎます"),
     FORBIDDEN_REQUEST("権限のないリクエストです"),
