@@ -95,4 +95,17 @@ public class BookEntityConverter {
                          .author(UserEntityConverter.toUserEntity(authorResult))
                          .build();
     }
+
+    public static BookEntity toBookEntityForRecentlyViewedList(Map<String, Object> results) {
+        Map<Object, Object> baseResult = (Map<Object, Object>) results.get("base");
+        Map<Object, Object> authorResult = (Map<Object, Object>) results.get("author");
+        String lastViewedPageId = (String) results.get("lastViewedPageId");
+
+        return BookEntity.builder()
+                         .base(BookBaseEntityConverter.toBookBaseEntityForList(baseResult,
+                                                                               EdgeLabel.PUBLISH.getString()))
+                         .author(UserEntityConverter.toUserEntity(authorResult))
+                         .lastViewedPageId(lastViewedPageId)
+                         .build();
+    }
 }

@@ -532,7 +532,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .by(coalesce(inE(EdgeLabel.VIEW.getString()).values(DateProperty.CREATE_TIME.getString()),
                                        values(DateProperty.CREATE_TIME.getString())), Order.desc)
                           .range(0, 6)
-                          .project("base", "author")
+                          .project("base", "author", "lastViewedPageId")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
                                     EdgeLabel.DRAFT.getString(),
@@ -541,6 +541,9 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.coalesce(__.inE(EdgeLabel.VIEW.getString())
+                                            .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+                                            .values(ViewEdgeProperty.PAGE_ID.getString()), constant("")))
                           .toList();
         } catch (Exception e) {
             log.error("findRecentlyViewed error: {} {}", userId, e.getMessage());
@@ -549,7 +552,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
         }
 
         List<BookEntity> bookEntities =
-            allResults.stream().map(r -> BookEntityConverter.toBookEntityForOwnList(r)).collect(Collectors.toList());
+            allResults.stream().map(r -> BookEntityConverter.toBookEntityForRecentlyViewedList(r)).collect(Collectors.toList());
 
         return BookListEntity.builder().books(bookEntities).sumCount(6).build();
     }

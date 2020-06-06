@@ -62,6 +62,7 @@ public class BookResponseConverter {
                            .imageUrl(book.getBase().getImageUrl())
                            .status(book.getBase().getStatus())
                            .purchasedCount(book.getPurchaseCount())
+                           .lastViewedPageId(book.getLastViewedPageId())
                            .createDate(String.valueOf(book.getBase().getCreatedDate()))
                            .updateDate(String.valueOf(book.getBase().getUpdatedDate()))
                            .author(UserResponseConverter.toUserResponse(book.getAuthor()))
