@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.coalesce;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.inE;
+import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.outV;
 import static org.apache.tinkerpop.gremlin.groovy.jsr223.dsl.credential.__.values;
 
 @Slf4j
@@ -48,10 +49,10 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
             allResult = g.V(userId).hasLabel(VertexLabel.USER.getString()).valueMap().with(WithOptions.tokens).next();
         } catch (Exception e) {
             log.error("findOne error: {} {}", userId, e.getMessage());
-            if(e.getMessage().equals("null")){
+            if (e.getMessage().equals("null")) {
                 throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                                  GraphQLErrorMessage.USER_NOT_FOUND.getString());
-            } else{
+            } else {
                 throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                                  GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
             }
@@ -76,7 +77,10 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
                          .range(24 * (page - 1), 24 * page)
                          .project("base", "edge", "author")
                          .by(__.valueMap().with(WithOptions.tokens))
-                         .by(__.inE(EdgeLabel.PURCHASE.getString()).valueMap())
+                         .by(__.inE(EdgeLabel.PURCHASE.getString())
+                               .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+                               .limit(1)
+                               .valueMap())
                          .by(__.in(EdgeLabel.PUBLISH.getString(),
                                    EdgeLabel.SUSPEND.getString(),
                                    EdgeLabel.DRAFT.getString())
