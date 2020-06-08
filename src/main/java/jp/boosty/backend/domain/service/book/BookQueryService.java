@@ -131,6 +131,10 @@ public class BookQueryService {
             return true;
         }
 
+        if (bookEntity.isPurchased()) {
+            return true;
+        }
+
         return requesterId.equals(bookEntity.getAuthor().getUserId());
     }
 
