@@ -48,11 +48,12 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
         try {
             allResult = g.V(userId).hasLabel(VertexLabel.USER.getString()).valueMap().with(WithOptions.tokens).next();
         } catch (Exception e) {
-            log.error("findOne error: {} {}", userId, e.getMessage());
             if (e.getMessage().equals("null")) {
+                // 会員登録しようとした場合にこのルートを通ることがある(頻発するのでログは出さない)
                 throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                                  GraphQLErrorMessage.USER_NOT_FOUND.getString());
             } else {
+                log.error("findOne error: {} {}", userId, e.getMessage());
                 throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                                  GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
             }

@@ -5,7 +5,8 @@ import java.util.Date;
 
 public class DateToStringConverter {
     public static String toDateString(Date date){
-        return date.toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime().format(
+        //JSTにしている
+        return date.toInstant().atOffset(ZoneOffset.ofHours(9)).toLocalDateTime().format(
             DateStringFormat.getFormatter());
     }
 }
