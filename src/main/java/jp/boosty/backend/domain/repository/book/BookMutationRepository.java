@@ -27,6 +27,8 @@ public interface BookMutationRepository {
 
     void updateTags(String bookId, ContentTags tagIds);
 
+    void updateMeaningful(String bookId, boolean meaningful);
+
     String addSection(String bookId, BookSectionTitle name, long sectionCount);
 
     void updateSectionTitle(String sectionId, BookSectionTitle title);

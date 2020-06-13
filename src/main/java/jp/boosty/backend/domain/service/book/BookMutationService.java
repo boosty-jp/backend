@@ -28,6 +28,7 @@ import jp.boosty.backend.infrastructure.repository.book.BookQueryRepositoryImpl;
 import jp.boosty.backend.infrastructure.repository.payment.PaymentRepositoryImpl;
 import jp.boosty.backend.infrastructure.repository.user.UserQueryRepositoryImpl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,8 @@ public class BookMutationService {
     private final BookQueryRepositoryImpl bookQueryRepository;
     private final UserQueryRepositoryImpl userQueryRepository;
     private final PaymentRepositoryImpl paymentRepository;
+    @Value("${admin.uid}")
+    private String ADMIN_UID;
 
     public BookMutationService(
         BookMutationRepositoryImpl bookMutationRepository,
@@ -215,6 +218,17 @@ public class BookMutationService {
         ContentTags contentTags = ContentTags.of(tags);
 
         bookMutationRepository.updateTags(bookId, contentTags);
+    }
+
+    public void updateMeaningful(String bookId, boolean meaningful, Requester requester) {
+        log.info("update book meaningful: {} {}", bookId, meaningful);
+
+        if(!requester.getUserId().equals(ADMIN_UID)){
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
+        }
+
+        bookMutationRepository.updateMeaningful(bookId, meaningful);
     }
 
     public String addSection(String bookId, String title, Requester requester) {

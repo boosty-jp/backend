@@ -9,6 +9,7 @@ import jp.boosty.backend.infrastructure.datamodel.book.BookListEntity;
 import jp.boosty.backend.infrastructure.repository.book.BookQueryRepositoryImpl;
 import jp.boosty.backend.infrastructure.repository.payment.PaymentRepositoryImpl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 public class BookQueryService {
     private final BookQueryRepositoryImpl bookQueryRepository;
     private final PaymentRepositoryImpl paymentRepository;
+    @Value("${admin.uid}")
+    private String ADMIN_UID;
 
     public BookQueryService(
         BookQueryRepositoryImpl bookQueryRepository, PaymentRepositoryImpl paymentRepository) {
@@ -115,6 +118,14 @@ public class BookQueryService {
 
     public BookListEntity findNewBooks(int page) {
         return bookQueryRepository.findNew(page);
+    }
+
+    public BookListEntity findAllNewBooks(int page, Requester requester) {
+        if (!requester.getUserId().equals(ADMIN_UID)) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
+                                             GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());
+        }
+        return bookQueryRepository.findAllNew(page);
     }
 
     public BookListEntity findFamousBooks(int page) {

@@ -49,7 +49,7 @@ public class BookDataFetcher {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
             String bookId = dataFetchingEnvironment.getArgument("bookId");
 
-            return BookResponseConverter.toBookResponse(bookQueryService.findBook(bookId, requester), true );
+            return BookResponseConverter.toBookResponse(bookQueryService.findBook(bookId, requester), true);
         };
     }
 
@@ -167,6 +167,22 @@ public class BookDataFetcher {
         };
     }
 
+    public DataFetcher allNewBooksDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            int page = dataFetchingEnvironment.getArgument("page");
+
+            BookListEntity result = bookQueryService.findAllNewBooks(page, requester);
+
+            return BookListResponse.builder()
+                                   .books(result.getBooks()
+                                                .stream()
+                                                .map(r -> BookResponseConverter.toBookResponseForOwnList(r))
+                                                .collect(Collectors.toList()))
+                                   .sumCount(result.getSumCount());
+        };
+    }
+
     public DataFetcher famousBooksDataFetcher() {
         return dataFetchingEnvironment -> {
             int page = dataFetchingEnvironment.getArgument("page");
@@ -269,6 +285,17 @@ public class BookDataFetcher {
             List<String> tags = dataFetchingEnvironment.getArgument("tags");
 
             bookMutationService.updateTags(bookId, tags, requester);
+            return true;
+        };
+    }
+
+    public DataFetcher updateBookMeaningful() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String bookId = dataFetchingEnvironment.getArgument("bookId");
+            boolean meaningful = dataFetchingEnvironment.getArgument("meaningful");
+
+            bookMutationService.updateMeaningful(bookId, meaningful, requester);
             return true;
         };
     }

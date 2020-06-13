@@ -21,6 +21,7 @@ public class BookResponse {
     private List<String> features;
     private BookTargetResponse targets;
     private String status;
+    private boolean meaningful;
     private String lastViewedPageId;
 
     private boolean purchased;

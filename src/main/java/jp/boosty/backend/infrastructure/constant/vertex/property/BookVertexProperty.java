@@ -6,7 +6,8 @@ public enum BookVertexProperty {
     PRICE("price"),
     LEVEL_START("levelStart"),
     LEVEL_END("levelEnd"),
-    IMAGE_URL("imageUrl");
+    IMAGE_URL("imageUrl"),
+    MEANINGFUL("meaningful");
 
     private String value;
 

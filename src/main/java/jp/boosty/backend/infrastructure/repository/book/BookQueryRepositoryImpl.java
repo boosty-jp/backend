@@ -83,7 +83,9 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                .by(__.out(EdgeLabel.INCLUDE.getString())
                                      .hasLabel(VertexLabel.PAGE.getString())
                                      .project("pageBase", "pageNumber")
-                                     .by(__.valueMap(PageVertexProperty.TITLE.getString(),PageVertexProperty.CAN_PREVIEW.getString()).with(WithOptions.tokens))
+                                     .by(__.valueMap(PageVertexProperty.TITLE.getString(),
+                                                     PageVertexProperty.CAN_PREVIEW.getString())
+                                           .with(WithOptions.tokens))
                                      .by(__.inE(EdgeLabel.INCLUDE.getString())
                                            .values(IncludeEdgeProperty.NUMBER.getString()))
                                      .fold())
@@ -147,7 +149,9 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                .by(__.out(EdgeLabel.INCLUDE.getString())
                                      .hasLabel(VertexLabel.PAGE.getString())
                                      .project("pageBase", "pageNumber")
-                                     .by(__.valueMap(PageVertexProperty.TITLE.getString(),PageVertexProperty.CAN_PREVIEW.getString()).with(WithOptions.tokens))
+                                     .by(__.valueMap(PageVertexProperty.TITLE.getString(),
+                                                     PageVertexProperty.CAN_PREVIEW.getString())
+                                           .with(WithOptions.tokens))
                                      .by(__.inE(EdgeLabel.INCLUDE.getString())
                                            .values(IncludeEdgeProperty.NUMBER.getString()))
                                      .fold())
@@ -551,14 +555,57 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
 
-        List<BookEntity> bookEntities =
-            allResults.stream().map(r -> BookEntityConverter.toBookEntityForRecentlyViewedList(r)).collect(Collectors.toList());
+        List<BookEntity> bookEntities = allResults.stream()
+                                                  .map(r -> BookEntityConverter.toBookEntityForRecentlyViewedList(r))
+                                                  .collect(Collectors.toList());
 
         return BookListEntity.builder().books(bookEntities).sumCount(6).build();
     }
 
     @Override
     public BookListEntity findNew(int page) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<String, Object>> allResults;
+        long sumCount;
+        try {
+            allResults = g.V()
+                          .out(EdgeLabel.PUBLISH.getString())
+                          .hasLabel(VertexLabel.BOOK.getString())
+                          .has(BookVertexProperty.MEANINGFUL.getString(), true)
+                          .order()
+                          .by(coalesce(inE(EdgeLabel.PUBLISH.getString()).values(DateProperty.CREATE_TIME.getString()),
+                                       values(DateProperty.CREATE_TIME.getString())), Order.desc)
+                          .range(12 * (page - 1), 12 * page)
+                          .project("base", "author")
+                          .by(__.valueMap().with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.PUBLISH.getString(),
+                                    EdgeLabel.DRAFT.getString(),
+                                    EdgeLabel.SUSPEND.getString(),
+                                    EdgeLabel.DELETE.getString())
+                                .hasLabel(VertexLabel.USER.getString())
+                                .valueMap()
+                                .with(WithOptions.tokens))
+                          .toList();
+
+            sumCount = g.E()
+                        .hasLabel(EdgeLabel.PUBLISH.getString())
+                        .where(outV().hasLabel(VertexLabel.BOOK.getString()))
+                        .count()
+                        .next();
+        } catch (Exception e) {
+            log.error("findNew error: {} {}", page, e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+
+        List<BookEntity> bookEntities =
+            allResults.stream().map(r -> BookEntityConverter.toBookEntityForOwnList(r)).collect(Collectors.toList());
+
+        return BookListEntity.builder().books(bookEntities).sumCount(sumCount).build();
+    }
+
+    @Override
+    public BookListEntity findAllNew(int page) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         List<Map<String, Object>> allResults;
         long sumCount;
@@ -581,7 +628,11 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .with(WithOptions.tokens))
                           .toList();
 
-            sumCount = g.E().hasLabel(EdgeLabel.PUBLISH.getString()).count().next();
+            sumCount = g.E()
+                        .hasLabel(EdgeLabel.PUBLISH.getString())
+                        .where(outV().hasLabel(VertexLabel.BOOK.getString()))
+                        .count()
+                        .next();
         } catch (Exception e) {
             log.error("findNew error: {} {}", page, e.getMessage());
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -604,6 +655,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .out(EdgeLabel.PUBLISH.getString())
                           .hasLabel(VertexLabel.BOOK.getString())
                           .has(BookVertexProperty.PRICE.getString(), P.gt(0))
+                          .has(BookVertexProperty.MEANINGFUL.getString(), true)
                           .project("base", "purchaseCount", "author")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PURCHASE.getString()).count())
@@ -618,7 +670,11 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .by(select("purchaseCount"), Order.desc)
                           .range(12 * (page - 1), 12 * page)
                           .toList();
-            sumCount = g.E().hasLabel(EdgeLabel.PUBLISH.getString()).count().next();
+            sumCount = g.E()
+                        .hasLabel(EdgeLabel.PUBLISH.getString())
+                        .where(outV().hasLabel(VertexLabel.BOOK.getString()))
+                        .count()
+                        .next();
         } catch (Exception e) {
             log.error("findFamous error: {} {}", page, e.getMessage());
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -644,6 +700,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .out(EdgeLabel.PUBLISH.getString())
                           .hasLabel(VertexLabel.BOOK.getString())
                           .has(BookVertexProperty.PRICE.getString(), P.eq(0))
+                          .has(BookVertexProperty.MEANINGFUL.getString(), true)
                           .project("base", "purchaseCount", "author")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PURCHASE.getString()).count())
@@ -663,7 +720,11 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                      .map(r -> BookEntityConverter.toBookEntityForOwnList(r))
                                      .collect(Collectors.toList());
 
-            sumCount = g.E().hasLabel(EdgeLabel.PUBLISH.getString()).count().next();
+            sumCount = g.E()
+                        .hasLabel(EdgeLabel.PUBLISH.getString())
+                        .where(outV().hasLabel(VertexLabel.BOOK.getString()))
+                        .count()
+                        .next();
 
         } catch (Exception e) {
             log.error("findFamousFree error: {} {}", page, e.getMessage());

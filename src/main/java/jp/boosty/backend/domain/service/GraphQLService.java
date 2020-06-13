@@ -91,6 +91,8 @@ public class GraphQLService {
                                                                        bookDataFetcher.recentlyViewedBooksDataFetcher())
                                                           .dataFetcher("newBooks",
                                                                        bookDataFetcher.newBooksDataFetcher())
+                                                          .dataFetcher("allNewBooks",
+                                                                       bookDataFetcher.allNewBooksDataFetcher())
                                                           .dataFetcher("famousBooks",
                                                                        bookDataFetcher.famousBooksDataFetcher())
                                                           .dataFetcher("famousFreeBooks",
@@ -131,6 +133,8 @@ public class GraphQLService {
                                                                        bookDataFetcher.updateBookTargetsDataFetcher())
                                                           .dataFetcher("updateBookTags",
                                                                        bookDataFetcher.updateBookTagsDataFetcher())
+                                                          .dataFetcher("updateBookMeaningful",
+                                                                       bookDataFetcher.updateBookMeaningful())
                                                           .dataFetcher("purchaseBook",
                                                                        bookDataFetcher.purchaseBookDataFetcher())
                                                           .dataFetcher("addBookShelf",

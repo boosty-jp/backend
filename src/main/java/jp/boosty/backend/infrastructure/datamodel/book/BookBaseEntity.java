@@ -18,6 +18,7 @@ public class BookBaseEntity {
     private int levelEnd;
     private List<String> targetDescriptions;
     private String status;
+    private boolean meaningful;
     private long createdDate;
     private long updatedDate;
 }

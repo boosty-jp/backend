@@ -242,6 +242,22 @@ public class BookMutationRepositoryImpl implements BookMutationRepository {
     }
 
     @Override
+    public void updateMeaningful(String bookId, boolean meaningful) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+
+        try {
+            g.V(bookId)
+             .hasLabel(VertexLabel.BOOK.getString())
+             .property(single, BookVertexProperty.MEANINGFUL.getString(), meaningful)
+             .next();
+        } catch (Exception e) {
+            log.error("update meaningful error: {}", e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+    }
+
+    @Override
     public String addSection(String bookId, BookSectionTitle name, long sectionCount) {
         GraphTraversalSource g = neptuneClient.newTraversal();
         long now = System.currentTimeMillis();

@@ -27,6 +27,8 @@ public interface BookQueryRepository {
 
     BookListEntity findNew(int page);
 
+    BookListEntity findAllNew(int page);
+
     BookListEntity findFamous(int page);
 
     BookListEntity findFamousFree(int page);

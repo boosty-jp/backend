@@ -17,3 +17,6 @@ firebase:
   databaseUrl: ${FIREBASE_DATABASE_URL}
 stripe:
   apiKey: ${STRIPE_API_KEY}
+admin:
+  uid: ${ADMIN_UID}
+
