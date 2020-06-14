@@ -84,35 +84,14 @@ public class UserMutationRepositoryImpl implements UserMutationRepository {
             g.V()
              .hasId(user.getUserId().getValue())
              .hasLabel(VertexLabel.USER.getString())
-             .fold()
-             .coalesce(unfold().V(user.getUserId().getValue())
-                               .property(single,
-                                         UserVertexProperty.DISPLAY_NAME.getString(),
-                                         user.getDisplayName().getValue())
-                               .property(single,
-                                         UserVertexProperty.DESCRIPTION.getString(),
-                                         user.getDescription().getValue())
-                               .property(single, UserVertexProperty.URL.getString(), user.getUrl().getValue())
-                               .property(single,
-                                         UserVertexProperty.IMAGE_URL.getString(),
-                                         user.getImageUrl().getValue())
-                               .property(single,
-                                         UserVertexProperty.TWITTER_ID.getString(),
-                                         user.getTwitterId().getValue())
-                               .property(single,
-                                         UserVertexProperty.GITHUB_ID.getString(),
-                                         user.getGithubId().getValue())
-                               .property(single, UserVertexProperty.UPDATED_TIME.getString(), now),
-                       g.addV(VertexLabel.USER.getString()).property("id", user.getUserId().getValue()))
-             .property(UserVertexProperty.DISPLAY_NAME.getString(), user.getDisplayName().getValue())
-             .property(UserVertexProperty.DESCRIPTION.getString(), user.getDescription().getValue())
-             .property(UserVertexProperty.URL.getString(), user.getUrl().getValue())
-             .property(UserVertexProperty.IMAGE_URL.getString(), user.getImageUrl().getValue())
-             .property(UserVertexProperty.TWITTER_ID.getString(), user.getTwitterId().getValue())
-             .property(UserVertexProperty.GITHUB_ID.getString(), user.getGithubId().getValue())
-             .property(UserVertexProperty.STRIPE_ID.getString(), "")
-             .property(UserVertexProperty.DELETED.getString(), false)
-             .property(UserVertexProperty.UPDATED_TIME.getString(), now)
+             .property(single, UserVertexProperty.DISPLAY_NAME.getString(), user.getDisplayName().getValue())
+             .property(single, UserVertexProperty.DESCRIPTION.getString(), user.getDescription().getValue())
+             .property(single, UserVertexProperty.URL.getString(), user.getUrl().getValue())
+             .property(single, UserVertexProperty.IMAGE_URL.getString(), user.getImageUrl().getValue())
+             .property(single, UserVertexProperty.TWITTER_ID.getString(), user.getTwitterId().getValue())
+             .property(single, UserVertexProperty.GITHUB_ID.getString(), user.getGithubId().getValue())
+             .property(single, UserVertexProperty.DELETED.getString(), false)
+             .property(single, UserVertexProperty.UPDATED_TIME.getString(), now)
              .next();
         } catch (Exception e) {
             log.error("updateOne error: {} {}", user, e.getMessage());
