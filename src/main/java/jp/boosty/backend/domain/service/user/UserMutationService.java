@@ -35,7 +35,7 @@ public class UserMutationService {
     }
 
     public String createUser(String displayName, String imageUrl, Requester requester) {
-        log.info("create user: {} {} {}", requester.getUserId(), imageUrl, displayName);
+        log.info("create user: {} {} {}", imageUrl, displayName, requester.getUserId());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -46,10 +46,7 @@ public class UserMutationService {
     }
 
     public void updateUser(UserInput userInput, Requester requester) {
-        log.info("update user name: {}", userInput.getDisplayName());
-        log.info("update user imageUrl: {}", userInput.getImageUrl());
-        log.info("update user url: {}", userInput.getUrl());
-        log.info("update user description size: {}", userInput.getDescription().length());
+        log.info("update user: {} {}", userInput, requester.getUserId());
 
         User user = UserConverter.toUser(userInput, requester.getUserId());
 
@@ -80,7 +77,7 @@ public class UserMutationService {
     }
 
     public void registerStripe(String userId, String code, Requester requester) {
-        log.info("register stripe: {} {} {}", userId, code, requester);
+        log.info("register stripe: {} {} {}", userId, code, requester.getUserId());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());

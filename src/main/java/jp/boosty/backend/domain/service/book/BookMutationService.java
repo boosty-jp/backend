@@ -61,7 +61,7 @@ public class BookMutationService {
 
 
     public void publish(String bookId, Requester requester) {
-        log.info("publish bookId: {}", bookId);
+        log.info("publish bookId: {} {}", bookId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -78,10 +78,11 @@ public class BookMutationService {
 
 
         bookMutationRepository.publish(bookId, book, requester.getUserId());
+        log.info("publish complete: {} {}", bookId, requester.getUserId());
     }
 
     public void suspend(String bookId, Requester requester) {
-        log.info("suspend bookId: {}", bookId);
+        log.info("suspend bookId: {} {}", bookId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -95,7 +96,7 @@ public class BookMutationService {
     }
 
     public void purchase(String paymentIntentId, Requester requester) {
-        log.info("purchase paymentIntentId: {}", paymentIntentId);
+        log.info("purchase paymentIntentId: {} {}", paymentIntentId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -112,7 +113,7 @@ public class BookMutationService {
 
         //https://stripe.com/docs/api/payment_intents/object#payment_intent_object-status
         if (!paymentEntity.getStatus().equals(PaymentStatus.SUCCEEDED.getString())) {
-            log.error("payment status: {}", paymentEntity.getStatus());
+            log.error("payment status: {} {}", paymentEntity.getStatus(), requester.getUserId());
             throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
                                              GraphQLErrorMessage.PAYMENT_NOT_SUCCEEDED.getString());
         }
@@ -130,7 +131,7 @@ public class BookMutationService {
     }
 
     public void addBookShelf(String bookId, Requester requester) {
-        log.info("purchase bookId: {}", bookId);
+        log.info("purchase bookId: {} {}", bookId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -168,7 +169,7 @@ public class BookMutationService {
     }
 
     public void updateBase(String bookId, BookBaseInput bookBaseInput, Requester requester) {
-        log.info("update book base info: {} {}", bookBaseInput, bookId);
+        log.info("update book base info: {} {} {}", bookBaseInput, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         BookBase base = BookBaseFactory.make(bookBaseInput);
@@ -183,7 +184,7 @@ public class BookMutationService {
     }
 
     public void updateImageUrl(String bookId, String imageUrl, Requester requester) {
-        log.info("update book imageUrl: {} {}", imageUrl, bookId);
+        log.info("update book imageUrl: {} {} {}", imageUrl, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         ContentImageUrl url = ContentImageUrl.of(imageUrl);
@@ -192,7 +193,7 @@ public class BookMutationService {
     }
 
     public void updateFeatures(String bookId, List<String> features, Requester requester) {
-        log.info("update book features: {} {}", features, bookId);
+        log.info("update book features: {} {} {}", features, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         BookFeatures bookFeatures =
@@ -202,7 +203,7 @@ public class BookMutationService {
     }
 
     public void updateTargets(String bookId, BookTargetsInput targetsInput, Requester requester) {
-        log.info("update book target: {} {}", targetsInput, bookId);
+        log.info("update book target: {} {} {}", targetsInput, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
 
@@ -212,7 +213,7 @@ public class BookMutationService {
     }
 
     public void updateTags(String bookId, List<String> tags, Requester requester) {
-        log.info("update book tags: {} {}", tags, bookId);
+        log.info("update book tags: {} {} {}", tags, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         ContentTags contentTags = ContentTags.of(tags);
@@ -221,7 +222,7 @@ public class BookMutationService {
     }
 
     public void updateMeaningful(String bookId, boolean meaningful, Requester requester) {
-        log.info("update book meaningful: {} {}", bookId, meaningful);
+        log.info("update book meaningful: {} {} {}", bookId, meaningful, requester.getUserId());
 
         if(!requester.getUserId().equals(ADMIN_UID)){
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
@@ -232,7 +233,7 @@ public class BookMutationService {
     }
 
     public String addSection(String bookId, String title, Requester requester) {
-        log.info("add section title: {} {}", title, bookId);
+        log.info("add section title: {} {} {}", title, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         BookSectionTitle sectionName = BookSectionTitle.of(title);
@@ -247,7 +248,7 @@ public class BookMutationService {
     }
 
     public void updateSectionTitle(String bookId, String sectionId, String title, Requester requester) {
-        log.info("update section title: {} {} {}", title, sectionId, bookId);
+        log.info("update section title: {} {} {} {}", title, sectionId, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         BookSectionTitle sectionName = BookSectionTitle.of(title);
@@ -256,7 +257,7 @@ public class BookMutationService {
     }
 
     public void reorderSections(String bookId, List<String> sectionIds, Requester requester) {
-        log.info("reorder sections sectionIds: {} {}", sectionIds, bookId);
+        log.info("reorder sections sectionIds: {} {} {}", sectionIds, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         List<String> originalIds = bookQueryRepository.findSectionIds(bookId);
@@ -273,7 +274,7 @@ public class BookMutationService {
     }
 
     public void reorderPages(String bookId, String sectionId, List<String> pageIds, Requester requester) {
-        log.info("reorder page pageIds: {} {} {}", pageIds, sectionId, bookId);
+        log.info("reorder page pageIds: {} {} {} {}", pageIds, sectionId, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         List<String> originalIds = bookQueryRepository.findPageIds(sectionId);
@@ -290,7 +291,7 @@ public class BookMutationService {
     }
 
     public String createPage(String bookId, String sectionId, Requester requester) {
-        log.info("create page to: {} {}", sectionId, bookId);
+        log.info("create page to: {} {} {}", sectionId, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         long pageCount = bookQueryRepository.findPageCount(sectionId);
@@ -303,14 +304,14 @@ public class BookMutationService {
     }
 
     public void deleteSection(String bookId, String sectionId, Requester requester) {
-        log.info("delete section id: {} {}", sectionId, bookId);
+        log.info("delete section id: {} {} {}", sectionId, bookId, requester.getUserId());
         validateAuthor(bookId, requester);
 
         bookMutationRepository.deleteSection(bookId, sectionId);
     }
 
     public void delete(String bookId, Requester requester) {
-        log.info("delete articleId: {}", bookId);
+        log.info("delete articleId: {} {}", bookId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());

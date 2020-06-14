@@ -36,7 +36,7 @@ public class PageQueryService {
     }
 
     public PageEntity findPage(String bookId, String pageId, Requester requester) {
-        log.info("find page: {} {}", bookId, pageId);
+        log.info("find page: {} {} {}", bookId, pageId, requester.getUserId());
         checkReadable(bookId,pageId,requester);
 
         if(requester.isGuest()){
@@ -55,7 +55,7 @@ public class PageQueryService {
     }
 
     public PageListEntity findCreatedPages(String userId, SearchConditionInput searchConditionInput) {
-        log.info("find created page: {}", searchConditionInput);
+        log.info("find created page: {} {}", searchConditionInput, userId);
         SearchCondition searchCondition = SearchConditionFactory.makeFilteredPublished(searchConditionInput);
 
         return pageQueryRepository.findCreated(userId, searchCondition);
@@ -63,7 +63,7 @@ public class PageQueryService {
 
     public PageListEntity findCreatedPagesBySelf(
         Requester requester, SearchConditionInput searchConditionInput) {
-        log.info("find created page by self: {}", searchConditionInput);
+        log.info("find created page by self: {} {}", searchConditionInput, requester.getUserId());
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 
         if (!searchCondition.createdFilter()) {
@@ -77,7 +77,7 @@ public class PageQueryService {
 
     public LikedPageListEntity findLikedPages(
         Requester requester, int page) {
-        log.info("find liked pages: {}", page);
+        log.info("find liked pages: {} {}", page, requester.getUserId());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(),
                                              GraphQLErrorMessage.FORBIDDEN_REQUEST.getString());

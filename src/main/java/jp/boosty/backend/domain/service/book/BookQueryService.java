@@ -37,7 +37,7 @@ public class BookQueryService {
     }
 
     public BookEntity findBook(String bookId, Requester requester) {
-        log.info("find book: {}", bookId);
+        log.info("find book: {} {}", bookId, requester.getUserId());
         BookEntity bookEntity;
         if (requester.isGuest()) {
             bookEntity = bookQueryRepository.findOneForGuest(bookId);
@@ -54,7 +54,7 @@ public class BookQueryService {
     }
 
     public String findPageIdToRead(String bookId, Requester requester) {
-        log.info("find pageId to read: {}", bookId);
+        log.info("find pageId to read: {} {}", bookId, requester.getUserId());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
         }
@@ -68,7 +68,7 @@ public class BookQueryService {
     }
 
     public BookListEntity findCreatedBook(String userId, SearchConditionInput searchConditionInput) {
-        log.info("find createdBook: {}", searchConditionInput);
+        log.info("find createdBook: {} {}", searchConditionInput, userId);
         SearchCondition searchCondition = SearchConditionFactory.makeFilteredPublished(searchConditionInput);
 
         return bookQueryRepository.findCreated(userId, searchCondition);
@@ -76,7 +76,7 @@ public class BookQueryService {
 
     public BookListEntity findCreatedBooksBySelf(
         Requester requester, SearchConditionInput searchConditionInput) {
-        log.info("find createdBook by self: {}", searchConditionInput);
+        log.info("find createdBook by self: {} {}", searchConditionInput ,requester.getUserId());
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 
         if (!searchCondition.createdFilter()) {
@@ -88,7 +88,7 @@ public class BookQueryService {
     }
 
     public BookListEntity findOwnBooks(Requester requester, int page) {
-        log.info("find own books: {}", page);
+        log.info("find own books: {} {}", page, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -150,7 +150,7 @@ public class BookQueryService {
     }
 
     public PaymentIntentResponse findPaymentIntent(String bookId, Requester requester) {
-        log.info("find payment intent: {}", bookId);
+        log.info("find payment intent: {} {}", bookId, requester.getUserId());
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.UNAUTHORIZED.value(),
                                              GraphQLErrorMessage.NEED_LOGIN.getString());

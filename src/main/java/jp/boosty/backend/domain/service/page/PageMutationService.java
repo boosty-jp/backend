@@ -29,7 +29,7 @@ public class PageMutationService {
     }
 
     public void save(String bookId, String pageId, PageInput pageInput, Requester requester) {
-        log.info("save page: {} {} {}", pageInput, pageId, bookId);
+        log.info("save page: {} {} {} {}", pageInput, pageId, bookId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -46,7 +46,7 @@ public class PageMutationService {
     }
 
     public void delete(String pageId, Requester requester) {
-        log.info("delete pageId: {}", pageId);
+        log.info("delete pageId: {} {}", pageId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -61,7 +61,7 @@ public class PageMutationService {
     }
 
     public void like(String pageId, Requester requester) {
-        log.info("like pageId: {}", pageId);
+        log.info("like pageId: {} {}", pageId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -71,7 +71,7 @@ public class PageMutationService {
     }
 
     public void unLike(String pageId, Requester requester) {
-        log.info("unLike pageId: {}", pageId);
+        log.info("unLike pageId: {} {}", pageId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -81,7 +81,7 @@ public class PageMutationService {
     }
 
     public void updateTrialRead(String pageId, boolean canPreview, Requester requester) {
-        log.info("update trial read: {} {}", canPreview, pageId);
+        log.info("update trial read: {} {} {}", canPreview, pageId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
