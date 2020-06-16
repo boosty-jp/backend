@@ -213,6 +213,22 @@ public class BookDataFetcher {
         };
     }
 
+    public DataFetcher likedBooksDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            int page = dataFetchingEnvironment.getArgument("page");
+
+            BookListEntity result = bookQueryService.findLikedBooks(page,requester);
+
+            return BookListResponse.builder()
+                                   .books(result.getBooks()
+                                                .stream()
+                                                .map(r -> BookResponseConverter.toBookResponseForOwnList(r))
+                                                .collect(Collectors.toList()))
+                                   .sumCount(result.getSumCount());
+        };
+    }
+
     public DataFetcher paymentIntentDataFetcher() {
         return dataFetchingEnvironment -> {
             Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
@@ -414,6 +430,26 @@ public class BookDataFetcher {
             String bookId = dataFetchingEnvironment.getArgument("bookId");
 
             bookMutationService.addBookShelf(bookId, requester);
+            return true;
+        };
+    }
+
+    public DataFetcher likeBookDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String bookId = dataFetchingEnvironment.getArgument("bookId");
+
+            bookMutationService.likeBook(bookId, requester);
+            return true;
+        };
+    }
+
+    public DataFetcher unLikeBookDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Requester requester = requesterConverter.toRequester(dataFetchingEnvironment);
+            String bookId = dataFetchingEnvironment.getArgument("bookId");
+
+            bookMutationService.unLikeBook(bookId, requester);
             return true;
         };
     }

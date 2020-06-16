@@ -33,6 +33,8 @@ public interface BookQueryRepository {
 
     BookListEntity findFamousFree(int page);
 
+    BookListEntity findLiked(int page, String userId);
+
     BookListEntity findSearched(String query, int page);
 
     List<BookEntity> findActioned(String userId, SearchCondition searchCondition);

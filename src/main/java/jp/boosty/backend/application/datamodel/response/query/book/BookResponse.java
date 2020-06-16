@@ -27,6 +27,9 @@ public class BookResponse {
     private boolean purchased;
     private long purchasedCount;
 
+    private boolean liked;
+    private long likedCount;
+
     private List<TagResponse> tags;
     private List<SectionResponse> sections;
     private UserResponse author;

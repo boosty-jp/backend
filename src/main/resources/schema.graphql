@@ -17,6 +17,7 @@ type Query {
     allNewBooks(page: Int!): BookList!
     famousBooks(page: Int!): BookList!
     famousFreeBooks(page: Int!): BookList!
+    likedBooks(page: Int!): BookList!
     paymentIntent(bookId: ID!): PaymentIntent
 
     user(userId: ID!): User!
@@ -103,6 +104,9 @@ type Book {
 
     purchased: Boolean
     purchasedCount: Int
+
+    liked: Boolean
+    likedCount: Int
 
     tags: [Tag]
     sections: [Section]
@@ -228,6 +232,8 @@ type Mutation {
     updateBookTargets(bookId: ID!, targets: BookTargetsInput!): Boolean
     updateBookTags(bookId: ID!, tags: [String]!): Boolean
     updateBookMeaningful(bookId: ID!, meaningful: Boolean!): Boolean
+    likeBook(bookId: ID!): Boolean
+    unLikeBook(bookId: ID!): Boolean
 
     publishBook(bookId: ID!): Boolean
     suspendBook(bookId: ID!): Boolean

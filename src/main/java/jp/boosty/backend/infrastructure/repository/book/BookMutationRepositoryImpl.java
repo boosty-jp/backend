@@ -446,7 +446,34 @@ public class BookMutationRepositoryImpl implements BookMutationRepository {
 
         clearStatus(g, bookId, userId);
         addStatus(g, bookId, EdgeLabel.PUBLISH.getString(), userId, now);
+    }
 
+    @Override
+    public void like(String bookId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        long now = System.currentTimeMillis();
+
+        clearLike(g, bookId, userId);
+
+        try {
+            g.V(bookId)
+             .hasLabel(VertexLabel.BOOK.getString())
+             .addE(EdgeLabel.LIKE.getString())
+             .property(T.id, EdgeIdCreator.createId(userId, bookId, EdgeLabel.LIKE.getString()))
+             .property(DateProperty.CREATE_TIME.getString(), now)
+             .from(g.V(userId).hasLabel(VertexLabel.USER.getString()))
+             .next();
+        } catch (Exception e) {
+            log.error("like error: {}", e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+    }
+
+    @Override
+    public void unLike(String bookId, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        clearLike(g, bookId, userId);
     }
 
     @Override
@@ -521,6 +548,21 @@ public class BookMutationRepositoryImpl implements BookMutationRepository {
              .iterate();
         } catch (Exception e) {
             log.error("clear status error: {}", e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+    }
+
+    private void clearLike(GraphTraversalSource g, String bookId, String userId) {
+        try {
+            g.V(bookId)
+             .hasLabel(VertexLabel.BOOK.getString())
+             .inE(EdgeLabel.LIKE.getString())
+             .where(outV().hasLabel(VertexLabel.USER.getString()).hasId(userId))
+             .drop()
+             .iterate();
+        } catch (Exception e) {
+            log.error("clear like error: {}", e.getMessage());
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }

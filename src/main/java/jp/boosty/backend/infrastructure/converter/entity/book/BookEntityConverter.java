@@ -20,6 +20,8 @@ public class BookEntityConverter {
         Map<Object, Object> authorResult = (Map<Object, Object>) allResult.get("author");
         String statusResult = allResult.get("status").toString();
         boolean purchased = (boolean) allResult.get("purchased");
+        long likedCount = (long) allResult.get("likedCount");
+        boolean liked = (boolean) allResult.get("liked");
         String lastViewedPageId = (String) allResult.get("lastViewedPageId");
 
         return BookEntity.builder()
@@ -36,6 +38,8 @@ public class BookEntityConverter {
                          .lastViewedPageId(lastViewedPageId)
                          .author(UserEntityConverter.toUserEntity(authorResult))
                          .purchased(purchased)
+                         .liked(liked)
+                         .likedCount(likedCount)
                          .build();
     }
 
@@ -48,6 +52,7 @@ public class BookEntityConverter {
         Map<Object, Object> authorResult = (Map<Object, Object>) allResult.get("author");
         List<Map<Object, Object>> tagResult = (List<Map<Object, Object>>) allResult.get("tags");
         String statusResult = allResult.get("status").toString();
+        long likedCount = (long) allResult.get("likedCount");
 
         return BookEntity.builder()
                          .base(BookBaseEntityConverter.toBookBaseEntity(baseResult,
@@ -61,6 +66,9 @@ public class BookEntityConverter {
                          .tags(tagResult.stream()
                                         .map(t -> TagEntityConverter.toTagEntity(t))
                                         .collect(Collectors.toList()))
+                         .purchased(false)
+                         .liked(false)
+                         .likedCount(likedCount)
                          .build();
     }
 
@@ -89,10 +97,12 @@ public class BookEntityConverter {
     public static BookEntity toBookEntityForOwnList(Map<String, Object> results) {
         Map<Object, Object> baseResult = (Map<Object, Object>) results.get("base");
         Map<Object, Object> authorResult = (Map<Object, Object>) results.get("author");
+        long likedCount = (long) results.get("likedCount");
         return BookEntity.builder()
                          .base(BookBaseEntityConverter.toBookBaseEntityForList(baseResult,
                                                                                EdgeLabel.PUBLISH.getString()))
                          .author(UserEntityConverter.toUserEntity(authorResult))
+                         .likedCount(likedCount)
                          .build();
     }
 

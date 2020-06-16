@@ -97,6 +97,8 @@ public class GraphQLService {
                                                                        bookDataFetcher.famousBooksDataFetcher())
                                                           .dataFetcher("famousFreeBooks",
                                                                        bookDataFetcher.famousFreeBooksDataFetcher())
+                                                          .dataFetcher("likedBooks",
+                                                                       bookDataFetcher.likedBooksDataFetcher())
                                                           .dataFetcher("user", userDataFetcher.userDataFetcher())
                                                           .dataFetcher("account", userDataFetcher.accountDataFetcher())
                                                           .dataFetcher("canSale", userDataFetcher.canSaleDataFetcher())
@@ -155,6 +157,10 @@ public class GraphQLService {
                                                                        bookDataFetcher.suspendBookDataFetcher())
                                                           .dataFetcher("deleteBook",
                                                                        bookDataFetcher.deleteBookDataFetcher())
+                                                          .dataFetcher("likeBook",
+                                                                       bookDataFetcher.likeBookDataFetcher())
+                                                          .dataFetcher("unLikeBook",
+                                                                       bookDataFetcher.unLikeBookDataFetcher())
                                                           .dataFetcher("createUser",
                                                                        userDataFetcher.createUserDataFetcher())
                                                           .dataFetcher("updateUser",

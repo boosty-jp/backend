@@ -47,6 +47,10 @@ public interface BookMutationRepository {
 
     void delete(String bookId, String userId);
 
+    void like(String bookId, String userId);
+
+    void unLike(String bookId, String userId);
+
     void purchase(PaymentEntity paymentEntity, String userId, String paymentIntentId);
 
     void addBookShelf(String bookId, String userId);

@@ -76,7 +76,7 @@ public class BookQueryService {
 
     public BookListEntity findCreatedBooksBySelf(
         Requester requester, SearchConditionInput searchConditionInput) {
-        log.info("find createdBook by self: {} {}", searchConditionInput ,requester.getUserId());
+        log.info("find createdBook by self: {} {}", searchConditionInput, requester.getUserId());
         SearchCondition searchCondition = SearchConditionFactory.make(searchConditionInput);
 
         if (!searchCondition.createdFilter()) {
@@ -134,6 +134,14 @@ public class BookQueryService {
 
     public BookListEntity findFamousFreeBooks(int page) {
         return bookQueryRepository.findFamousFree(page);
+    }
+
+    public BookListEntity findLikedBooks(int page, Requester requester) {
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.BAD_REQUEST.value(),
+                                             GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+        return bookQueryRepository.findLiked(page, requester.getUserId());
     }
 
     //TODO: ドメイン化

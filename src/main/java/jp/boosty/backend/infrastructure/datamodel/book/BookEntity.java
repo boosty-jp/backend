@@ -17,4 +17,6 @@ public class BookEntity {
     private UserEntity author;
     private long purchaseCount;
     private boolean purchased;
+    private long likedCount;
+    private boolean liked;
 }

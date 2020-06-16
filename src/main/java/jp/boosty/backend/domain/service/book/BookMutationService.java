@@ -311,7 +311,7 @@ public class BookMutationService {
     }
 
     public void delete(String bookId, Requester requester) {
-        log.info("delete articleId: {} {}", bookId, requester.getUserId());
+        log.info("delete bookId: {} {}", bookId, requester.getUserId());
 
         if (requester.isGuest()) {
             throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
@@ -325,6 +325,23 @@ public class BookMutationService {
         bookMutationRepository.delete(bookId, requester.getUserId());
     }
 
+    public void likeBook(String bookId, Requester requester) {
+        log.info("like book: {} {} {}", bookId, requester.getUserId());
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        bookMutationRepository.like(bookId, requester.getUserId());
+    }
+
+    public void unLikeBook(String bookId, Requester requester) {
+        log.info("unLike book: {} {} {}", bookId, requester.getUserId());
+        if (requester.isGuest()) {
+            throw new GraphQLCustomException(HttpStatus.FORBIDDEN.value(), GraphQLErrorMessage.NEED_LOGIN.getString());
+        }
+
+        bookMutationRepository.unLike(bookId, requester.getUserId());
+    }
 
     private boolean isOwner(String bookId, String userId) {
         // 新規投稿じゃなければ、更新できるユーザーかチェックする

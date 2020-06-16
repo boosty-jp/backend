@@ -65,7 +65,9 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                   "author",
                                   "status",
                                   "purchased",
-                                  "lastViewedPageId")
+                                  "lastViewedPageId",
+                                  "liked",
+                                  "likedCount")
                          .by(__.valueMap().with(WithOptions.tokens))
                          .by(__.out(EdgeLabel.INCLUDE.getString())
                                .hasLabel(VertexLabel.BOOK_FEATURE.getString())
@@ -113,6 +115,11 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                          .by(__.coalesce(__.inE(EdgeLabel.VIEW.getString())
                                            .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
                                            .values(ViewEdgeProperty.PAGE_ID.getString()), constant("")))
+                         .by(__.coalesce(__.inE(EdgeLabel.LIKE.getString())
+                                           .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+                                           .limit(1)
+                                           .constant(true), constant(false)))
+                         .by(__.in(EdgeLabel.LIKE.getString()).count())
                          .next();
         } catch (Exception e) {
             log.error("find book error: {}", e.getMessage());
@@ -131,7 +138,14 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
         try {
             allResult = g.V(bookId)
                          .hasLabel(VertexLabel.BOOK.getString())
-                         .project("base", "features", "targetDescriptions", "sections", "tags", "author", "status")
+                         .project("base",
+                                  "features",
+                                  "targetDescriptions",
+                                  "sections",
+                                  "tags",
+                                  "author",
+                                  "status",
+                                  "likedCount")
                          .by(__.valueMap().with(WithOptions.tokens))
                          .by(__.out(EdgeLabel.INCLUDE.getString())
                                .hasLabel(VertexLabel.BOOK_FEATURE.getString())
@@ -172,6 +186,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                     EdgeLabel.DELETE.getString(),
                                     EdgeLabel.SUSPEND.getString(),
                                     EdgeLabel.PUBLISH.getString()).label())
+                         .by(__.in(EdgeLabel.LIKE.getString()).count())
                          .next();
         } catch (Exception e) {
             log.error("find book for guest error: {}", e.getMessage());
@@ -452,7 +467,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .order()
                           .by(DateProperty.CREATE_TIME.getString(), Order.desc)
                           .range(24 * (page - 1), 24 * page) //TODO: ドメインロジックに閉じ込める
-                          .project("base", "author")
+                          .project("base", "author", "likedCount")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
                                     EdgeLabel.DRAFT.getString(),
@@ -461,6 +476,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                           .toList();
 
             sumCount =
@@ -532,11 +548,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
             allResults = g.V(userId)
                           .out(EdgeLabel.VIEW.getString())
                           .hasLabel(VertexLabel.BOOK.getString())
-                          .order()
-                          .by(coalesce(inE(EdgeLabel.VIEW.getString()).values(DateProperty.CREATE_TIME.getString()),
-                                       values(DateProperty.CREATE_TIME.getString())), Order.desc)
-                          .range(0, 6)
-                          .project("base", "author", "lastViewedPageId")
+                          .project("base", "author", "lastViewedPageId", "lastViewDate")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
                                     EdgeLabel.DRAFT.getString(),
@@ -548,6 +560,12 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .by(__.coalesce(__.inE(EdgeLabel.VIEW.getString())
                                             .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
                                             .values(ViewEdgeProperty.PAGE_ID.getString()), constant("")))
+                          .by(__.inE(EdgeLabel.VIEW.getString())
+                                .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+                                .values(DateProperty.CREATE_TIME.getString()))
+                          .order()
+                          .by(select("lastViewDate"), Order.desc)
+                          .range(0, 6)
                           .toList();
         } catch (Exception e) {
             log.error("findRecentlyViewed error: {} {}", userId, e.getMessage());
@@ -576,7 +594,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .by(coalesce(inE(EdgeLabel.PUBLISH.getString()).values(DateProperty.CREATE_TIME.getString()),
                                        values(DateProperty.CREATE_TIME.getString())), Order.desc)
                           .range(12 * (page - 1), 12 * page)
-                          .project("base", "author")
+                          .project("base", "author", "likedCount")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
                                     EdgeLabel.DRAFT.getString(),
@@ -585,6 +603,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                           .toList();
 
             sumCount = g.E()
@@ -617,7 +636,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .by(coalesce(inE(EdgeLabel.PUBLISH.getString()).values(DateProperty.CREATE_TIME.getString()),
                                        values(DateProperty.CREATE_TIME.getString())), Order.desc)
                           .range(12 * (page - 1), 12 * page)
-                          .project("base", "author")
+                          .project("base", "author", "likedCount")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
                                     EdgeLabel.DRAFT.getString(),
@@ -626,6 +645,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                           .toList();
 
             sumCount = g.E()
@@ -656,7 +676,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .hasLabel(VertexLabel.BOOK.getString())
                           .has(BookVertexProperty.PRICE.getString(), P.gt(0))
                           .has(BookVertexProperty.MEANINGFUL.getString(), true)
-                          .project("base", "purchaseCount", "author")
+                          .project("base", "purchaseCount", "author", "likedCount")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PURCHASE.getString()).count())
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
@@ -666,6 +686,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                           .order()
                           .by(select("purchaseCount"), Order.desc)
                           .range(12 * (page - 1), 12 * page)
@@ -701,7 +722,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                           .hasLabel(VertexLabel.BOOK.getString())
                           .has(BookVertexProperty.PRICE.getString(), P.eq(0))
                           .has(BookVertexProperty.MEANINGFUL.getString(), true)
-                          .project("base", "purchaseCount", "author")
+                          .project("base", "purchaseCount", "author", "likedCount")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PURCHASE.getString()).count())
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
@@ -711,6 +732,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                           .order()
                           .by(select("purchaseCount"), Order.desc)
                           .range(12 * (page - 1), 12 * page)
@@ -728,6 +750,55 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 
         } catch (Exception e) {
             log.error("findFamousFree error: {} {}", page, e.getMessage());
+            throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                             GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
+        }
+
+        return BookListEntity.builder().books(bookEntities).sumCount(sumCount).build();
+    }
+
+    @Override
+    public BookListEntity findLiked(int page, String userId) {
+        GraphTraversalSource g = neptuneClient.newTraversal();
+        List<Map<String, Object>> allResults;
+        List<BookEntity> bookEntities;
+        long sumCount;
+
+        try {
+            allResults = g.V(userId)
+                          .hasLabel(VertexLabel.USER.getString())
+                          .out(EdgeLabel.LIKE.getString())
+                          .hasLabel(VertexLabel.BOOK.getString())
+                          .project("base", "author", "likedCount", "likedDate")
+                          .by(__.valueMap().with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.PUBLISH.getString(),
+                                    EdgeLabel.DRAFT.getString(),
+                                    EdgeLabel.SUSPEND.getString(),
+                                    EdgeLabel.DELETE.getString())
+                                .hasLabel(VertexLabel.USER.getString())
+                                .valueMap()
+                                .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
+                          .by(__.inE(EdgeLabel.LIKE.getString())
+                                .where(outV().hasId(userId).hasLabel(VertexLabel.USER.getString()))
+                                .values(DateProperty.CREATE_TIME.getString()))
+                          .order()
+                          .by(select("likedDate"), Order.desc)
+                          .range(24 * (page - 1), 24 * page)
+                          .toList();
+
+            bookEntities = allResults.stream()
+                                     .map(r -> BookEntityConverter.toBookEntityForOwnList(r))
+                                     .collect(Collectors.toList());
+
+            sumCount = g.E()
+                        .hasLabel(EdgeLabel.PUBLISH.getString())
+                        .where(outV().hasLabel(VertexLabel.BOOK.getString()))
+                        .count()
+                        .next();
+
+        } catch (Exception e) {
+            log.error("find liked error: {} {}", page, e.getMessage());
             throw new GraphQLCustomException(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                              GraphQLErrorMessage.INTERNAL_SERVER_ERROR.getString());
         }
