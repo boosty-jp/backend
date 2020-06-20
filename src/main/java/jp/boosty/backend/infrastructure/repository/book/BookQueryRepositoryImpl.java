@@ -507,7 +507,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                   containing(query.substring(0, 1).toUpperCase())),
                               has(BookVertexProperty.TITLE.getString(), containing(query.toUpperCase())))
                           .where(inE().hasLabel(EdgeLabel.PUBLISH.getString()))
-                          .project("base", "purchaseCount", "author")
+                          .project("base", "purchaseCount", "author", "likedCount")
                           .by(__.valueMap().with(WithOptions.tokens))
                           .by(__.in(EdgeLabel.PURCHASE.getString()).count())
                           .by(__.in(EdgeLabel.PUBLISH.getString(),
@@ -517,6 +517,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
                                 .hasLabel(VertexLabel.USER.getString())
                                 .valueMap()
                                 .with(WithOptions.tokens))
+                          .by(__.in(EdgeLabel.LIKE.getString()).count())
                           .order()
                           .by(select("purchaseCount"), Order.desc)
                           .range(24 * (page - 1), 24 * page)
