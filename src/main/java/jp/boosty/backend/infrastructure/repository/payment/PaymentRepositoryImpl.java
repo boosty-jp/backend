@@ -47,7 +47,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         params.put("metadata", metadata);
 
         Map<String, Object> transferDataParams = new HashMap<String, Object>();
-        transferDataParams.put("amount", (int) Math.floor(price * 0.9));
+        transferDataParams.put("amount", (int) Math.floor(price * 0.8));
         transferDataParams.put("destination", stripeId);
         params.put("transfer_data", transferDataParams);
         PaymentIntent paymentIntent = PaymentIntent.create(params);
